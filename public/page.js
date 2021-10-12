@@ -124,10 +124,10 @@ const postdata = async () => {
         const keyvalue = key.value;
         const quest = document.getElementById('quest');
         var questval = quest.value;
-        questval = questval.replace(/\?/, "")
-        questval = questval.replace(/\%/, "modulus")
-        questval = questval.replace(/\#/, "hash")
-        questval = questval.replace(/\//, " divide by ")
+        questval = questval.replace(/\?/g, "")
+        questval = questval.replace(/\%/g, "modulus")
+        questval = questval.replace(/\#/g, "hash")
+        questval = questval.replace(/\//g, " divide by ")
         questval = questval.replace(/\n|\n\n|\r\n/g, "<br>")
         questval = questval.toString();
         const btn3 = document.getElementById('btn3');
@@ -169,7 +169,7 @@ const postdata = async () => {
     setTimeout(() => {
         quest.value='';
         notify.style.display = "none";
-    }, 2000);
+    }, 3000);
 }
 // **********************************************************************
 
