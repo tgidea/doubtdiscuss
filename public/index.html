@@ -16,9 +16,10 @@
 <body>
 
   <!-- navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<div style="background-color: black;">
+  <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -29,21 +30,13 @@
             <a class="nav-link active" aria-current="page" href="#">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">About</a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="#">How to use</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
           </li>
         </ul>
 
@@ -53,19 +46,25 @@
 
 
 
-  <div class="container">
-    <div class="input-group mb-3">
-      <button class="btn btn-danger" id="btn1">Click to get id</button>
-    </div>
-    <div class="input-group mb-3">
-      <!-- <input type="text" class="form-control" id="key"  placeholder="Enter your Id" aria-label="Enter Your Id" aria-describedby="btn2"> -->
-      <div class="container">
-        <span>Have an id?</span> 
-        <a class="btn btn-success" id="btn2" href="page.html" >Click</a>
+  <div class="container" style="min-height: 50vh; max-height: 55vh;">
+    <div class="container " style="margin-top: 45px;">
+      <div class="input-group mb-3" style="align-items: center; justify-content: center;">
+      </div>
+      <div class="input-group mb-3">
+        <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <span style="color: white;">Want new id?</span>
+          <button class="btn" style="background-color: rgb(253, 63, 142); border-color: white; border-width: 3px; width: 39%;" id="btn1"><span style="color: white;">Click</span> </button>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <span style="color: white;">Have an id?</span>
+          <a class="btn btn-success" id="btn2" href="page.html" style="width: 50%; background-color: rgb(250, 63, 145); border-color: white; border-width: 3px;">Click</a>
+        </div>
       </div>
     </div>
-
   </div>
+</div>
 
 
 

@@ -340,7 +340,9 @@ app.get('/delete/:id', async (req, res) => {
     }
 });
 
-
+app.get("*",(req,res)=>{
+    res.send(`<h2>Page not found</h2>`);
+});
 
 app.listen(port, () => {
     console.log('connection succesful');

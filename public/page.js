@@ -13,10 +13,10 @@ const showData = (articles, keyvalue) => {
                  <div class="container">
                      <p class="card-text card-header "><span  style="width:10vw; position:absolute; left:0px;">${i+1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
                      <div class="container"  >
-                       <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-primary ${artitem[0][i]._id} ${keyvalues}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-primary ${artitem[0][i]._id}  ${keyvalues}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-primary ${artitem[0][i]._id}  ${keyvalues}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-primary ${artitem[0][i]._id}  ${keyvalues}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
                      </div>
                      </div>
                 </div>

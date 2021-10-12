@@ -23,29 +23,30 @@ const createLength = function () {
 }
 
 document.getElementById('btn1').addEventListener('click', async () => {
-    const newid = createLength();
-    const fetching = async () => {
-        try {
-            await fetch(`/newkey/${newid}`)
-                .then(function (resp) {
-                    return resp.json();
-                })
-                .then(function (data) {
-                    if (data.result == 'success') {
-                        alert(`Your id is  ${data.id}`);
-                    }
-                    else {
-                        alert(`${data.result}`);
-                    }
-                });
+    // const newid = createLength();
+    // const fetching = async () => {
+    //     try {
+    //         await fetch(`/newkey/${newid}`)
+    //             .then(function (resp) {
+    //                 return resp.json();
+    //             })
+    //             .then(function (data) {
+    //                 if (data.result == 'success') {
+    //                     alert(`Your id is  ${data.id}`);
+    //                 }
+    //                 else {
+    //                     alert(`${data.result}`);
+    //                 }
+    //             });
+            alert('Sorry, this is not production version so we have storage limit .You need to contact us to get new ids')
             document.getElementById('btn1').disabled = true;
 
-        }
-        catch (err) {
-            console.log(err);
-        }
-    }
-    await fetching();
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+    // await fetching();
 
      setTimeout(function () {
         document.getElementById('btn1').disabled = false;
