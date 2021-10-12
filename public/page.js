@@ -125,6 +125,9 @@ const postdata = async () => {
         const quest = document.getElementById('quest');
         var questval = quest.value;
         questval = questval.replace(/\?/, "")
+        questval = questval.replace(/\%/, "modulus")
+        questval = questval.replace(/\#/, "hash")
+        questval = questval.replace(/\//, " divide by ")
         questval = questval.replace(/\n|\n\n|\r\n/g, "<br>")
         questval = questval.toString();
         const btn3 = document.getElementById('btn3');
