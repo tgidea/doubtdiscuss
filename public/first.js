@@ -23,7 +23,7 @@ const createLength = function () {
 }
 
 document.getElementById('btn1').addEventListener('click', async () => {
-    // const newid = createLength();
+    const newid = createLength();
     // const fetching = async () => {
     //     try {
     //         await fetch(`/newkey/${newid}`)
@@ -38,8 +38,11 @@ document.getElementById('btn1').addEventListener('click', async () => {
     //                     alert(`${data.result}`);
     //                 }
     //             });
-            alert('Sorry, this is not production version so we have storage limit .You need to contact us to get new ids')
-            document.getElementById('btn1').disabled = true;
+    // document.getElementById('btn1').disabled = true;
+    document.getElementsByClassName('alert')[0].style.display='block';
+    document.getElementsByClassName('alert')[0].style.transition='top 0.4s ease-in';
+    document.getElementsByClassName('alert')[0].style.top='1px';
+    document.getElementById('btnbody').style.marginTop = '1vh';
 
     //     }
     //     catch (err) {
@@ -48,12 +51,15 @@ document.getElementById('btn1').addEventListener('click', async () => {
     // }
     // await fetching();
 
-     setTimeout(function () {
+    setTimeout(function () {
         document.getElementById('btn1').disabled = false;
     }, 10000);
 });
 
 // ********************************************************************************
-
+ const delalert = async()=>{
+   document.getElementsByClassName('alert')[0].style.transition='top 0.6s ease-in';
+     document.getElementsByClassName('alert')[0].style.top='-500px';
+ }
 
 

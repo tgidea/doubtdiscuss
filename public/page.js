@@ -2,6 +2,7 @@
 const showData = (articles, keyvalue) => {
     const artitem = articles;
     console.log(artitem);
+    console.log('reach here');
     var items_list = document.getElementById('items-list');
     var keyvalues = keyvalue;
     items_list.innerHTML ='';
@@ -34,7 +35,7 @@ const getdata = async () => {
         const btn4 = document.getElementById('btn4');
         if (keyvalue == '') {
             // console.log('both empty');
-            document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill all fields</h6>`
+            document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
             notify.style.display = "block";
         }
         else if (keyvalue != '') {
@@ -55,7 +56,8 @@ const getdata = async () => {
                             notify.style.display = "block";
                         }
                     }).catch((err) => {
-                        notify.innerHTML = `<h6 style="color:red">Error occured</h6>`
+                        console.log('reach here2');
+                        notify.innerHTML = `<h6 style="color:red">Error occured${err}</h6>`
                         notify.style.display = "block";
                     })
             }
@@ -65,14 +67,14 @@ const getdata = async () => {
             }
         }
         else {
-            notify.innerHTML = `<h6 style="color:red">Please fill all fields</h6>`
+            notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
             notify.style.display = "block";
         }
     }
     await fetching();
     setTimeout(() => {
         notify.style.display = "none";
-    }, 1000);
+    }, 2000);
 }
 
 //************************************************************************* *//
@@ -101,12 +103,12 @@ const option = async (list, text) => {
                         notify.style.display = "block";
                     }
                 }).catch((err) => {
-                    notify.innerHTML = `<h6 style="color:red">Error occured :${err}</h6>`
+                    notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`
                     notify.style.display = "block";
                 })
         }
         catch (err) {
-            notify.innerHTML = `<h6 style="color:red">${err} </h6>`
+            notify.innerHTML = `<h6 style="color:red">Error occured. Check Network or contact us. </h6>`
             notify.style.display = "block";
         }
         setTimeout(() => {
@@ -124,10 +126,11 @@ const postdata = async () => {
         const keyvalue = key.value;
         const quest = document.getElementById('quest');
         var questval = quest.value;
-        questval = questval.replace(/\?/g, "")
-        questval = questval.replace(/\%/g, "modulus")
-        questval = questval.replace(/\#/g, "hash")
-        questval = questval.replace(/\//g, " divide by ")
+        questval = questval.replace(/\?/g, "&quest;")
+        questval = questval.replace(/\%/g, "&percnt;")
+        questval = questval.replace(/\#/g, "&num;")
+        questval = questval.replace(/\//g, "&sol;")
+        questval = questval.replace(/\\/g, "&Backslash;")
         questval = questval.replace(/\n|\n\n|\r\n/g, "<br>")
         questval = questval.toString();
         const btn3 = document.getElementById('btn3');
@@ -154,13 +157,13 @@ const postdata = async () => {
                     });
             }
             catch (err) {
-                notify.innerHTML = `<h6 style="color:red">Error with input<br>don't write mathematical terms </h6>`
+                notify.innerHTML = `<h6 style="color:red">Error with input<br>Erase some mathematical symbols </h6>`
                 notify.style.display = "block";
                 // alert(err);
             }
         }
         else {
-            notify.innerHTML = `<h6 style="color:red">Fill all fields</h6>`
+            notify.innerHTML = `<h6 style="color:red">Fill all fields*</h6>`
             notify.style.display = "block";
             // alert('fill all fields correct');
         }
@@ -169,7 +172,7 @@ const postdata = async () => {
     setTimeout(() => {
         quest.value='';
         notify.style.display = "none";
-    }, 3000);
+    }, 2000);
 }
 // **********************************************************************
 
@@ -212,7 +215,7 @@ const deletedata = async () => {
             }
         }
         else {
-            notify.innerHTML = `<h6 style="color:red">Please fill all fields</h6>`
+            notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
             notify.style.display = "block";
         }
     }
