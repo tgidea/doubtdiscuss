@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 const express = require('express');
 const path = require('path')
-const fs = require('fs')
+
 const dotenv = require('dotenv');
+const { clearScreenDown } = require('readline');
 const app = express();
 const port = process.env.PORT || 8000;
 // mongodb://localhost:27017/expapp
@@ -22,35 +23,18 @@ const getmillsec = function () {
     var d = new Date();
     return d.getTime();
 }
-const funwritefile = function (storage) {
-    fs.writeFile(path.join(__dirname, '../src', 'userdata.json'), JSON.stringify(storage, null, 2), (err, info) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            // console.log("successfully written")
-        }
-    })
-}
-const funreadfile = function () {
-
-    fs.readFile(path.join(__dirname, '../src/', 'userdata.json'), 'utf-8', (err, filedata) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            return (JSON.parse(filedata));
-            //    return userData;
-        }
-    });
-}
-
-
-// const userData = funreadfile();
-// console.log(funreadfile());
-
 
 // *****************************************************
+const blockReq = new mongoose.Schema({
+    ip: String,
+    id: String,
+    count: Number,
+    data: {
+        type: Date,
+        default: Date.now
+    }
+});
+const Client = mongoose.model('usergetnewkeydatas', blockReq);
 
 const expSchema2 = new mongoose.Schema({
     title: String,
@@ -108,75 +92,176 @@ app.get('/', (req, res) => {
 });
 
 // **********************************************************************************
+const Clienttemp = mongoose.model('usergetnewkeydatas');
+const createIpDoc = async (id, ip) => {
+    try {
+        const datacoll = new Client({
+            "ip": ip,
+            "id": id,
+            "count": 1
+        });
+        const result = await datacoll.save();
+        
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
 // route for creating new id
 app.get('/newkey/:uni_id', (req, res) => {
-    var str1 = "" + req.params.uni_id;
-    // console.log(str1);
-    const userip = req.ip;
-    // console.log(userip);
-    fs.readFile(path.join(__dirname, '../src/', 'userdata.json'), 'utf-8', (err, fileData) => {
-        const userData = JSON.parse(fileData);
-        if (err) {
-            console.log(err);
-        }
-        else {
-            for (var i = 0; i < userData.length; i++) {
-                if (userData[i].ip == userip) {
-                    check = 1;
 
-                    //check time of previous newid formation
-                    if (getmillsec() - userData[i].time > 3600000) {
-                        console.log(getmillsec() - userData[i].time);
-                        const createnew = async () => {
-                            userData[i].time = getmillsec();
-                            userData[i].id = "" + str1;
-                            funwritefile(userData);
-                            if (str1.length > 29 && str1.length < 60) {
+    var str1 = "" + req.params.uni_id;
+    const userip = "" + req.ip;
+    try {
+        mongoose.connection.db.listCollections({ name: `usergetnewkeydatas` })
+            .next(function (err, info) {
+                if (info) {
+                    try {
+                        const fun = async () => {
+                            try {
+                                //try for usergernewkeupdates
+                                const Temp = mongoose.model(`usergetnewkeydatas`);
                                 try {
-                                    dynamicSchema(str1);
-                                    // console.log('id created');
-                                    const obj = { "result": "success", "id": str1 };
-                                    res.send(obj);
+
+                                    const result = await Temp.find({ ip: `${userip}` });
+                                    // console.log(result);
+                                    //ip found
+                                    if (result.length > 0) {
+                                        //if ids request exceed 5
+                                        if (result[0].count >= 5) {
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}` });
+                                        }
+                                        //ids request not exceed 5
+                                        else {
+                                            try {
+                                                //try for updates if count<5
+                                                // console.log(result[0].id);
+                                                const idtemp = result[0].id + " " + str1;
+                                                // console.log(result[0].count);
+                                                const idcount = result[0].count + 1;
+                                                dynamicSchema(str1);
+                                                try {
+                                                    Temp.updateOne({ ip: userip },
+                                                        { $inc: { count: 1 } }).then(function () {
+                                                            // console.log('update success');
+                                                        }).catch(function (err) {
+                                                            console.log(err);
+                                                        })
+                                                    Temp.updateOne({ ip: userip },
+                                                        {$set:{id:idtemp}}).then(function () {
+                                                            // console.log('update success');
+                                                        }).catch(function (err) {
+                                                            console.log(err);
+                                                        })
+                                                    // console.log(update);
+                                                    const obj = { "result": "success", "id": result[0].id + `  Your count left are ${5 - idcount}  ` };
+                                                    res.send(obj);
+                                                }
+                                                catch (err) {
+                                                    console.log('err occured', err);
+                                                }
+
+                                            }
+                                            catch (err) {
+                                                console.log('hereeeee');
+                                                console.log(err);
+                                                res.send({ "result": `${err}` });
+                                            }
+                                        }
+                                    }
+                                    //ip not found
+                                    else {
+                                        createIpDoc(str1, userip);
+                                        dynamicSchema(str1);
+                                        const obj = { "result": "success", "id": str1 + `  Your count left are 4` };
+                                        res.send(obj);
+                                    }
                                 }
-                                catch {
-                                    res.send({ "result": "No more id possible" })
+                                catch (err) {
+                                    console.log('ip not found ');
                                 }
+
                             }
-                            else {
-                                const obj3 = { "result": "failure" }
-                                res.send(obj3);
+                            catch (err) {
+                                //try for usergernewkeupdates
+                                const Temp = mongoose.model(`usergetnewkeydatas`,blockReq);
+                                try {
+
+                                    const result = await Temp.find({ ip: `${userip}` });
+                                    // console.log(result);
+                                    //ip found
+                                    if (result.length > 0) {
+                                        //if ids request exceed 5
+                                        if (result.count > 5) {
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}` });
+                                        }
+                                        //ids request not exceed 5
+                                        else {
+                                            try {
+                                                //try for updates if count<5
+                                                // console.log(result[0].id);
+                                                const idtemp = result[0].id + " " + str1;
+                                                // console.log(result[0].count);
+                                                const idcount = result[0].count + 1;
+                                                dynamicSchema(str1);
+                                                try {
+                                                    Temp.updateOne({ ip: userip },
+                                                        { $inc: { count: 1 } }).then(function () {
+                                                            // console.log('update success');
+                                                        }).catch(function (err) {
+                                                            console.log(err);
+                                                        })
+                                                    // console.log(update);
+                                                    const obj = { "result": "success", "id": result[0].id + `<br>  Your count left are ${5 - idcount}  ` };
+                                                    res.send(obj);
+                                                }
+                                                catch (err) {
+                                                    console.log('err occured', err);
+                                                }
+
+                                            }
+                                            catch (err) {
+                                                // console.log('hereeeee');
+                                                console.log(err);
+                                                res.send({ "result": `${err}` });
+                                            }
+                                        }
+                                    }
+                                    //ip not found
+                                    else {
+                                        createIpDoc(str1, userip);
+                                        dynamicSchema(str1);
+                                        const obj = { "result": "success", "id": str1 + ` <br> Your count left are 4` };
+                                        res.send(obj);
+                                    }
+                                }
+                                catch (err) {
+                                    console.log('ip not found ');
+                                }
+
                             }
                         }
-                        createnew()
+                        fun();
+
                     }
-                    else {
-                        res.send({ "result": `Already created : ${userData[i].id} ` });
+                    catch (err) {
+                        // console.log('id not match');
+                        res.send({ "result": "Id not found" });
                     }
-                    break;
                 }
-            }
-        }
-
-        //set new user in userData
-        if (check == 0) {
-            // console.log('not found')
-            if (userData.length > 1000) {
-                userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }];
-                funwritefile(userData);
-            }
-            const dataa = { ip: req.ip, id: str1, time: getmillsec() }
-            dynamicSchema(str1);
-            userData.push(dataa);
-            funwritefile(userData);
-            const obj7 = { "result": "success", "id": str1 };
-            res.send(obj7);
-        }
-
-    })
+                else {
+                    console.log('not found')
+                }
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Error occured" });
+    }
+    // }
+})
 
 
-
-});
 // **********************************************************************************
 const staticPath2 = path.join(__dirname, '../public');
 app.use(express.static(staticPath2));

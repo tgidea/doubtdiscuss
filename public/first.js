@@ -37,7 +37,7 @@ document.getElementById('btn1').addEventListener('click', async () => {
                         document.getElementById('alerttext').innerHTML = `Your id is  ${data.id}`;
                     }
                     else {
-                        document.getElementById('alerttext').innerHTML = `Your id is  ${data.result}`;
+                        document.getElementById('alerttext').innerHTML = ` ${data.result}`;
                         // alert(`${data.result}`);
                     }
                     document.getElementsByClassName('alert')[0].style.display = 'block';
