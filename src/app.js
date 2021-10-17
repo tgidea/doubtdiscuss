@@ -7,6 +7,12 @@ const app = express();
 const port = process.env.PORT || 8000;
 // mongodb://localhost:27017/expapp
 
+const getmillsec = function () {
+    var d = new Date();
+    return d.getTime();
+}
+var userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }];
+
 require('dotenv').config({ path: __dirname + '/config.env' });
 
 const url2 = process.env.DATABASE;
@@ -74,23 +80,47 @@ app.get('/', (req, res) => {
 // **********************************************************************************
 // route for creating new id
 app.get('/newkey/:uni_id', (req, res) => {
-    // console.log(req.params.uni_id);
     var str1 = "" + req.params.uni_id;
-    if (str1.length > 29) {
-        // try {
-        // console.log("here only", str1);
-        // dynamicSchema(str1);
-        // const obj = { "result": "success", "id": str1 };
-        // res.send(obj);
-        // }
-        // catch {
-        //     res.send({ "result": "No more id possible" })
-        // }
-        res.send({ "result": "Sorry,this is not production version.You need to contact us to get new ids" });
+    var check = 0;
+    const userip = req.ip;
+    //store ip address of client
+
+    for (var i = 0; i < userData.length; i++) {
+        if (userData[i].ip == userip) {
+            check = 1;
+
+            //check time of previous newid formation
+            if (getmillsec() - userData[i].time > 3600000) {
+                userData[i].time = getmillsec();
+                userData[i].id = " " + str1;
+                if (str1.length > 29 && str1.length < 60) {
+                    try {
+                        dynamicSchema(str1);
+                        const obj = { "result": "success", "id": str1 };
+                        res.send(obj);
+                    }
+                    catch {
+                        res.send({ "result": "No more id possible" })
+                    }
+                }
+                else {
+                    const obj3 = { "result": "failure" }
+                    res.send(obj3);
+                }
+            }
+            else {
+                res.send({ "result": `Already created : ${userData[i].id} ` });
+            }
+            break;
+        }
     }
-    else {
-        const obj3 = { "result": "failure" }
-        res.send(obj3);
+    //set new user in userData
+    if (check == 0) {
+        if (userData.length > 1000) {
+            userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
+        }
+        const dataa = { ip: req.ip, id: str1, time: getmillsec() }
+        userData.push(dataa);
     }
 
 
@@ -110,7 +140,7 @@ app.get('/post/:uniq_id/:quest', async (req, res) => {
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
-                if (info && stri.length > 24) {
+                if (info && stri.length > 24 && stri.length < 60) {
                     // if server is running continuously without restating ever
 
                     try {
@@ -340,7 +370,77 @@ app.get('/delete/:id', async (req, res) => {
     }
 });
 
-app.get("*",(req,res)=>{
+
+app.get('/deleteblankcollections/', async (req, res) => {
+    // const stri = "" + req.params.id;
+
+    //check if routed id present or not
+    try {
+        mongoose.connection.db.listCollections()
+            .toArray(function (err, info) {
+                const details = info;
+                for (var i = 0; i < details.length; i++) {
+                    //     // if server is running continuously without restating ever
+                    const naam = ""+details[i].name;
+                    var reslt='check database';
+                    // console.log(naam);
+                    try {
+                                const fun = async () => {
+                                    try {
+                                        const Temp = mongoose.model(naam);
+                                        const number = await Temp.countDocuments();
+                                        if (number < 1) {      
+                                            try{
+                                                await mongoose.connection.collection(naam).drop()
+                                                userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
+                                            }
+                                            catch(err){
+                                                reslt=`${err}`;
+                                                console.log(err);
+                                            }
+                                        }
+                                    }
+                                    catch (err) {
+
+                                        // if server restarted : to handle previously made collections
+                                        reslt=`${err}`;
+                                        const Temp = mongoose.model(naam, expSchema2);
+                                        const number = await Temp.countDocuments(); 
+                                        if (number < 1) {       
+                                            
+                                            try{
+                                            await mongoose.connection.collection(naam).drop()
+                                            console.log('deleted successfully');
+                                            }
+                                            catch(err){
+                                                reslt=`${err}`;
+                                                console.log(err);
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                fun();
+                    }
+                    catch (err) {
+                        reslt=`${err}`;
+                    }
+                    
+                }
+                res.send({ "result": reslt });
+
+            })
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Error occured" });
+    }
+});
+
+
+
+
+app.get("*", (req, res) => {
     res.send(`<h2>Page not found</h2>`);
 });
 

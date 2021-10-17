@@ -1,8 +1,8 @@
 //************************************************************************* *//
 const showData = (articles, keyvalue) => {
     const artitem = articles;
-    console.log(artitem);
-    console.log('reach here');
+    // console.log(artitem);
+    // console.log('reach here');
     var items_list = document.getElementById('items-list');
     var keyvalues = keyvalue;
     items_list.innerHTML ='';
@@ -52,7 +52,7 @@ const getdata = async () => {
                             showData(dataAll, keyvalue);
                         }
                         else {
-                            notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                            notify.innerHTML = `<h6 style="color:red">Error Occured : ${data.result} </h6>`
                             notify.style.display = "block";
                         }
                     }).catch((err) => {
@@ -140,7 +140,7 @@ const postdata = async () => {
         }
         else if (keyvalue != '' && questval != '') {
             try {
-                console.log(questval);
+                // console.log(questval);
                 await fetch(`/post/${keyvalue}/${questval}`)
                     .then(function (resp) {
                         return resp.json();
