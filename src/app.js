@@ -8,6 +8,7 @@ const port = process.env.PORT || 8000;
 // mongodb://localhost:27017/expapp
 require('dotenv').config({ path: __dirname + '/config.env' });
 
+var check = 0;
 const url2 = process.env.DATABASE;
 const conn = mongoose.connect(url2, {
     useNewUrlParser: true,
@@ -43,14 +44,13 @@ const funreadfile = function () {
         }
     });
 }
+
+
 // const userData = funreadfile();
 // console.log(funreadfile());
 
 
 // *****************************************************
-const userdata = new mongoose.Schema({
-
-})
 
 const expSchema2 = new mongoose.Schema({
     title: String,
@@ -96,6 +96,7 @@ function dynamicSchema(prefix) {
 
     });
     mongoose.model(prefix + "", expSchema, prefix);
+    // console.log('reach here')
     return;
 }
 // **********************************************************************************
@@ -110,8 +111,9 @@ app.get('/', (req, res) => {
 // route for creating new id
 app.get('/newkey/:uni_id', (req, res) => {
     var str1 = "" + req.params.uni_id;
-    var check = 0;
+    // console.log(str1);
     const userip = req.ip;
+    // console.log(userip);
     fs.readFile(path.join(__dirname, '../src/', 'userdata.json'), 'utf-8', (err, fileData) => {
         const userData = JSON.parse(fileData);
         if (err) {
@@ -124,24 +126,28 @@ app.get('/newkey/:uni_id', (req, res) => {
 
                     //check time of previous newid formation
                     if (getmillsec() - userData[i].time > 3600000) {
-                        // console.log('diff is greater');
-                        userData[i].time = getmillsec();
-                        userData[i].id = "" + str1;
-                        funwritefile(userData);
-                        if (str1.length > 29 && str1.length < 60) {
-                            try {
-                                dynamicSchema(str1);
-                                const obj = { "result": "success", "id": str1 };
-                                res.send(obj);
+                        console.log(getmillsec() - userData[i].time);
+                        const createnew = async () => {
+                            userData[i].time = getmillsec();
+                            userData[i].id = "" + str1;
+                            funwritefile(userData);
+                            if (str1.length > 29 && str1.length < 60) {
+                                try {
+                                    dynamicSchema(str1);
+                                    // console.log('id created');
+                                    const obj = { "result": "success", "id": str1 };
+                                    res.send(obj);
+                                }
+                                catch {
+                                    res.send({ "result": "No more id possible" })
+                                }
                             }
-                            catch {
-                                res.send({ "result": "No more id possible" })
+                            else {
+                                const obj3 = { "result": "failure" }
+                                res.send(obj3);
                             }
                         }
-                        else {
-                            const obj3 = { "result": "failure" }
-                            res.send(obj3);
-                        }
+                        createnew()
                     }
                     else {
                         res.send({ "result": `Already created : ${userData[i].id} ` });
@@ -153,11 +159,13 @@ app.get('/newkey/:uni_id', (req, res) => {
 
         //set new user in userData
         if (check == 0) {
+            // console.log('not found')
             if (userData.length > 1000) {
                 userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }];
                 funwritefile(userData);
             }
             const dataa = { ip: req.ip, id: str1, time: getmillsec() }
+            dynamicSchema(str1);
             userData.push(dataa);
             funwritefile(userData);
             const obj7 = { "result": "success", "id": str1 };
@@ -165,7 +173,7 @@ app.get('/newkey/:uni_id', (req, res) => {
         }
 
     })
-    
+
 
 
 });
