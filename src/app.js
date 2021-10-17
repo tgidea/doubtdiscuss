@@ -1,18 +1,11 @@
 const mongoose = require('mongoose')
 const express = require('express');
 const path = require('path')
-// const hbs = require('hbs')
+const fs = require('fs')
 const dotenv = require('dotenv');
 const app = express();
 const port = process.env.PORT || 8000;
 // mongodb://localhost:27017/expapp
-
-const getmillsec = function () {
-    var d = new Date();
-    return d.getTime();
-}
-var userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }];
-
 require('dotenv').config({ path: __dirname + '/config.env' });
 
 const url2 = process.env.DATABASE;
@@ -22,7 +15,43 @@ const conn = mongoose.connect(url2, {
 }).then(() => console.log('success connection'))
     .catch((err) => console.log(err))
 
-// *****************************************************8
+
+
+const getmillsec = function () {
+    var d = new Date();
+    return d.getTime();
+}
+const funwritefile = function (storage) {
+    fs.writeFile(path.join(__dirname, '../src', 'userdata.json'), JSON.stringify(storage, null, 2), (err, info) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // console.log("successfully written")
+        }
+    })
+}
+const funreadfile = function () {
+
+    fs.readFile(path.join(__dirname, '../src/', 'userdata.json'), 'utf-8', (err, filedata) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            return (JSON.parse(filedata));
+            //    return userData;
+        }
+    });
+}
+// const userData = funreadfile();
+// console.log(funreadfile());
+
+
+// *****************************************************
+const userdata = new mongoose.Schema({
+
+})
+
 const expSchema2 = new mongoose.Schema({
     title: String,
     title: String,
@@ -83,45 +112,60 @@ app.get('/newkey/:uni_id', (req, res) => {
     var str1 = "" + req.params.uni_id;
     var check = 0;
     const userip = req.ip;
-    //store ip address of client
+    fs.readFile(path.join(__dirname, '../src/', 'userdata.json'), 'utf-8', (err, fileData) => {
+        const userData = JSON.parse(fileData);
+        if (err) {
+            console.log(err);
+        }
+        else {
+            for (var i = 0; i < userData.length; i++) {
+                if (userData[i].ip == userip) {
+                    check = 1;
 
-    for (var i = 0; i < userData.length; i++) {
-        if (userData[i].ip == userip) {
-            check = 1;
-
-            //check time of previous newid formation
-            if (getmillsec() - userData[i].time > 3600000) {
-                userData[i].time = getmillsec();
-                userData[i].id = " " + str1;
-                if (str1.length > 29 && str1.length < 60) {
-                    try {
-                        dynamicSchema(str1);
-                        const obj = { "result": "success", "id": str1 };
-                        res.send(obj);
+                    //check time of previous newid formation
+                    if (getmillsec() - userData[i].time > 3600000) {
+                        // console.log('diff is greater');
+                        userData[i].time = getmillsec();
+                        userData[i].id = "" + str1;
+                        funwritefile(userData);
+                        if (str1.length > 29 && str1.length < 60) {
+                            try {
+                                dynamicSchema(str1);
+                                const obj = { "result": "success", "id": str1 };
+                                res.send(obj);
+                            }
+                            catch {
+                                res.send({ "result": "No more id possible" })
+                            }
+                        }
+                        else {
+                            const obj3 = { "result": "failure" }
+                            res.send(obj3);
+                        }
                     }
-                    catch {
-                        res.send({ "result": "No more id possible" })
+                    else {
+                        res.send({ "result": `Already created : ${userData[i].id} ` });
                     }
-                }
-                else {
-                    const obj3 = { "result": "failure" }
-                    res.send(obj3);
+                    break;
                 }
             }
-            else {
-                res.send({ "result": `Already created : ${userData[i].id} ` });
+        }
+
+        //set new user in userData
+        if (check == 0) {
+            if (userData.length > 1000) {
+                userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }];
+                funwritefile(userData);
             }
-            break;
+            const dataa = { ip: req.ip, id: str1, time: getmillsec() }
+            userData.push(dataa);
+            funwritefile(userData);
+            const obj7 = { "result": "success", "id": str1 };
+            res.send(obj7);
         }
-    }
-    //set new user in userData
-    if (check == 0) {
-        if (userData.length > 1000) {
-            userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
-        }
-        const dataa = { ip: req.ip, id: str1, time: getmillsec() }
-        userData.push(dataa);
-    }
+
+    })
+    
 
 
 });
@@ -381,51 +425,51 @@ app.get('/deleteblankcollections/', async (req, res) => {
                 const details = info;
                 for (var i = 0; i < details.length; i++) {
                     //     // if server is running continuously without restating ever
-                    const naam = ""+details[i].name;
-                    var reslt='check database';
+                    const naam = "" + details[i].name;
+                    var reslt = 'check database';
                     // console.log(naam);
                     try {
-                                const fun = async () => {
+                        const fun = async () => {
+                            try {
+                                const Temp = mongoose.model(naam);
+                                const number = await Temp.countDocuments();
+                                if (number < 1) {
                                     try {
-                                        const Temp = mongoose.model(naam);
-                                        const number = await Temp.countDocuments();
-                                        if (number < 1) {      
-                                            try{
-                                                await mongoose.connection.collection(naam).drop()
-                                                userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
-                                            }
-                                            catch(err){
-                                                reslt=`${err}`;
-                                                console.log(err);
-                                            }
-                                        }
+                                        await mongoose.connection.collection(naam).drop()
+                                        userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
                                     }
                                     catch (err) {
-
-                                        // if server restarted : to handle previously made collections
-                                        reslt=`${err}`;
-                                        const Temp = mongoose.model(naam, expSchema2);
-                                        const number = await Temp.countDocuments(); 
-                                        if (number < 1) {       
-                                            
-                                            try{
-                                            await mongoose.connection.collection(naam).drop()
-                                            console.log('deleted successfully');
-                                            }
-                                            catch(err){
-                                                reslt=`${err}`;
-                                                console.log(err);
-                                            }
-                                            
-                                        }
+                                        reslt = `${err}`;
+                                        console.log(err);
                                     }
                                 }
-                                fun();
+                            }
+                            catch (err) {
+
+                                // if server restarted : to handle previously made collections
+                                reslt = `${err}`;
+                                const Temp = mongoose.model(naam, expSchema2);
+                                const number = await Temp.countDocuments();
+                                if (number < 1) {
+
+                                    try {
+                                        await mongoose.connection.collection(naam).drop()
+                                        console.log('deleted successfully');
+                                    }
+                                    catch (err) {
+                                        reslt = `${err}`;
+                                        console.log(err);
+                                    }
+
+                                }
+                            }
+                        }
+                        fun();
                     }
                     catch (err) {
-                        reslt=`${err}`;
+                        reslt = `${err}`;
                     }
-                    
+
                 }
                 res.send({ "result": reslt });
 
