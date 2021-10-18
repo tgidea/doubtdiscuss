@@ -127,14 +127,15 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     // console.log(result);
                                     //ip found
                                     if (result.length > 0) {
+                                        // console.log('second hit');
                                         //if ids request exceed 5
-                                        if (result[0].count >= 5) {
-                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}` });
+                                        if (result[0].count >= 2) {
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`,"id":` ${result[0].id}`  });
                                         }
                                         //ids request not exceed 5
                                         else {
                                             try {
-                                                //try for updates if count<5
+                                                //try for updates if count<2
                                                 // console.log(result[0].id);
                                                 const idtemp = result[0].id + " " + str1;
                                                 // console.log(result[0].count);
@@ -154,7 +155,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                                             console.log(err);
                                                         })
                                                     // console.log(update);
-                                                    const obj = { "result": "success", "id": result[0].id + `  Your count left are ${5 - idcount}  ` };
+                                                    const obj = { "result": "success", "id": `${result[0].id}  ${str1}` };
                                                     res.send(obj);
                                                 }
                                                 catch (err) {
@@ -171,9 +172,10 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     }
                                     //ip not found
                                     else {
+                                        // console.log('first hit');
                                         createIpDoc(str1, userip);
                                         dynamicSchema(str1);
-                                        const obj = { "result": "success", "id": str1 + `  Your count left are 4` };
+                                        const obj = { "result": "success", "id": str1  };
                                         res.send(obj);
                                     }
                                 }
@@ -193,7 +195,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     if (result.length > 0) {
                                         //if ids request exceed 5
                                         if (result.count > 5) {
-                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}` });
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`,"id":` ${result[0].id}` });
                                         }
                                         //ids request not exceed 5
                                         else {
@@ -212,7 +214,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                                             console.log(err);
                                                         })
                                                     // console.log(update);
-                                                    const obj = { "result": "success", "id": result[0].id + `<br>  Your count left are ${5 - idcount}  ` };
+                                                    const obj = { "result": "success", "id": result[0].id };
                                                     res.send(obj);
                                                 }
                                                 catch (err) {
@@ -231,7 +233,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     else {
                                         createIpDoc(str1, userip);
                                         dynamicSchema(str1);
-                                        const obj = { "result": "success", "id": str1 + ` <br> Your count left are 4` };
+                                        const obj = { "result": "success", "id": str1  };
                                         res.send(obj);
                                     }
                                 }
