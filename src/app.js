@@ -101,17 +101,30 @@ const createIpDoc = async (id, ip) => {
             "count": 1
         });
         const result = await datacoll.save();
-        
+
     }
     catch (err) {
         console.log(err);
     }
 }
 // route for creating new id
-app.get('/newkey/:uni_id', (req, res) => {
+const getip = async (req) => {
+    var ip;
+    if (req.headers['x-forwarded-for']) {
+        ip = req.headers['x-forwarded-for'].split(",")[0];
+    } else if (req.connection && req.connection.remoteAddress) {
+        ip = req.connection.remoteAddress;
+    } else {
+        ip = req.ip;
+    }
+    // console.log(ip)
+    return ip;
+}
+app.get('/newkey/:uni_id', async (req, res) => {
 
     var str1 = "" + req.params.uni_id;
-    const userip = "" + req.ip;
+    const userip = await getip(req);
+    // const userip = "" + req.ip;
     try {
         mongoose.connection.db.listCollections({ name: `usergetnewkeydatas` })
             .next(function (err, info) {
@@ -130,7 +143,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                         // console.log('second hit');
                                         //if ids request exceed 5
                                         if (result[0].count >= 2) {
-                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`,"id":` ${result[0].id}`  });
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
                                         }
                                         //ids request not exceed 5
                                         else {
@@ -149,7 +162,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                                             console.log(err);
                                                         })
                                                     Temp.updateOne({ ip: userip },
-                                                        {$set:{id:idtemp}}).then(function () {
+                                                        { $set: { id: idtemp } }).then(function () {
                                                             // console.log('update success');
                                                         }).catch(function (err) {
                                                             console.log(err);
@@ -175,7 +188,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                         // console.log('first hit');
                                         createIpDoc(str1, userip);
                                         dynamicSchema(str1);
-                                        const obj = { "result": "success", "id": str1  };
+                                        const obj = { "result": "success", "id": str1 };
                                         res.send(obj);
                                     }
                                 }
@@ -186,7 +199,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                             }
                             catch (err) {
                                 //try for usergernewkeupdates
-                                const Temp = mongoose.model(`usergetnewkeydatas`,blockReq);
+                                const Temp = mongoose.model(`usergetnewkeydatas`, blockReq);
                                 try {
 
                                     const result = await Temp.find({ ip: `${userip}` });
@@ -195,7 +208,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     if (result.length > 0) {
                                         //if ids request exceed 5
                                         if (result.count > 5) {
-                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`,"id":` ${result[0].id}` });
+                                            res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
                                         }
                                         //ids request not exceed 5
                                         else {
@@ -233,7 +246,7 @@ app.get('/newkey/:uni_id', (req, res) => {
                                     else {
                                         createIpDoc(str1, userip);
                                         dynamicSchema(str1);
-                                        const obj = { "result": "success", "id": str1  };
+                                        const obj = { "result": "success", "id": str1 };
                                         res.send(obj);
                                     }
                                 }
