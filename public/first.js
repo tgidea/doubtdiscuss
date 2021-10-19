@@ -22,49 +22,54 @@ const createLength = function () {
     return str1;
 }
 
-const lcset = function(id){
+const lcset = function (id) {
     // console.log('id obtained are',id);
-    const lccount=(localStorage.getItem('dhgetidcount'));
+    const lccount = (localStorage.getItem('dhgetidcount'));
     // console.log('lccount is ',lccount);
-    const lcdata= (localStorage.getItem('dhgetiddata'));
+    const lcdata = (localStorage.getItem('dhgetiddata'));
     // console.log('lcdata is ',lcdata);
-    const tempstr=""+id;
-    let count=0,ids="";
-    if(lccount==null || lccount==undefined){
-        if(tempstr.length<60){
-        count =1 ;
+    const tempstr = "" + id;
+    let count = 0, ids = "";
+    if (lccount == null || lccount == undefined) {
+        if (tempstr.length < 60) {
+            count = 1;
         }
-        else{
-            count =2;
+        else {
+            count = 2;
         }
-        ids=id;
-        localStorage.setItem('dhgetidcount',count);
-        localStorage.setItem('dhgetiddata',ids);
-    }
-    else if(lccount<=2){
-        count = Number(lccount) + 1;
         ids = id;
-        localStorage.setItem('dhgetidcount',count);
-        localStorage.setItem('dhgetiddata',ids);
+        localStorage.setItem('dhgetidcount', count);
+        localStorage.setItem('dhgetiddata', ids);
+    }
+    else if (lccount <= 2 && lcdata!=null && lcdata!=undefined) {
+        count = Number(lccount) + 1;
+        if (tempstr.length < 60 && lccount==1) {
+            ids = lcdata + "  " + id;
+        }
+        else {
+            ids = id;
+        }
+        localStorage.setItem('dhgetidcount', count);
+        localStorage.setItem('dhgetiddata', ids);
     }
 
 }
-const checklc = function(){
-    const lccount=(localStorage.getItem('dhgetidcount'));
-    if(lccount==null || lccount==undefined){
+const checklc = function () {
+    const lccount = (localStorage.getItem('dhgetidcount'));
+    if (lccount == null || lccount == undefined) {
         return 0;
     }
-    else{
+    else {
         return lccount;
     }
 
-} 
-const getlc = function(){
-    const lcdata= (localStorage.getItem('dhgetiddata'));
-    if(lcdata==null || lcdata==undefined){
+}
+const getlc = function () {
+    const lcdata = (localStorage.getItem('dhgetiddata'));
+    if (lcdata == null || lcdata == undefined) {
         return "No ids present"
     }
-    else{
+    else {
         return lcdata;
     }
 }
@@ -93,24 +98,24 @@ document.getElementById('btn1').addEventListener('click', async () => {
                         document.getElementById('alerttext').innerHTML = ` ${data.result}`;
                         lcset(data.id);
                     }
-                  alertBox();
+                    alertBox();
                 });
         }
         catch (err) {
             console.log(err);
         }
     }
-    if(checklc()<2){
-        console.log('less than 2');
-        document.getElementById('btn1').disabled=true;
-    await fetching();
-    setTimeout(function(){
-        document.getElementById('btn1').disabled=false;
-    },10000);
+    if (checklc() < 2) {
+        // console.log('less than 2');
+        document.getElementById('btn1').disabled = true;
+        await fetching();
+        setTimeout(function () {
+            document.getElementById('btn1').disabled = false;
+        }, 10000);
     }
-    else{
-        console.log('greater than 2');
-        const lcdatas=getlc();
+    else {
+        // console.log('greater than 2');
+        const lcdatas = getlc();
         document.getElementById('alerttext').innerHTML = `<strong>Sorry</strong>,no more ids for you.<br>Your ids are ${lcdatas}`;
         alertBox();
     }
