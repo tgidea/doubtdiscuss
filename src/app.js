@@ -115,7 +115,6 @@ const getip = async (req) => {
     } if (req.connection && req.connection.remoteAddress) {
         ip = ip +"  req.connection------  "+ req.connection.remoteAddress;
         ip = ip +"  req.socket.remote------  "+ req.socket.remoteAddress;
-        ip = ip +"  req.bdevala------  "+ req.connection.socket.remoteAddress.split(",")[0];
 
     }
         ip = ip+" req.ip is-----   "+ req.ip;
