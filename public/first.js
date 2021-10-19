@@ -23,7 +23,7 @@ const createLength = function () {
 }
 
 const lcset = function(id){
-    console.log('id obtained are',id);
+    // console.log('id obtained are',id);
     const lccount=(localStorage.getItem('dhgetidcount'));
     // console.log('lccount is ',lccount);
     const lcdata= (localStorage.getItem('dhgetiddata'));

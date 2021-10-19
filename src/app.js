@@ -108,24 +108,23 @@ const createIpDoc = async (id, ip) => {
     }
 }
 // route for creating new id
-const getip = async (req) => {
-    var ip="header------  ";
-    if (req.headers['x-forwarded-for']) {
-        ip += req.headers['x-forwarded-for'];
-    } if (req.connection && req.connection.remoteAddress) {
-        ip = ip +"  req.connection------  "+ req.connection.remoteAddress;
-        ip = ip +"  req.socket.remote------  "+ req.socket.remoteAddress;
-
-    }
-        ip = ip+" req.ip is-----   "+ req.ip;
-    console.log(ip)
-    return ip;
-}
+// const getip = async (req) => {
+//     var ip;
+//     if (req.headers['x-forwarded-for']) {
+//         ip = req.headers['x-forwarded-for'].split(",")[0];
+//     } else if (req.connection && req.connection.remoteAddress) {
+//         ip = req.connection.remoteAddress;
+//     } else {
+//         ip = req.ip;
+//     }
+//     // console.log(ip)
+//     return ip;
+// }
 app.get('/newkey/:uni_id', async (req, res) => {
 
     var str1 = "" + req.params.uni_id;
-    const userip = await getip(req);
-    // const userip = "" + req.ip;
+    // const userip = await getip(req);
+    const userip = "" + req.ip;
     try {
         mongoose.connection.db.listCollections({ name: `usergetnewkeydatas` })
             .next(function (err, info) {
