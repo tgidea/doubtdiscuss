@@ -109,15 +109,14 @@ const createIpDoc = async (id, ip) => {
 }
 // route for creating new id
 const getip = async (req) => {
-    var ip;
+    var ip="header------  ";
     if (req.headers['x-forwarded-for']) {
-        ip = req.headers['x-forwarded-for'].split(",")[0];
-    } else if (req.connection && req.connection.remoteAddress) {
-        ip = req.connection.remoteAddress;
-    } else {
-        ip = req.ip;
+        ip += req.headers['x-forwarded-for'];
+    } if (req.connection && req.connection.remoteAddress) {
+        ip = ip +"  req.connection------  "+ req.connection.remoteAddress;
     }
-    // console.log(ip)
+        ip = ip+" req.ip is-----   "+ req.ip;
+    console.log(ip)
     return ip;
 }
 app.get('/newkey/:uni_id', async (req, res) => {
