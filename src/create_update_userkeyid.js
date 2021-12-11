@@ -58,7 +58,7 @@ const create_update_ip = async (str1, userip, res) => {
                                     }).catch(function (err) {
                                         console.log(err);
                                     })
-                                const obj = { "result": "success", "id": `${result[0].id}  ${str1}` };
+                                const obj = { "result": "success", "id":`${result[0].id} ${str1}` };
                                 // console.log(obj);
                                 res.send(obj);
 

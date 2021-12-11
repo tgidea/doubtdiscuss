@@ -35,7 +35,6 @@ const changeOption = async (stri, questid, opti, status, res) => {
                                 $set:{[`${opti}`]:0}
                             })
                         }
-                        console.log(check);
                         res.send({ "result": "Success" });
                     }
                     catch (err) {

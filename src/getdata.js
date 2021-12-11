@@ -17,8 +17,6 @@ const getdata = async (stri, res) => {
                     }
                     try {
                         const result = await Temp.find();
-                        // console.log('found successfully1');
-                        console.log(result);
                         res.send({ "result": "success", "alldata": result });
                     }
                     catch (err) {
