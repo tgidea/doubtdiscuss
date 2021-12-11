@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const expschema2 = require('./expschema2');
 
-const changeOption = async (stri,questid , opti,res) => {
+const changeOption = async (stri, questid, opti, status, res) => {
 
     //check if routed id present or not
     try {
@@ -19,10 +19,24 @@ const changeOption = async (stri,questid , opti,res) => {
                         Temp = mongoose.model(stri, expschema2);
                     }
                     try {
-                        const result = await Temp.updateOne({ _id: questid }, {
-                            $inc: { [`${opti}`]: 1 }
-                        })
-                        res.send({ "result": "success" });
+                        if (status == "inc") {
+                            const result = await Temp.updateOne({ _id: questid }, {
+                                $inc: { [`${opti}`]: 1 }
+                            })
+                        }
+                        else{
+                            const result = await Temp.updateOne({ _id: questid }, {
+                                $inc: { [`${opti}`]: -1 }
+                            })
+                        }
+                        const check=await Temp.find({_id:questid});
+                        if(check[0][`${opti}`]<0){
+                            const result=await Temp.updateOne({_id:questid},{
+                                $set:{[`${opti}`]:0}
+                            })
+                        }
+                        console.log(check);
+                        res.send({ "result": "Success" });
                     }
                     catch (err) {
                         console.log(err);
@@ -39,4 +53,4 @@ const changeOption = async (stri,questid , opti,res) => {
         res.send({ "result": "Error occured" });
     }
 }
-module.exports=changeOption;
+module.exports = changeOption;

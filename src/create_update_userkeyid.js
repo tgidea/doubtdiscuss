@@ -34,10 +34,11 @@ const create_update_ip = async (str1, userip, res) => {
                 const result = await Temp.find({ ip: `${userip}` });
                 //ip found
                 if (result.length > 0) {
-                    // console.log('ip find');
+                    console.log('ip find');
                     //if ids request exceed 2
                     if (result[0].count >= 2) {
-                        res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
+                        // res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
+                        res.send({ "result":"success", "id": ` ${result[0].id}` });
                     }
                     //ids request not exceed 2
                     else {
@@ -58,12 +59,13 @@ const create_update_ip = async (str1, userip, res) => {
                                         console.log(err);
                                     })
                                 const obj = { "result": "success", "id": `${result[0].id}  ${str1}` };
+                                // console.log(obj);
                                 res.send(obj);
 
                             }
                             catch (err) {
                                 console.log('err occured', err);
-                                res.send({ "result": "update successful due to error"})
+                                res.send({ "result": "update unsuccessful due to error"})
                             }
 
                         }

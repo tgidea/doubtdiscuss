@@ -2,131 +2,139 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .divider:after,
+        .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
 
-  <title>DoubtHelper</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+        .h-custom {
+            height: calc(100% - 73px);
+        }
 
-    #bdy {
-      background-image: url('support.png');
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-
-    #btn1 {
-      background-color: rgb(253, 63, 142);
-      border-color: white;
-      border-width: 3px;
-      width: 39%;
-      transition: width .2s;
-    }
-
-    #btn1:hover {
-      width: 45%;
-      font-size: larger;
-    }
-
-    #btn2 {
-      background-color: rgb(253, 63, 142);
-      border-color: white;
-      border-width: 3px;
-      width: 50%;
-      transition: width .2s;
-    }
-
-    #btn2:hover {
-      width: 55%;
-      font-size: larger;
-    }
-  </style>
+        @media (max-width: 450px) {
+            .h-custom {
+                height: 100%;
+            }
+        }
+    </style>
+    <title>Sign-In</title>
 </head>
 
 <body>
 
-  <!-- navbar -->
-  <div id="bdy" class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="howtouse.html">How to use</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
-            </li>
-          </ul>
-
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-      </div>
     </nav>
 
 
-    <div class="contanier">
-      <div class="alert alert-info " role="alert" style="position: relative; top: -500px; border: 1px solid white;">
-        <span id="alerttext"> <strong>SORRY,</strong> we disable this feature currently. You need to <b><a
-              href="mailto: gyanexplode@gmail.com">contact us</a></b> to get new ids</span>
-        <button type="button" id="close" onclick="delalert()" style="float: right;">&times;</button>
-      </div>
-    </div>
-    <div class="container" style="min-height: 100vh; ">
-      <div class="container">
-        <div class="input-group mb-3" style="align-items: center; justify-content: center;">
-        </div>
-        <div class="input-group mb-3">
-          <div class="container"
-            style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <span style="color: white;">Want new id?</span>
-            <button class="btn" id="btn1"><span style="color: white;">Click</span> </button>
-          </div>
-        </div>
-        <div class="input-group mb-3">
-          <div class="container"
-            style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <span style="color: white;">Have an id?</span>
-            <a class="btn btn-success" id="btn2" href="page.html">Click</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="container" id="footer">
-    <div>
-      <div class="fixed-bottom text-center" style="background:transparent;">
-        <p style="color: rgb(212, 209, 209);">© 2021
-          <a style="text-decoration: none;" href="#">DoubtHelper</a>. All rights reserved. Created by
-          <a style="text-decoration: none;" href="#">Tushar</a>
-        </p>
-      </div>
-    </div>
-  </div>
+    <section class="vh-100">
+        <div class="container-fluid h-custom">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-md-9 col-lg-6 col-xl-5">
+                    <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png"
+                        class="img-fluid" alt="Sample image">
+                    </div>
+                    <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                    <p class="text-danger font-weight-bold" id="result"></p>
+                    <form id="reg-form">
+                        <!-- Email input -->
+                        <div class="form-outline mb-1">
+                            <input type="email" id="email-id" name="email" class="form-control form-control-lg"
+                                placeholder="Enter a valid email address" />
+                            <label class="form-label" for="email-id">Email address</label>
+                        </div>
 
+                        <!-- Password input -->
+                        <div class="form-outline mb-1">
+                            <input type="password" id="pass" name="password" class="form-control form-control-lg"
+                                placeholder="Enter password" />
+                            <label class="form-label" for="pass">Password</label>
+                        </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
-  <script src="first.js"></script>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-center text-lg-start mt-2 pt-2">
+                                <button type="submit" class="btn  btn-lg" id="submitBtn"
+                                    style="padding-left: 2.5rem; padding-right: 2.5rem;background-color:  rgb(248, 9, 109);color: white;">Login</button>
+                                <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="register.html"
+                                        class="link-danger">Register</a></p>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Right -->
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script>
+        const form = document.getElementById('reg-form');
+        form.addEventListener('submit', loginUser);
+        async function loginUser(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-id').value;
+            const password = document.getElementById('pass').value;
+            const result=document.getElementById('result');
+            const button=document.getElementById('submitBtn');
+            result.innerText="Submitting...";
+            result.style.backgroundColor="white";
+            button.disabled= true;
+            await fetch('/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                }),
+                redirect:'follow'
+                
+            }).then((res) => {
+                if(res.redirected){
+                    window.location.href="main.html";
+                }
+                else{
+                    return res.json();
+                }
+            })
+            .then((data) => {
+                if(data.redirected){ 
+                    window.location.href="main.html";
+                }
+                else{
+                    result.innerText=data.result;
+                    result.style.backgroundColor="rgb(248, 204, 204)";
+                    setTimeout(function(){
+                        result.innerText="";
+                        result.style.backgroundColor="white";
+                        button.disabled= false;
+                    },4000)
+                }
+            })
+        }
+    </script>
 </body>
 
 </html>

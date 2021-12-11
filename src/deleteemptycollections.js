@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const expschema2 = require('./expschema2');
 
+const getmillsec = function () {
+    var d = new Date();
+    return d.getTime();
+}
 const deleteBlankCollection = async (res) => {
-
     try {
         mongoose.connection.db.listCollections()
             .toArray(function (err, info) {

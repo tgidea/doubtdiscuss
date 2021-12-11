@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        @media screen and (min-width: 1px) {
+            #items-list {
+                font-size: 3.4vw;
+            }
+        }
+
+        @media screen and (min-width: 450px) {
+            #items-list {
+                font-size: 3.6vw;
+            }
+        }
+
+        @media screen and (min-width: 600px) {
+            #items-list {
+                font-size: 3vw;
+            }
+        }
+
+        @media screen and (min-width: 800px) {
+            #items-list {
+                font-size: 1.6vw;
+            }
+        }
+
+        @media screen and (min-width: 1000px) {
+            #items-list {
+                font-size: 1.2vw;
+            }
+        }
+    </style>
+    <title>DoubtHelper/page</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link " aria-current="page" href="../main.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../howtouse.html">How to use</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="container" id="notify" style="margin-top:20px; min-height: 30px;">
+
+    </div>
+    <div class="container">
+        <div class="input-group mb-3">
+            <div class="container">
+                <input type="text" class="form-control" id="key" placeholder="Enter your Id" aria-label="Enter Your Id"
+                    aria-describedby="btn2" value="<%=name%>">
+                <textarea class="form-control" id="quest" placeholder="Enter Question" rows="2"></textarea>
+                <div style="display: flex;">
+                    <button onclick="postdata()" class="btn btn-success" id="btn3"
+                        style="margin-right: 5%;">Post</button>
+                    <button onclick="getdata()" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
+                        content</button>
+                    <button onclick="deletedata()" class="btn btn-success" id="btn5">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="container" id="items-list" style="display:flex; flex-direction:column-reverse;">
+
+        </div>
+    </div>
+
+    <!-- <script src="page.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <!-- <script src="page.js"></script> -->
+</body>
+<script>
+    //************************************************************************* *//
+
+    const showData = (articles, keyvalue) => {
+        const artitem = articles;
+        
+        // console.log('reach here');
+        var items_list = document.getElementById('items-list');
+        var keyvalues = keyvalue;
+        items_list.innerHTML = '';
+        for (var i = 0; i < artitem[0].length; i++) {
+            var output = "";
+            output += `
+            <div class="card text-center border-success">
+                 <div class="card-body ">
+                 <div class="container">
+                     <p class="card-text card-header "><span  style="width:10vw; position:absolute; left:0px;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
+                     <div class="container"  >
+                       <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ">opt1</button> <span>${artitem[0][i].opt1}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ">opt2</button> <span>${artitem[0][i].opt2}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ">opt3</button> <span>${artitem[0][i].opt3}</span></div>
+                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ">opt4</button> <span>${artitem[0][i].opt4}</span></div>
+                     </div>
+                     </div>
+                </div>
+             </div>`
+
+            items_list.innerHTML += output;
+        }
+    }
+    //************************************************************************* *//
+    const getdata = async () => {
+        const notify = document.getElementById('notify');
+        const fetching = async () => {
+            const key = document.getElementById('key');
+            const keyvalue = key.value;
+            const btn4 = document.getElementById('btn4');
+            if (keyvalue == '') {
+                // console.log('both empty');
+                document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
+            }
+            else if (keyvalue != '') {
+                try {
+                    await fetch(`/get/${keyvalue}`)
+                        .then(function (resp) {
+                            return resp.json();
+                        })
+                        .then(function (data) {
+                            if (data.result == 'success') {
+                                const dataAll = [data.alldata];
+                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                showData(dataAll, keyvalue);
+                            }
+                            else {
+                                notify.innerHTML = `<h6 style="color:red">Error Occured : ${data.result} </h6>`
+                            }
+                        }).catch((err) => {
+                            console.log('reach here2');
+                            notify.innerHTML = `<h6 style="color:red">Error occured${err}</h6>`
+                        })
+                }
+                catch (err) {
+                    notify.innerHTML = `<h6 style="color:red">${err} </h6>`
+                }
+            }
+            else {
+                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
+            }
+        }
+        await fetching();
+        setTimeout(() => {
+            notify.innerText = "";
+        }, 2000);
+    }
+
+    //************************************************************************* *//
+    const option = async (list, text) => {
+        const conf = window.confirm('Are you sure?');
+        if (conf) {
+            // console.log('here');
+            const id = list[2];
+            const opti = text;
+            const pageid = list[3];
+            try {
+                let status;
+                if (localStorage.getItem('clickedId') != undefined) {
+                    const object = JSON.parse(localStorage.getItem('clickedId'));    
+                    if (object[`${id}${opti}`] == undefined || object[`${id}${opti}`] ==null) {
+                        object[`${id}${opti}`]=true;
+                        localStorage.setItem('clickedId',JSON.stringify(object));
+                        status = "inc";
+                    }
+                    else if (object[`${id}${opti}`] == true) {
+                        object[`${id}${opti}`]=false;
+                        localStorage.setItem('clickedId',JSON.stringify(object));
+                        status = "dec";
+                    }
+                    else {
+                        object[`${id}${opti}`]=true;
+                        localStorage.setItem('clickedId',JSON.stringify(object));                                          
+                        status = "inc";
+                    }
+                }
+                else {
+                    let obj={
+                        [`${id}${opti}`]:true
+                    }
+                    localStorage.setItem('clickedId',JSON.stringify(obj));
+                    status = "inc";
+                }
+                await fetch(`/change/${pageid}/${id}/${text}/${status}`)
+                    .then(function (resp) {
+                        return resp.json();
+                    })
+                    .then(function (data) {
+                        if (data.result == 'Success' || data.result=='success') {
+                            const dataAll = [data.alldata];
+                            notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                            getdata();
+                        }
+                        else {
+                            notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                        }
+                    }).catch((err) => {
+                        notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`
+                    })
+            }
+            catch (err) {
+                console.log(err);
+                notify.innerHTML = `<h6 style="color:red">Error occured. Check Network or contact us. </h6>`
+            }
+            setTimeout(() => {
+                notify.innerText = "";
+            }, 1500);
+        }
+    }
+    //************************************************************************* *//
+
+    const postdata = async () => {
+        const notify = document.getElementById('notify');
+        const fetching = async () => {
+
+            const key = document.getElementById('key');
+            const keyvalue = key.value;
+            const quest = document.getElementById('quest');
+            var questval = quest.value;
+            questval = questval.replace(/\?/g, "&quest;")
+            questval = questval.replace(/\%/g, "&percnt;")
+            questval = questval.replace(/\#/g, "&num;")
+            questval = questval.replace(/\//g, "&sol;")
+            questval = questval.replace(/\\/g, "&Backslash;")
+            questval = questval.replace(/\n|\n\n|\r\n/g, "<br>")
+            questval = questval.toString();
+            const btn3 = document.getElementById('btn3');
+            if (keyvalue == '' || questval == '') {
+                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
+            }
+            else if (keyvalue != '' && questval != '') {
+                try {
+                    // console.log(questval);
+                    await fetch(`/post/${keyvalue}/${questval}`)
+                        .then(function (resp) {
+                            return resp.json();
+                        })
+                        .then(function (data) {
+                            // console.log(data);
+                            if (data.result == "Can't add more than 60 questions") {
+                                notify.innerHTML = `<h6 style="color:orange">${data.result}</h6>`
+                            }
+                            else {
+                                getdata();
+                            }
+                        });
+                }
+                catch (err) {
+                    notify.innerHTML = `<h6 style="color:red">Error with input<br>Erase some mathematical symbols </h6>`
+                }
+            }
+            else {
+                notify.innerHTML = `<h6 style="color:red">Fill all fields*</h6>`
+            }
+        }
+        await fetching();
+        setTimeout(() => {
+            quest.value = '';
+            notify.innerText = "";
+        }, 2000);
+    }
+    // **********************************************************************
+
+    const deletedata = async () => {
+        const notify = document.getElementById('notify');
+        const fetching = async () => {
+            const key = document.getElementById('key');
+            const keyvalue = key.value;
+            const btn5 = document.getElementById('btn5');
+            if (keyvalue == '') {
+                // console.log('both empty');
+                document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill id</h6>`
+                // notify.style.display = "block";
+            }
+            else if (keyvalue != '') {
+                try {
+                    await fetch(`/delete/${keyvalue}`)
+                        .then(function (resp) {
+                            return resp.json();
+                        })
+                        .then(function (data) {
+                            if (data.result == 'success') {
+                                // const dataAll = [data.alldata];
+                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                // notify.style.display = "block";
+                                getdata();
+                            }
+                            else {
+                                notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                                // notify.style.display = "block";
+                            }
+                        }).catch((err) => {
+                            notify.innerHTML = `<h6 style="color:red">Error occured</h6>`
+                            // notify.style.display = "block";
+                        })
+                }
+                catch (err) {
+                    notify.innerHTML = `<h6 style="color:red">${err} </h6>`
+                    // notify.style.display = "block";
+                }
+            }
+            else {
+                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
+                // notify.style.display = "block";
+            }
+        }
+        await fetching();
+        setTimeout(() => {
+            notify.innerText = "";
+        }, 1000);
+    }
+
+
+
+</script>
+
+</html>

@@ -7,7 +7,7 @@ const post_question = async (stri, quest, res) => {
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
-                if (info && stri.length > 24 && stri.length < 60) {
+                if (info && stri.length > 10 && stri.length < 60) {
                     try {
                         const fun = async () => {
                             var Temp;
