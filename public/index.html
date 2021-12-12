@@ -36,15 +36,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
         <div class="container-fluid">
             <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
         </div>
     </nav>
-
-
 
     <section class="vh-100">
         <div class="container-fluid h-custom">
@@ -52,8 +45,8 @@
                 <div class="col-md-9 col-lg-6 col-xl-5">
                     <img src="https://mdbootstrap.com/img/Photos/new-templates/bootstrap-login-form/draw2.png"
                         class="img-fluid" alt="Sample image">
-                    </div>
-                    <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                </div>
+                <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                     <p class="text-danger font-weight-bold" id="result"></p>
                     <form id="reg-form">
                         <!-- Email input -->
@@ -95,11 +88,11 @@
             event.preventDefault();
             const email = document.getElementById('email-id').value;
             const password = document.getElementById('pass').value;
-            const result=document.getElementById('result');
-            const button=document.getElementById('submitBtn');
-            result.innerText="Submitting...";
-            result.style.backgroundColor="white";
-            button.disabled= true;
+            const result = document.getElementById('result');
+            const button = document.getElementById('submitBtn');
+            result.innerText = "Submitting...";
+            result.style.backgroundColor = "white";
+            button.disabled = true;
             await fetch('/login/', {
                 method: 'POST',
                 headers: {
@@ -109,30 +102,28 @@
                     email,
                     password
                 }),
-                redirect:'follow'
-                
+                redirect: 'follow'
+
             }).then((res) => {
-                if(res.redirected){
-                    window.location.href="main.html";
+                if (res.redirected == true) {
+                    result.innerText = "";
+                    button.disabled = false;
+                    window.location.href = "/main";
+                    return;
                 }
-                else{
-                    return res.json();
-                }
+                return res.json();
             })
-            .then((data) => {
-                if(data.redirected){ 
-                    window.location.href="main.html";
-                }
-                else{
-                    result.innerText=data.result;
-                    result.style.backgroundColor="rgb(248, 204, 204)";
-                    setTimeout(function(){
-                        result.innerText="";
-                        result.style.backgroundColor="white";
-                        button.disabled= false;
-                    },4000)
-                }
-            })
+                .then((data) => {
+                    if (data != undefined) {
+                        result.innerText = data.result;
+                        result.style.backgroundColor = "rgb(248, 204, 204)";
+                    }
+                    setTimeout(function () {
+                        result.innerText = "";
+                        result.style.backgroundColor = "white";
+                        button.disabled = false;
+                    }, 4000)
+                })
         }
     </script>
 </body>

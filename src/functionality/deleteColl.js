@@ -1,47 +1,40 @@
 const mongoose = require('mongoose');
+const expschema2 = require('../schema/expschema2');
 
-const post_question = async (stri, quest, res) => {
-
-    //check if routed id present or not
+const deleteCollection = async (stri, res) => {
     try {
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
-                if (info && stri.length > 10 && stri.length < 60) {
+                if (info && stri.length > 24) {
                     try {
                         const fun = async () => {
                             var Temp;
                             try {
                                 // if server is running continuously without restating ever
-                                Temp = mongoose.model(stri);
+                                 Temp = mongoose.model(stri);
                             }
                             catch (err) {
                                 // if server restarted : to handle previously made collections
-                                Temp = mongoose.model(stri, expSchema2);
+                                Temp = mongoose.model(stri, expschema2)
                             }
                             try {
                                 const number = await Temp.countDocuments();
-                                if (number < 60) {
-                                    const createDocument = async () => {
-                                        const datacoll = new Temp({
-                                            "title": quest
-                                        });
-                                        const result = await datacoll.save();
-                                        // console.log('created successfully');
-                                    }
-                                    createDocument();
+                                if (number > 59) {
+                                    await Temp.deleteMany();
+                                    console.log('deleted successfully');
                                     res.send({ "result": "success" });
                                 }
                                 else {
-                                    res.send({ "result": "Can't add more than 60 questions" });
+                                    res.send({ "result": "Can't delete till a limit reach" });
                                 }
                             }
                             catch (err) {
                                 console.log(err);
+                                res.send({ "result": "Error occur " });
                             }
                         }
                         fun();
-
                     }
                     catch (err) {
                         // console.log('id not match');
@@ -59,4 +52,4 @@ const post_question = async (stri, quest, res) => {
         res.send({ "result": "Error occured" });
     }
 }
-module.exports = post_question;
+module.exports=deleteCollection;

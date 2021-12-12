@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const expSchema2 = new mongoose.Schema({
     title: String,
-    title: String,
+    owner:String,
     opt1: {
         type: Number,
         default: 0

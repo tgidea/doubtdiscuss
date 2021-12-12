@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>DoubtHelper</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        #bdy {
+            background-image: url('support.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #btn1 {
+            background-color: rgb(253, 63, 142);
+            border-color: white;
+            border-width: 3px;
+            width: 50%;
+            transition: width .2s;
+        }
+
+        #btn1:hover {
+            width: 55%;
+            font-size: larger;
+        }
+
+        #btn2 {
+            background-color: rgb(253, 63, 142);
+            border-color: white;
+            border-width: 3px;
+            width: 50%;
+            transition: width .2s;
+        }
+
+        #btn2:hover {
+            width: 55%;
+            font-size: larger;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- navbar -->
+    <div id="bdy" class="fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="howtouse.html">How to use</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <a class="nav-link active" id="usernamee" href="#"><%=username%></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="contanier">
+            <div class="alert alert-info " role="alert"
+                style="position: relative; top: -500px; border: 1px solid white;">
+                <span id="alerttext"> </span>
+                <button type="button" id="close" onclick="delalert1()" style="float: right;">&times;</button>
+            </div>
+        </div>
+        <div class="container" style="min-height: 100vh; ">
+            <div class="container">
+                <div class="input-group mb-3" style="align-items: center; justify-content: center;">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="container"
+                        style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <span style="color: white;">Want new id?</span>
+                        <button class="btn" id="btn1"><span style="color: white;">Click</span> </button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="container"
+                        style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <span style="color: white;">Have an id?</span>
+                        <a class="btn btn-success" id="btn2" href="/pag/">Click</a>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="container"
+                        style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <span style="color: white;">How To Use</span>
+                        <a class="btn btn-success" id="btn2" href="howtouse.html">Click</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="footer">
+        <div>
+            <div class="fixed-bottom text-center" style="background:transparent;">
+                <p style="color: rgb(212, 209, 209);">© 2021
+                    <a style="text-decoration: none;" href="#">DoubtHelper</a>. All rights reserved. Created by
+                    <a style="text-decoration: none;" href="#">Tushar</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script>
+
+        const lcset1 = function (id) {
+            const lccount = (localStorage.getItem('dhgetidcount'));
+            const lcdata = (localStorage.getItem('dhgetiddata'));
+            const tempstr = id.toString();
+            let count = 0, ids = "";
+            if (lccount == null || lccount == undefined) {
+                if (tempstr.length < 40) {
+                    count = 1;
+                }
+                else {
+                    count = 2;
+                }
+                ids = id;
+                localStorage.setItem('dhgetidcount', count);
+                localStorage.setItem('dhgetiddata', ids);
+            }
+            else if (lccount <= 2 && lcdata != null && lcdata != undefined) {
+                count = Number(lccount) + 1;
+                if (tempstr.length < 40 && lccount == 1) {
+                    ids = lcdata + " " + id;
+                }
+                else {
+                    ids = id;
+                }
+                localStorage.setItem('dhgetidcount', count);
+                localStorage.setItem('dhgetiddata', ids);
+            }
+
+        }
+        const checklc1 = function () {
+            const lccount = (localStorage.getItem('dhgetidcount'));
+            if (lccount == null || lccount == undefined) {
+                return 0;
+            }
+            else {
+                return lccount;
+            }
+
+        }
+        const getlc1 = function () {
+            const lcdata = (localStorage.getItem('dhgetiddata'));
+            if (lcdata == null || lcdata == undefined) {
+                return "/";
+            }
+            else {
+                return lcdata;
+            }
+        }
+
+        const showLink1 = function (str) {
+            // console.log('str',str);
+            let id1 = "";
+            let id2 = "";
+            let data = str.split(" ");
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] == "") {
+                    continue;
+                }
+                else if (id1 == "") {
+                    id1 = data[i];
+                }
+                else if (id2 == "") {
+                    id2 = data[i];
+                }
+                else {
+                    break;
+                }
+            }
+            link1 = `/pag/${id1}`;
+            link2 = `/pag/${id2}`;
+            document.getElementById('alerttext').innerHTML = `Your Id 1 : <a href="${link1}">Id 1</a>`;
+            if (id2 != "") {
+                document.getElementById('alerttext').innerHTML += `<br> Your id 2 : <a href="${link2}">Id 2</a>`;
+            }
+        }
+        // *******************
+
+        const alertBox1 = function () {
+            document.getElementsByClassName('alert')[0].style.display = 'block';
+            document.getElementsByClassName('alert')[0].style.transition = 'top 0.4s ease-in';
+            document.getElementsByClassName('alert')[0].style.top = '1px';
+        }
+
+        // *******************
+        document.getElementById('btn1').addEventListener('click', async () => {
+            // const newid = createLength();
+            const fetching = async () => {
+                try {
+                    await fetch(`/newkey/`)
+                        .then(function (resp) {
+                            return resp.json();
+                        })
+                        .then(function (data) {
+                            if (data.result.toLowerCase() == 'success') {
+                                lcset1(data.id);
+                                showLink1(data.id.toString());
+                            }
+                            else {                                
+                                document.getElementById('alerttext').innerHTML = `${data.result}`;
+                            }
+                            alertBox1();
+                        });
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }
+            if (checklc1() < 2) {
+                // console.log('less than 2');
+                document.getElementById('btn1').disabled = true;
+                await fetching();
+                setTimeout(function () {
+                    document.getElementById('btn1').disabled = false;
+                }, 10000);
+            }
+            else {
+                const lcdatas = getlc1();
+                showLink1(lcdatas);
+                alertBox1();
+            }
+
+        });
+
+        // ********************************************************************************
+        const delalert1 = async () => {
+            document.getElementsByClassName('alert')[0].style.transition = 'top 0.6s ease-in';
+            document.getElementsByClassName('alert')[0].style.top = '-500px';
+        }
+
+    </script>
+</body>
+
+</html>

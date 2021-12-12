@@ -2,19 +2,22 @@ const mongoose = require('mongoose')
 const express = require('express');
 const bodyparser = require('body-parser');
 const path = require('path')
-const dynamicSchema = require('./dynamicCollection');
-const dotenv = require('dotenv');
-const blockReq = require('./blockReqschema');
-const expschema2 = require('./expschema2');
-const Client = require('./usernewkey');
+const jwt=require('jsonwebtoken');
+const cookieparser=require('cookie-parser');
+const dynamicSchema = require('./schema/dynamicCollection');
+const auth=require('./middleware/auth');
+const authstart=require('./middleware/authstart');
+const blockReq = require('./schema/blockReqschema');
+const expschema2 = require('./schema/expschema2');
+const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
-const post_question = require('./post_question');
-const getdata = require('./getdata');
-const create_update_ip = require('./create_update_userkeyid');
-const changeOption = require('./changeoption');
-const deleteCollection = require('./deleteColl');
-const deleteBlankCollection = require('./deleteemptycollections');
-const createLength = require('./generateid');
+const post_question = require('./functionality/post_question');
+const getdata = require('./functionality/getdata');
+const create_update_ip = require('./functionality/create_update_userkeyid');
+const changeOption = require('./functionality/changeoption');
+const deleteCollection = require('./functionality/deleteColl');
+const deleteBlankCollection = require('./functionality/deleteemptycollections');
+const createLength = require('./functionality/generateid');
 const Register = require('./registerSchema');
 require('dotenv').config({ path: __dirname + '/config.env' });
 const JWT_KEY=process.env.JWT_TOKEN;
@@ -29,10 +32,22 @@ const staticPath = path.join(__dirname, '../public');
 app.use(express.static(staticPath));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieparser());
 
 app.get('/', (req, res) => {
-    console.log(staticPath);
     res.sendFile(path.join(staticPath, 'index.html'));
+});
+
+app.get('/main',authstart,async(req,res)=>{
+    try{
+        const username=req.username;
+        res.status(201).render('main',{username:username});
+    }
+    catch(err){
+        console.log('Invalid token');
+        res.status(201).render('main',{username:""});
+    }
+    
 });
 
 app.get('/pag/:id', (req, res) => {
@@ -116,11 +131,11 @@ app.post('/login/', async (req, res) => {
             const token = await Temp[0].generateAuthToken();
             // console.log(token);
             res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 30000),
+                expires: new Date(Date.now() + 450000000),
                 httpOnly: true
             })
                 // res.status(201).sendFile(path.join(staticPath, 'main.html'));
-                .redirect('main.html')
+                .redirect('/main')
         }
         else {
             res.send({ "result": "Invalid login details" });
@@ -132,29 +147,30 @@ app.post('/login/', async (req, res) => {
     }
 })
 
-app.get('/newkey/', async (req, res) => {
+app.get('/newkey/',auth, async (req, res) => {
+    
     var str1 = await createLength();
-    const userip = "" + req.ip;
-    create_update_ip(str1, userip, res);
+    const username =req.username;
+    create_update_ip(str1, username, res);
 
 });
-app.get('/post/:uniq_id/:quest', async (req, res) => {
+app.get('/post/:uniq_id/:quest',auth,async (req, res) => {
     const stri = "" + req.params.uniq_id;
-    // console.log('params is  ', req.params);
+    const usernam=req.username;
     const quest = req.params.quest.toString();
     //check if routed id present or not
-    post_question(stri, quest, res);
+    post_question(stri, quest,usernam,res);
     // 
 });
 
 
-app.get('/get/:id', async (req, res) => {
+app.get('/get/:id', auth ,async (req, res) => {
     const stri = "" + req.params.id;
     await getdata(stri, res);
 });
 
 
-app.get('/change/:coll_id/:quest_id/:opt/:status', async(req, res) => {
+app.get('/change/:coll_id/:quest_id/:opt/:status',auth,async(req, res) => {
     try{
         const stri = "" + req.params.coll_id;
         const questid = "" + req.params.quest_id;
@@ -167,7 +183,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', async(req, res) => {
     }
 });
 
-app.get('/delete/:id', async (req, res) => {
+app.get('/delete/:id', auth,async (req, res) => {
     const stri = "" + req.params.id;
     deleteCollection(stri, res);
 });

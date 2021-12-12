@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const Client = require('./usernewkey');
-const dynamicSchema = require('./dynamicCollection');
-const blockReq=require('./blockReqschema');
+const Client = require('../schema/usernewkey');
+const dynamicSchema = require('../schema/dynamicCollection');
+const blockReq = require('../schema/blockReqschema');
 
-const createIpDoc = async (id, ip) => {
+const createIpDoc = async (id, username) => {
     try {
         const datacoll = new Client({
-            "ip": ip,
+            "username": username,
             "id": id,
             "count": 1
         });
@@ -18,29 +18,27 @@ const createIpDoc = async (id, ip) => {
     }
 }
 
-const create_update_ip = async (str1, userip, res) => {
-
+const create_update_ip = async (str1, username, res) => {
     try {
         const fun = async () => {
             var Temp;
             //try for usergernewkeupdates
             try {
-                Temp = mongoose.model("usergetnewkeydatas");
+                Temp = mongoose.model("user1ids");
             }
             catch (err) {
-                Temp = mongoose.model(`usergetnewkeydatas`, blockReq);
+                Temp = mongoose.model(`user1ids`, blockReq);
             }
             try {
-                const result = await Temp.find({ ip: `${userip}` });
-                //ip found
-                if (result.length > 0) {
-                    console.log('ip find');
+                const result = await Temp.find({ "username": username });
+                // user found
+                if (result != null && result != undefined &&result.length>0 ) {
                     //if ids request exceed 2
                     if (result[0].count >= 2) {
-                        // res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
-                        res.send({ "result":"success", "id": ` ${result[0].id}` });
+                        res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
+                        res.send({ "result": "success", "id": ` ${result[0].id}` });
                     }
-                    //ids request not exceed 2
+                    // ids request not exceed 2
                     else {
                         try {
                             //try for updates if count<2
@@ -48,26 +46,25 @@ const create_update_ip = async (str1, userip, res) => {
                             const idcount = result[0].count + 1;
                             dynamicSchema(str1);
                             try {
-                                Temp.updateOne({ ip: userip },
+                                Temp.updateOne({ username: username },
                                     { $inc: { count: 1 } }).then(function () {
                                     }).catch(function (err) {
                                         console.log(err);
                                     })
-                                Temp.updateOne({ ip: userip },
+                                Temp.updateOne({ ip: username },
                                     { $set: { id: idtemp } }).then(function () {
                                     }).catch(function (err) {
                                         console.log(err);
                                     })
-                                const obj = { "result": "success", "id":`${result[0].id} ${str1}` };
+                                const obj = { "result": "success", "id": `${result[0].id} ${str1}` };
                                 // console.log(obj);
                                 res.send(obj);
 
                             }
                             catch (err) {
                                 console.log('err occured', err);
-                                res.send({ "result": "update unsuccessful due to error"})
+                                res.send({ "result": "update Unsuccessful" })
                             }
-
                         }
                         catch (err) {
                             console.log(err);
@@ -75,9 +72,9 @@ const create_update_ip = async (str1, userip, res) => {
                         }
                     }
                 }
-                //ip not found
+                //username not found
                 else {
-                    createIpDoc(str1, userip);
+                    createIpDoc(str1, username);
                     dynamicSchema(str1);
                     const obj = { "result": "success", "id": str1 };
                     res.send(obj);
@@ -85,10 +82,9 @@ const create_update_ip = async (str1, userip, res) => {
             }
             catch (err) {
                 console.log(err);
-                console.log('ip not found ');
-                res.send({ "result": "Error"});
+                console.log('username not found ');
+                res.send({ "result": "Something misterios happened" });
             }
-
         }
         fun();
     }

@@ -60,7 +60,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="../main.html">Home</a>
+                        <a class="nav-link " aria-current="page" href="/main">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../howtouse.html">How to use</a>
@@ -133,9 +133,13 @@
             output += `
             <div class="card text-center border-success">
                  <div class="card-body ">
+                    <details> 
+                            <summary></summary>
+                                <p>${artitem[0][i].owner}</p>
+                        </details>
                  <div class="container">
                      <p class="card-text card-header "><span  style="width:10vw; position:absolute; left:0px;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
-                     <div class="container"  >
+                     <div class="container mt-2" style="display:flex;justify-content:center;" >
                        <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
                        <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
                        <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
@@ -172,11 +176,11 @@
                                 showData(dataAll, keyvalue);
                             }
                             else {
-                                notify.innerHTML = `<h6 style="color:red">Error Occured : ${data.result} </h6>`
+                                notify.innerHTML = `<h6 style="color:red"> ${data.result} </h6>`
                             }
                         }).catch((err) => {
                             console.log('reach here2');
-                            notify.innerHTML = `<h6 style="color:red">Error occured${err}</h6>`
+                            notify.innerHTML = `<h6 style="color:red">${err}</h6>`
                         })
                 }
                 catch (err) {
@@ -250,7 +254,7 @@
             }
             catch (err) {
                 console.log(err);
-                notify.innerHTML = `<h6 style="color:red">Error occured. Check Network or contact us. </h6>`
+                notify.innerHTML = `<h6 style="color:red">Check Network or contact us. </h6>`
             }
             setTimeout(() => {
                 notify.innerText = "";

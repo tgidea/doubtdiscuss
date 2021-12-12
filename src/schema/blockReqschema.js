@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const blockReq = new mongoose.Schema({
-    ip: String,
+    username: {
+        type: String,
+        unique: true
+    },
     id: String,
     count: Number,
     data: {
@@ -8,4 +11,4 @@ const blockReq = new mongoose.Schema({
         default: Date.now
     }
 });
-module.exports=blockReq;
+module.exports = blockReq;

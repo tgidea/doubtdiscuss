@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const dynamicSchema = (prefix)=> {
     const expSchema = new mongoose.Schema({
         title: String,
+        owner:String,
         opt1: {
             type: Number,
             default: 0
@@ -18,9 +19,8 @@ const dynamicSchema = (prefix)=> {
             type: Number,
             default: 0
         }
-
     });
-    mongoose.model(prefix + "", expSchema,prefix);
+    mongoose.model(prefix+"",expSchema,prefix);
 
 }
 module.exports=dynamicSchema

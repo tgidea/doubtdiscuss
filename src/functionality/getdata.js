@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const expschema2 = require('./expschema2');
+const expschema2 = require('../schema/expschema2');
 
 const getdata = async (stri, res) => {
     try {
