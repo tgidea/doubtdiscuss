@@ -35,8 +35,7 @@ const create_update_ip = async (str1, username, res) => {
                 if (result != null && result != undefined &&result.length>0 ) {
                     //if ids request exceed 2
                     if (result[0].count >= 2) {
-                        res.send({ "result": `<strong>Sorry</strong>,No more ids for you.<br> Your previous ids are ${result[0].id}`, "id": ` ${result[0].id}` });
-                        res.send({ "result": "success", "id": ` ${result[0].id}` });
+                        res.send({ "result": `success`, "id": ` ${result[0].id}` });
                     }
                     // ids request not exceed 2
                     else {
