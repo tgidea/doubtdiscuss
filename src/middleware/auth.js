@@ -15,7 +15,7 @@ const auth=async(req,res,next)=>{
     }
     catch(err){
         console.log('Token not present or faulty');
-        res.status(201).send({"result":`Please <a href="/" style="text-decoration:none;color:rgb(248, 9, 109)">Sign In</a>`});
+        res.status(201).send({"result":`Please <a href="/" style="color:rgb(248, 9, 109)">Sign In</a>`});
     }
 }
 module.exports=auth;

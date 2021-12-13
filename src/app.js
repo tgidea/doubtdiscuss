@@ -6,6 +6,8 @@ const jwt=require('jsonwebtoken');
 const cookieparser=require('cookie-parser');
 const dynamicSchema = require('./schema/dynamicCollection');
 const auth=require('./middleware/auth');
+const authpage=require('./middleware/authpage');
+const authpageNoId=require('./middleware/authpageNoId');
 const authstart=require('./middleware/authstart');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
@@ -35,7 +37,7 @@ app.use(express.json());
 app.use(cookieparser());
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
+    res.sendFile(path.join(staticPath, '/main'));
 });
 
 app.get('/main',authstart,async(req,res)=>{
@@ -50,13 +52,15 @@ app.get('/main',authstart,async(req,res)=>{
     
 });
 
-app.get('/pag/:id', (req, res) => {
+app.get('/pag/:id',authpage,(req, res) => {
     const id = req.params.id.toString();
-    res.status(201).render('page', { name: id });
+    const username=req.username;
+    res.status(201).render('page', { name: id ,link:"#",username:username  });
 });
 
-app.get('/pag/', (req, res) => {
-    res.status(201).render('page', { name: "" });
+app.get('/pag/',authpageNoId, (req, res) => {
+    const user=req.username;
+    res.status(201).render('page', { name: "",link:"#",username:username });
 })
 
 app.post('/register/', async (req, res) => {
