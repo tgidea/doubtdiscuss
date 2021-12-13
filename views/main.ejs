@@ -138,54 +138,6 @@
         crossorigin="anonymous"></script>
     <script>
 
-        // const lcset1 = function (id) {
-        //     const lccount = (localStorage.getItem('dhgetidcount'));
-        //     const lcdata = (localStorage.getItem('dhgetiddata'));
-        //     const tempstr = id.toString();
-        //     let count = 0, ids = "";
-        //     if (lccount == null || lccount == undefined) {
-        //         if (tempstr.length < 40) {
-        //             count = 1;
-        //         }
-        //         else {
-        //             count = 2;
-        //         }
-        //         ids = id;
-        //         localStorage.setItem('dhgetidcount', count);
-        //         localStorage.setItem('dhgetiddata', ids);
-        //     }
-        //     else if (lccount <= 2 && lcdata != null && lcdata != undefined) {
-        //         count = Number(lccount) + 1;
-        //         if (tempstr.length < 40 && lccount == 1) {
-        //             ids = lcdata + " " + id;
-        //         }
-        //         else {
-        //             ids = id;
-        //         }
-        //         localStorage.setItem('dhgetidcount', count);
-        //         localStorage.setItem('dhgetiddata', ids);
-        //     }
-
-        // }
-        // const checklc1 = function () {
-        //     const lccount = (localStorage.getItem('dhgetidcount'));
-        //     if (lccount == null || lccount == undefined) {
-        //         return 0;
-        //     }
-        //     else {
-        //         return lccount;
-        //     }
-
-        // }
-        // const getlc1 = function () {
-        //     const lcdata = (localStorage.getItem('dhgetiddata'));
-        //     if (lcdata == null || lcdata == undefined) {
-        //         return "/";
-        //     }
-        //     else {
-        //         return lcdata;
-        //     }
-        // }
 
         const showLink1 = function (str) {
             // console.log('str',str);
@@ -257,6 +209,56 @@
             document.getElementsByClassName('alert')[0].style.top = '-500px';
         }
 
+
+        
+        // const lcset1 = function (id) {
+        //     const lccount = (localStorage.getItem('dhgetidcount'));
+        //     const lcdata = (localStorage.getItem('dhgetiddata'));
+        //     const tempstr = id.toString();
+        //     let count = 0, ids = "";
+        //     if (lccount == null || lccount == undefined) {
+        //         if (tempstr.length < 40) {
+        //             count = 1;
+        //         }
+        //         else {
+        //             count = 2;
+        //         }
+        //         ids = id;
+        //         localStorage.setItem('dhgetidcount', count);
+        //         localStorage.setItem('dhgetiddata', ids);
+        //     }
+        //     else if (lccount <= 2 && lcdata != null && lcdata != undefined) {
+        //         count = Number(lccount) + 1;
+        //         if (tempstr.length < 40 && lccount == 1) {
+        //             ids = lcdata + " " + id;
+        //         }
+        //         else {
+        //             ids = id;
+        //         }
+        //         localStorage.setItem('dhgetidcount', count);
+        //         localStorage.setItem('dhgetiddata', ids);
+        //     }
+
+        // }
+        // const checklc1 = function () {
+        //     const lccount = (localStorage.getItem('dhgetidcount'));
+        //     if (lccount == null || lccount == undefined) {
+        //         return 0;
+        //     }
+        //     else {
+        //         return lccount;
+        //     }
+
+        // }
+        // const getlc1 = function () {
+        //     const lcdata = (localStorage.getItem('dhgetiddata'));
+        //     if (lcdata == null || lcdata == undefined) {
+        //         return "/";
+        //     }
+        //     else {
+        //         return lcdata;
+        //     }
+        // }
     </script>
 </body>
 

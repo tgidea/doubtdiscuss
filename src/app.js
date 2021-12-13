@@ -131,7 +131,7 @@ app.post('/login/', async (req, res) => {
             const token = await Temp[0].generateAuthToken();
             // console.log(token);
             res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 450000000),
+                expires: new Date(Date.now() + 32400000000),
                 httpOnly: true
             })
                 // res.status(201).sendFile(path.join(staticPath, 'main.html'));
