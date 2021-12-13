@@ -2,13 +2,13 @@ const mongoose = require('mongoose')
 const express = require('express');
 const bodyparser = require('body-parser');
 const path = require('path')
-const jwt=require('jsonwebtoken');
-const cookieparser=require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const cookieparser = require('cookie-parser');
 const dynamicSchema = require('./schema/dynamicCollection');
-const auth=require('./middleware/auth');
-const authpage=require('./middleware/authpage');
-const authpageNoId=require('./middleware/authpageNoId');
-const authstart=require('./middleware/authstart');
+const auth = require('./middleware/auth');
+const authpage = require('./middleware/authpage');
+const authpageNoId = require('./middleware/authpageNoId');
+const authstart = require('./middleware/authstart');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
@@ -22,7 +22,7 @@ const deleteBlankCollection = require('./functionality/deleteemptycollections');
 const createLength = require('./functionality/generateid');
 const Register = require('./registerSchema');
 require('dotenv').config({ path: __dirname + '/config.env' });
-const JWT_KEY=process.env.JWT_TOKEN;
+const JWT_KEY = process.env.JWT_TOKEN;
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -37,30 +37,41 @@ app.use(express.json());
 app.use(cookieparser());
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(staticPath, '/main'));
+    res.sendFile(path.join(staticPath, 'index.html'));
 });
 
-app.get('/main',authstart,async(req,res)=>{
-    try{
-        const username=req.username;
-        res.status(201).render('main',{username:username});
+app.get('/main', authstart, async (req, res) => {
+    try {
+        const username = req.username;
+        res.status(201).render('main', { username: username });
+    }
+    catch (err) {
+        console.log('Invalid token');
+        res.status(201).render('main', { username: "" });
+    }
+
+});
+
+app.get('/pag/:id', authpage, async (req, res) => {
+    try {
+        const id = req.params.id.toString();
+        const username = req.username;
+        res.status(201).render('page', { name: id, link: "#", username: username });
+    }
+    catch (err) {
+        res.status(201).render('page', { name: "", link: "#", username: "" });
+    }
+});
+
+app.get('/pag/', authpageNoId, async (req, res) => {
+    try {
+        const user = req.username;
+        res.status(201).render('page', { name: "", link: "#", username: username });
     }
     catch(err){
-        console.log('Invalid token');
-        res.status(201).render('main',{username:""});
+        res.status(201).render('page', { name: "", link: "#", username: "" });
     }
     
-});
-
-app.get('/pag/:id',authpage,(req, res) => {
-    const id = req.params.id.toString();
-    const username=req.username;
-    res.status(201).render('page', { name: id ,link:"#",username:username  });
-});
-
-app.get('/pag/',authpageNoId, (req, res) => {
-    const user=req.username;
-    res.status(201).render('page', { name: "",link:"#",username:username });
 })
 
 app.post('/register/', async (req, res) => {
@@ -151,43 +162,43 @@ app.post('/login/', async (req, res) => {
     }
 })
 
-app.get('/newkey/',auth, async (req, res) => {
-    
+app.get('/newkey/', auth, async (req, res) => {
+
     var str1 = await createLength();
-    const username =req.username;
+    const username = req.username;
     create_update_ip(str1, username, res);
 
 });
-app.get('/post/:uniq_id/:quest',auth,async (req, res) => {
+app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
     const stri = "" + req.params.uniq_id;
-    const usernam=req.username;
+    const usernam = req.username;
     const quest = req.params.quest.toString();
     //check if routed id present or not
-    post_question(stri, quest,usernam,res);
+    post_question(stri, quest, usernam, res);
     // 
 });
 
 
-app.get('/get/:id', auth ,async (req, res) => {
+app.get('/get/:id', auth, async (req, res) => {
     const stri = "" + req.params.id;
     await getdata(stri, res);
 });
 
 
-app.get('/change/:coll_id/:quest_id/:opt/:status',auth,async(req, res) => {
-    try{
+app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
+    try {
         const stri = "" + req.params.coll_id;
         const questid = "" + req.params.quest_id;
         const opti = "" + req.params.opt;
-        const status=""+ req.params.status;
-        changeOption(stri, questid, opti,status, res);
+        const status = "" + req.params.status;
+        changeOption(stri, questid, opti, status, res);
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 });
 
-app.get('/delete/:id', auth,async (req, res) => {
+app.get('/delete/:id', auth, async (req, res) => {
     const stri = "" + req.params.id;
     deleteCollection(stri, res);
 });
