@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Client = require('../schema/usernewkey');
-const dynamicSchema = require('../schema/dynamicCollection');
 const blockReq = require('../schema/blockReqschema');
+const dynamicSchema = require('../schema/dynamicCollection');
 
 const createIpDoc = async (id, username) => {
     try {
@@ -86,7 +86,7 @@ const create_update_ip = async (str1, username, res) => {
             catch (err) {
                 console.log(err);
                 console.log('username not found ');
-                res.send({ "result": "Something misterios happened" });
+                res.send({ "result": "Something went wrong" });
             }
         }
         fun();

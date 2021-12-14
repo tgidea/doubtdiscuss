@@ -9,6 +9,7 @@ const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
 const authpageNoId = require('./middleware/authpageNoId');
 const authstart = require('./middleware/authstart');
+const profileAuth=require('./middleware/profileauth');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
@@ -43,11 +44,11 @@ app.get('/', (req, res) => {
 app.get('/main', authstart, async (req, res) => {
     try {
         const username = req.username;
-        res.status(201).render('main', { username: username });
+        res.status(201).render('main', { username: username,link:"/profile" });
     }
     catch (err) {
         console.log('Invalid token');
-        res.status(201).render('main', { username: "" });
+        res.status(201).render('main', { username: "",link:"" });
     }
 
 });
@@ -56,7 +57,7 @@ app.get('/pag/:id', authpage, async (req, res) => {
     try {
         const id = req.params.id.toString();
         const username = req.username;
-        res.status(201).render('page', { name: id, link: "#", username: username });
+        res.status(201).render('page', { name: id, link: "/profile", username: username });
     }
     catch (err) {
         res.status(201).render('page', { name: "", link: "#", username: "" });
@@ -65,13 +66,27 @@ app.get('/pag/:id', authpage, async (req, res) => {
 
 app.get('/pag/', authpageNoId, async (req, res) => {
     try {
-        const user = req.username;
-        res.status(201).render('page', { name: "", link: "#", username: username });
+        const username = req.username;
+        res.status(201).render('page', { name: "", link: "/profile", username: username });
     }
-    catch(err){
+    catch (err) {
         res.status(201).render('page', { name: "", link: "#", username: "" });
     }
-    
+
+})
+
+app.get('/profile',profileAuth,async(req,res)=>{
+    try{
+        const username=req.username;
+        const name=req.name;
+        const email=req.email;
+        const ids=req.ids;
+        res.status(201).render('profile',{username,name,email,ids});
+    }
+    catch(err){
+        console.log(err);
+        res.send({status:"error",result:"Something went wrong"});
+    }
 })
 
 app.post('/register/', async (req, res) => {
@@ -126,7 +141,9 @@ app.post('/register/', async (req, res) => {
 
     }
     catch (err) {
+        console.log(err);
         console.log('Error in processing /register');
+        res.send({ "result": "Something went wrong" });
     }
 })
 
@@ -158,30 +175,46 @@ app.post('/login/', async (req, res) => {
     }
     catch (err) {
         console.log('Error occur in /login');
+        console.log(err);
         res.send({ "result": "Invalid login details" });
     }
 })
 
 app.get('/newkey/', auth, async (req, res) => {
-
-    var str1 = await createLength();
-    const username = req.username;
-    create_update_ip(str1, username, res);
-
+    try {
+        var str1 = await createLength();
+        const username = req.username;
+        create_update_ip(str1, username, res);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
 });
 app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
-    const stri = "" + req.params.uniq_id;
-    const usernam = req.username;
-    const quest = req.params.quest.toString();
-    //check if routed id present or not
-    post_question(stri, quest, usernam, res);
-    // 
+    try {
+        const stri = "" + req.params.uniq_id;
+        const usernam = req.username;
+        const quest = req.params.quest.toString();
+        //check if routed id present or not
+        post_question(stri, quest, usernam, res);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
 });
 
 
 app.get('/get/:id', auth, async (req, res) => {
-    const stri = "" + req.params.id;
-    await getdata(stri, res);
+    try {
+        const stri = "" + req.params.id;
+        await getdata(stri, res);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
 });
 
 
@@ -195,17 +228,30 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
+        res.send({ "result": "Something went wrong" });
     }
 });
 
 app.get('/delete/:id', auth, async (req, res) => {
-    const stri = "" + req.params.id;
-    deleteCollection(stri, res);
+    try {
+        const stri = "" + req.params.id;
+        deleteCollection(stri, res);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
 });
 
 
 app.get('/deleteblankcollections/', async (req, res) => {
-    deleteBlankCollection(res);
+    try {
+        deleteBlankCollection(res);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
 });
 
 app.get("*", (req, res) => {
