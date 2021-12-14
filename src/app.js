@@ -48,7 +48,7 @@ app.get('/main', authstart, async (req, res) => {
     }
     catch (err) {
         console.log('Invalid token');
-        res.status(201).render('main', { username: "",link:"" });
+        res.status(201).render('main', { username: "Login",link:"/" });
     }
 
 });

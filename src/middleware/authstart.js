@@ -13,7 +13,7 @@ const authstart=async(req,res,next)=>{
     }
     catch(err){
         console.log('Token not present or faulty');
-        res.status(201).render('main',{username:""});
+        res.status(201).render('main',{username:"Login",link:"/"});
     }
 }
 module.exports=authstart;
