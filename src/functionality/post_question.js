@@ -17,7 +17,7 @@ const post_question = async (stri, quest, username,res) => {
                             }
                             catch (err) {
                                 // if server restarted : to handle previously made collections
-                                Temp = mongoose.model(stri, expSchema2);
+                                Temp = mongoose.model(stri, expschema2);
                             }
                             try {
                                 const number = await Temp.countDocuments();

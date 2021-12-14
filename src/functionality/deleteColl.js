@@ -6,7 +6,7 @@ const deleteCollection = async (stri, res) => {
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
-                if (info && stri.length > 24) {
+                if (info && stri.length > 14) {
                     try {
                         const fun = async () => {
                             var Temp;

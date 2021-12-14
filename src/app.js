@@ -14,6 +14,7 @@ const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
+const deleteDocument=require('./functionality/deleteDocument');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
 const create_update_ip = require('./functionality/create_update_userkeyid');
@@ -88,6 +89,7 @@ app.get('/profile',profileAuth,async(req,res)=>{
         res.send({status:"error",result:"Something went wrong"});
     }
 })
+
 
 app.post('/register/', async (req, res) => {
     try {
@@ -205,7 +207,6 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
     }
 });
 
-
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
@@ -243,6 +244,18 @@ app.get('/delete/:id', auth, async (req, res) => {
     }
 });
 
+app.get('/deleteDocument/:collection/:document',auth,async(req,res)=>{
+    try {
+        const collection = "" + req.params.collection;
+        const document=req.params.document;
+        const username=req.username;
+        deleteDocument(req, res,collection,document,username);
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ "result": "Something went wrong" });
+    }
+})
 
 app.get('/deleteblankcollections/', async (req, res) => {
     try {
