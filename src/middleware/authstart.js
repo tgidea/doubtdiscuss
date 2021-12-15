@@ -8,6 +8,7 @@ const authstart=async(req,res,next)=>{
         const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
         // console.log(veriftToken);
         const user =await Register.findOne({_id:verifyToken.id});
+        req.useremail=user.email.
         req.username=verifyToken.username;
         next();
     }
