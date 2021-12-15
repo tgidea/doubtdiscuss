@@ -186,6 +186,7 @@
                             }
                             else {
                                 notify.innerHTML = `<h6 style="color:red"> ${data.result} </h6>`
+
                             }
                         }).catch((err) => {
                             console.log('reach here2');
@@ -285,11 +286,11 @@
                         if (data.result == 'Success' || data.result == 'success') {
                             const dataAll = [data.alldata];
                             notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                            getdata();
                         }
                         else {
                             notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
                         }
+                        getdata();
                     }).catch((err) => {
                         notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`
                     })
