@@ -47,6 +47,23 @@
             width: 55%;
             font-size: larger;
         }
+        #alertDiv{
+            min-height: 14vh;
+        }
+        #mainContent {
+            margin-top: 50px;
+            min-height: 100vh;
+        }
+ 
+        @media screen and (max-width: 550px) {
+            #alertDiv{
+                min-height: 16vh;
+            }
+            #mainContent {
+                min-height: 100vh;
+                margin-top: 12px;
+            }
+        }
     </style>
 </head>
 
@@ -70,14 +87,16 @@
                         <li class="nav-item">
                             <a class="nav-link" href="howtouse.html">How to use</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
                         </li>
                         <li class="nav-item ml-3">
-                            <a class="nav-link " id="usernamee" href="<%=link%>"><%=username%></a>
+                            <a class="nav-link " id="usernamee" href="<%=link%>">
+                                <%=username%>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -85,14 +104,14 @@
         </nav>
 
 
-        <div class="contanier">
+        <div class="contanier" id="alertDiv"">
             <div class="alert alert-info " role="alert"
                 style="position: relative; top: -500px; border: 1px solid white;">
                 <span id="alerttext"> </span>
                 <button type="button" id="close" onclick="delalert1()" style="float: right;">&times;</button>
             </div>
         </div>
-        <div class="container" style="min-height: 100vh; ">
+        <div class="container" id="mainContent">
             <div class="container">
                 <div class="input-group mb-3" style="align-items: center; justify-content: center;">
                 </div>
@@ -120,6 +139,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div class="container" id="footer">
         <div>
@@ -208,57 +229,6 @@
             document.getElementsByClassName('alert')[0].style.transition = 'top 0.6s ease-in';
             document.getElementsByClassName('alert')[0].style.top = '-500px';
         }
-
-
-        
-        // const lcset1 = function (id) {
-        //     const lccount = (localStorage.getItem('dhgetidcount'));
-        //     const lcdata = (localStorage.getItem('dhgetiddata'));
-        //     const tempstr = id.toString();
-        //     let count = 0, ids = "";
-        //     if (lccount == null || lccount == undefined) {
-        //         if (tempstr.length < 40) {
-        //             count = 1;
-        //         }
-        //         else {
-        //             count = 2;
-        //         }
-        //         ids = id;
-        //         localStorage.setItem('dhgetidcount', count);
-        //         localStorage.setItem('dhgetiddata', ids);
-        //     }
-        //     else if (lccount <= 2 && lcdata != null && lcdata != undefined) {
-        //         count = Number(lccount) + 1;
-        //         if (tempstr.length < 40 && lccount == 1) {
-        //             ids = lcdata + " " + id;
-        //         }
-        //         else {
-        //             ids = id;
-        //         }
-        //         localStorage.setItem('dhgetidcount', count);
-        //         localStorage.setItem('dhgetiddata', ids);
-        //     }
-
-        // }
-        // const checklc1 = function () {
-        //     const lccount = (localStorage.getItem('dhgetidcount'));
-        //     if (lccount == null || lccount == undefined) {
-        //         return 0;
-        //     }
-        //     else {
-        //         return lccount;
-        //     }
-
-        // }
-        // const getlc1 = function () {
-        //     const lcdata = (localStorage.getItem('dhgetiddata'));
-        //     if (lcdata == null || lcdata == undefined) {
-        //         return "/";
-        //     }
-        //     else {
-        //         return lcdata;
-        //     }
-        // }
     </script>
 </body>
 

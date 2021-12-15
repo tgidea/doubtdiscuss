@@ -66,9 +66,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="../howtouse.html">How to use</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#">About </a>
-                    </li>
+                    </li> -->
 
                     <li class="nav-item">
                         <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
@@ -348,10 +348,10 @@
             else {
                 notify.innerHTML = `<h6 style="color:red">Fill all fields*</h6>`
             }
+            quest.value = '';
         }
         await fetching();
         setTimeout(() => {
-            quest.value = '';
             notify.innerText = "";
         }, 4000);
     }

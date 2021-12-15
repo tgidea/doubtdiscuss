@@ -7,7 +7,7 @@ const auth=async(req,res,next)=>{
     try{
         const token=req.cookies.jwt;
         const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
-        // const user =await Register.findOne({_id:verifyToken.id});
+        const user =await Register.findOne({_id:verifyToken.id});
         req.username=verifyToken.username;
         // console.log(user);
         next();
