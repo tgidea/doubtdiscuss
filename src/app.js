@@ -23,6 +23,7 @@ const deleteCollection = require('./functionality/deleteColl');
 const deleteBlankCollection = require('./functionality/deleteemptycollections');
 const createLength = require('./functionality/generateid');
 const Register = require('./registerSchema');
+const authlogout = require('./middleware/authlogout');
 require('dotenv').config({ path: __dirname + '/config.env' });
 const JWT_KEY = process.env.JWT_TOKEN;
 
@@ -38,9 +39,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
+app.get('/' ,(req, res) => {
+    try{
+        const token=req.cookies.jwt;
+        const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
+        res.redirect('/main');
+    }
+    catch(err){
+        try{
+            res.sendFile(path.join(staticPath, 'login.html'));
+        }
+        catch(error){
+            res.send("Something went wrong");
+        }
+    }
 });
+
 
 app.get('/main', authstart, async (req, res) => {
     try {
@@ -179,6 +193,17 @@ app.post('/login/', async (req, res) => {
         console.log('Error occur in /login');
         console.log(err);
         res.send({ "result": "Invalid login details" });
+    }
+})
+
+app.get('/logout',authlogout,async(req,res)=>{
+    try{
+        res.clearCookie('jwt');
+        const temp=await req.user.save();
+        res.sendFile(path.join(staticPath, 'login.html'));
+    }
+    catch(err){
+        res.status(500).send(`<h1>Logout fails</h1>`);
     }
 })
 
