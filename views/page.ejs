@@ -222,11 +222,11 @@
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
                             notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                            getdata();
                         }
                         else {
                             notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
                         }
+                        getdata();
                     }).catch((err) => {
                         notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`
                     })
