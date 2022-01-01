@@ -86,7 +86,7 @@
     <div class="container" id="notify" style="margin-top:20px; min-height: 30px;">
 
     </div>
-    <div class="container">
+    <div class="container" style="border-bottom : 1px solid green;">
         <div class="input-group mb-3">
             <div class="container">
                 <input type="text" class="form-control" id="key" placeholder="Enter your Id" aria-label="Enter Your Id"
@@ -95,15 +95,15 @@
                 <div style="display: flex;">
                     <button onclick="postdata()" class="btn btn-success" id="btn3"
                         style="margin-right: 5%;">Post</button>
-                    <button onclick="getdata()" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
+                    <button onclick="getdata('yes')" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
                         content</button>
                     <button onclick="deletedata()" class="btn btn-success" id="btn5">Delete</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="container" id="items-list" style="display:flex; flex-direction:column-reverse;">
+    <div >
+        <div class="mb-3" id="items-list" style="display:flex; flex-direction:column-reverse; margin-left: 6vw; margin-right: 6vw; ">
 
         </div>
     </div>
@@ -137,42 +137,45 @@
             opt3 = object[`${artitem[0][i]._id}opt3`];
             opt4 = object[`${artitem[0][i]._id}opt4`];
             output += `
-            <div class="card text-center border-success">
-                 <div class="card-body ">
+            <div style="border-bottom : 1px solid green;">
+                <div class="card-body "  >
                     <details > 
                             <summary></summary>
                             <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
                                 <p>${artitem[0][i].owner} </p>
-                                <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)" id="delete" style="position:absolute;right:3vw"> <i class="fa fa-trash"></i></button>
+                                <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)" id="delete" style="position:absolute;right:8vw"> <i class="fa fa-trash"></i></button>
                             </div>
-                        </details>
-                 <div class="container">
-                     <p class="card-text card-header "><span  style="width:10vw; position:absolute; left:0px;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
-                     <div class="container mt-2" style="display:flex;justify-content:center;" >
-                       <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
-                     </div>
-                     </div>
+                    </details>
+                <div>
+                <p class="card-text card-header "><span  style=" position:absolute; left:2vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
+                <div class=" mt-2" style="display:flex;justify-content:center;" >
+                    <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
+                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
+                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
+                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
                 </div>
-             </div>`
+            </div>`
 
             items_list.innerHTML += output;
         }
     }
     //************************************************************************* *//
-    const getdata = async () => {
+    const getdata = async (check) => {
         const notify = document.getElementById('notify');
         const fetching = async () => {
             const key = document.getElementById('key');
-            const keyvalue = key.value;
+            let keyvalue = key.value;
             const btn4 = document.getElementById('btn4');
             if (keyvalue == '') {
                 // console.log('both empty');
                 document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
             }
             else if (keyvalue != '') {
+                keyvalue = keyvalue.replace(/\?/g, "&quest;")
+                keyvalue = keyvalue.replace(/\%/g, "&percnt;")
+                keyvalue = keyvalue.replace(/\#/g, "&num;")
+                keyvalue = keyvalue.replace(/\//g, "&sol;")
+                keyvalue = keyvalue.replace(/\\/g, "&Backslash;")
                 try {
                     await fetch(`/get/${keyvalue}`)
                         .then(function (resp) {
@@ -181,7 +184,9 @@
                         .then(function (data) {
                             if (data.result == 'success') {
                                 const dataAll = [data.alldata];
-                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                if(check=="yes"){
+                                    notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                }
                                 showData(dataAll, keyvalue);
                             }
                             else {
@@ -221,12 +226,13 @@
                     })
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                            notify.innerHTML = `<h6 style="color:green">Success </h6>`;
+                            getdata("yes");
                         }
                         else {
                             notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                            getdata("no");
                         }
-                        getdata();
                     }).catch((err) => {
                         notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`
                     })
@@ -285,12 +291,13 @@
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
                             const dataAll = [data.alldata];
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                            notify.innerHTML = `<h6 style="color:green">Success </h6>`;
+                            getdata("yes");
                         }
                         else {
                             notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                            getdata("no");
                         }
-                        getdata();
                     }).catch((err) => {
                         notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`
                     })
@@ -334,12 +341,14 @@
                         })
                         .then(function (data) {
                             // console.log(data);
-                            if (data.result == "Can't add more than 60 questions") {
-                                notify.innerHTML = `<h6 style="color:orange">${data.result}</h6>`
-                            }
-                            else {
-                                getdata();
-                            }
+                            if(data.result=="success"){
+                                notify.innerHTML = `<h6 style="color:green">${data.result}</h6>`; 
+                                getdata("yes");
+                            }                 
+                            else{
+                                notify.innerHTML = `<h6 style="color:red">${data.result}</h6>`; 
+                                getdata("no")
+                            }           
                         });
                 }
                 catch (err) {
@@ -380,7 +389,7 @@
                                 // const dataAll = [data.alldata];
                                 notify.innerHTML = `<h6 style="color:green">Success </h6>`
                                 // notify.style.display = "block";
-                                getdata();
+                                getdata("yes");
                             }
                             else {
                                 notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
@@ -392,7 +401,7 @@
                         })
                 }
                 catch (err) {
-                    notify.innerHTML = `<h6 style="color:red">${err} </h6>`
+                    notify.innerHTML = `<h6 style="color:red">Something went wrong </h6>`
                     // notify.style.display = "block";
                 }
             }
