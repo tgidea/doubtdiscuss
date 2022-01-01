@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
+const IdData = require('../schema/idSchemaModal');
+const idSchema = require('../schema/idSchema');
 
-const changeOption = async (stri, questid, opti, status, res) => {
+const changeOption = async (stri, questid, opti, status, res, req) => {
 
     //check if routed id present or not
     try {
@@ -19,23 +21,34 @@ const changeOption = async (stri, questid, opti, status, res) => {
                         Temp = mongoose.model(stri, expschema2);
                     }
                     try {
-                        if (status == "inc") {
-                            const result = await Temp.updateOne({ _id: questid }, {
-                                $inc: { [`${opti}`]: 1 }
-                            })
+                        const details = await IdData.findOne({ name: stri });                        
+                        if (details.active) {
+                            if (details.deniedTo.indexOf(req.username) == -1) {
+                                if (status == "inc") {
+                                    const result = await Temp.updateOne({ _id: questid }, {
+                                        $inc: { [`${opti}`]: 1 }
+                                    })
+                                }
+                                else {
+                                    const result = await Temp.updateOne({ _id: questid }, {
+                                        $inc: { [`${opti}`]: -1 }
+                                    })
+                                }
+                                const check = await Temp.find({ _id: questid });
+                                if (check[0][`${opti}`] < 0) {
+                                    const result = await Temp.updateOne({ _id: questid }, {
+                                        $set: { [`${opti}`]: 0 }
+                                    })
+                                }
+                                res.send({ "result": "Success" });
+                            }
+                            else {
+                                res.send({ "result": "Sorry,You don't have permission." });
+                            }
                         }
-                        else{
-                            const result = await Temp.updateOne({ _id: questid }, {
-                                $inc: { [`${opti}`]: -1 }
-                            })
+                        else {
+                            res.send({ "result": "All operations are stopped by owner." });
                         }
-                        const check=await Temp.find({_id:questid});
-                        if(check[0][`${opti}`]<0){
-                            const result=await Temp.updateOne({_id:questid},{
-                                $set:{[`${opti}`]:0}
-                            })
-                        }
-                        res.send({ "result": "Success" });
                     }
                     catch (err) {
                         console.log(err);

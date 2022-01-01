@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
+const IdData = require('../schema/idSchemaModal');
 
-const deleteCollection = async (stri, res) => {
+const deleteCollection = async (stri, res, req) => {
     try {
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
@@ -12,7 +13,7 @@ const deleteCollection = async (stri, res) => {
                             var Temp;
                             try {
                                 // if server is running continuously without restating ever
-                                 Temp = mongoose.model(stri);
+                                Temp = mongoose.model(stri);
                             }
                             catch (err) {
                                 // if server restarted : to handle previously made collections
@@ -20,13 +21,29 @@ const deleteCollection = async (stri, res) => {
                             }
                             try {
                                 const number = await Temp.countDocuments();
-                                if (number > 59) {
-                                    await Temp.deleteMany();
-                                    console.log('deleted successfully');
-                                    res.send({ "result": "success" });
+                                const limit = await IdData.findOne({ name: stri });
+                                if (limit.deniedTo.indexOf(req.username) == -1) {
+                                    if (limit.active == true) {
+                                        if (number > limit && limit.author == req.username || limit.coauthor.indexOf(req.username)>-1) {
+                                            await Temp.deleteMany();
+                                            console.log('deleted successfully');
+                                            res.send({ "result": "success" });
+                                        }
+                                        else {
+                                            if (number > limit) {
+                                                res.send({ "result": "You are not owner/co-owner of this id" });
+                                            }
+                                            else {
+                                                res.send({ "result": "Can't delete till a limit reach" });
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        res.send({ "result": "All operations are closed by owner" });
+                                    }
                                 }
                                 else {
-                                    res.send({ "result": "Can't delete till a limit reach" });
+                                    res.send({ "result": "You don't have permission" });
                                 }
                             }
                             catch (err) {
@@ -52,4 +69,4 @@ const deleteCollection = async (stri, res) => {
         res.send({ "result": "Error occured" });
     }
 }
-module.exports=deleteCollection;
+module.exports = deleteCollection;

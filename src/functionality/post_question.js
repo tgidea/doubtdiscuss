@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
-const post_question = async (stri, quest, username,res) => {
+const IdData=require('../schema/idSchemaModal');
+const idSchema=require('../schema/idSchema');    
 
+const post_question = async (stri, quest, username,res,req) => {
+    const user=req.username;
     //check if routed id present or not
     try {
         mongoose.connection.db.listCollections({ name: stri })
@@ -21,20 +24,31 @@ const post_question = async (stri, quest, username,res) => {
                             }
                             try {
                                 const number = await Temp.countDocuments();
-                                if (number < 60) {
-                                    const createDocument = async () => {
-                                        const datacoll = new Temp({
-                                            "title": quest,
-                                            "owner":username,
-                                        });
-                                        const result = await datacoll.save();
-                                        // console.log('created successfully');
+                                const details=await IdData.findOne({name:stri});
+                                if(details.active){                                    
+                                    if(details.deniedTo.indexOf(user)==-1){
+                                        if (number<details.limit) {
+                                            const createDocument = async () => {
+                                                const datacoll = new Temp({
+                                                    "title": quest,
+                                                    "owner":username,
+                                                });
+                                                const result = await datacoll.save();
+                                                // console.log('created successfully');
+                                            }
+                                            createDocument();
+                                            res.send({ "result": "success" });
+                                        }
+                                        else {
+                                            res.send({ "result": "Limit surpassed" });
+                                        }
                                     }
-                                    createDocument();
-                                    res.send({ "result": "success" });
+                                    else{
+                                        res.send({ "result": "Sorry,You don't have permission." });
+                                    }
                                 }
-                                else {
-                                    res.send({ "result": "Can't add more than 60 questions" });
+                                else{
+                                    res.send({ "result": "All operations are stopped by owner." });
                                 }
                             }
                             catch (err) {

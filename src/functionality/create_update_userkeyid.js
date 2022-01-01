@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Client = require('../schema/usernewkey');
 const blockReq = require('../schema/blockReqschema');
 const dynamicSchema = require('../schema/dynamicCollection');
+const IdData=require('../schema/idSchemaModal');
+const idSchema=require('../schema/idSchema');
 
 const createIpDoc = async (id, username) => {
     try {
@@ -17,8 +19,21 @@ const createIpDoc = async (id, username) => {
         console.log(err);
     }
 }
+const createIdEdit=async(_id,author)=>{
+    console.log('here in create id edit');
+    try{
+        const idModal=new IdData({
+            "name":_id,
+            "author":author
+        });
+        const result=await idModal.save();
+    }
+    catch(err){
 
-const create_update_ip = async (str1, username, res) => {
+    }
+}
+
+const create_update_ip = async (str1, username, res,req) => {
     // console.log(str1);
     try {
         const fun = async () => {
@@ -48,6 +63,7 @@ const create_update_ip = async (str1, username, res) => {
                             const idtemp = result[0].id + " " + str1;
                             const idcount = result[0].count + 1;
                             dynamicSchema(str1);
+                            createIdEdit(str1,username);
                             try {
                                 Temp.updateOne({ username: username },
                                     { $inc: { count: 1 } }).then(function () {
@@ -79,6 +95,7 @@ const create_update_ip = async (str1, username, res) => {
                 else {
                     createIpDoc(str1, username);
                     dynamicSchema(str1);
+                    createIdEdit(str1,username);
                     const obj = { "result": "success", "id": str1 };
                     res.send(obj);
                 }

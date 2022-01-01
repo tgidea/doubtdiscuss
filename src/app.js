@@ -14,6 +14,9 @@ const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
+const editId=require('./functionality/editId');
+const IdData=require('./schema/idSchemaModal');
+const idSchema=require('./schema/idSchema');
 const deleteDocument=require('./functionality/deleteDocument');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
@@ -211,7 +214,7 @@ app.get('/newkey/', auth, async (req, res) => {
     try {
         var str1 = await createLength();
         const username = req.username;
-        create_update_ip(str1, username, res);
+        create_update_ip(str1, username, res,req);
     }
     catch (err) {
         console.log(err);
@@ -224,7 +227,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
         const usernam = req.username;
         const quest = req.params.quest.toString();
         //check if routed id present or not
-        post_question(stri, quest, usernam, res);
+        post_question(stri, quest, usernam, res,req);
     }
     catch (err) {
         console.log(err);
@@ -235,7 +238,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        await getdata(stri, res);
+        await getdata(stri, res,req);
     }
     catch (err) {
         console.log(err);
@@ -243,14 +246,30 @@ app.get('/get/:id', auth, async (req, res) => {
     }
 });
 
-
+app.get('/edit/:idName/:fun/:event/',profileAuth,(req,res)=>{
+    try{
+        const idName=req.params.idName;
+        const fun=req.params.fun;
+        const event=req.params.event;
+        if(req.ids.indexOf(idName)>-1){
+            editId(res,req,idName,fun,event);
+        }
+        else{
+            res.send({"result":"Please Contact Owner"});
+        }
+    }
+    catch(err){
+        console.log(err);
+        res.send({"result":"Something went wrong"});
+    }
+})
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     try {
         const stri = "" + req.params.coll_id;
         const questid = "" + req.params.quest_id;
         const opti = "" + req.params.opt;
         const status = "" + req.params.status;
-        changeOption(stri, questid, opti, status, res);
+        changeOption(stri, questid, opti, status, res,req);
     }
     catch (err) {
         console.log(err);
@@ -261,7 +280,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
 app.get('/delete/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        deleteCollection(stri, res);
+        deleteCollection(stri, res,req);
     }
     catch (err) {
         console.log(err);

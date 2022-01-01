@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
+const IdData = require('../schema/idSchemaModal');
 
 const deleteDocument = async (req, res, collection, document,username) => {
 
@@ -19,12 +20,18 @@ const deleteDocument = async (req, res, collection, document,username) => {
                     }
                     try {
                         const result = await Temp.findOne({ _id: document });
-                        if(result.owner==username){
-                            const deleted=await Temp.deleteOne({_id:document});
-                            res.send({ "result": "Success" });
+                        const status = await IdData.findOne({ name: collection });
+                        if(status.active){
+                            if(result.owner==username){
+                                const deleted=await Temp.deleteOne({_id:document});
+                                res.send({ "result": "Success" });
+                            }
+                            else{
+                                res.send({ "result": "You didn't post it." })
+                            }
                         }
                         else{
-                            res.send({ "result": "You didn't post it." })
+                            res.send({"result":"This ids operation are closed by owner"})
                         }
                     }
                     catch (err) {
