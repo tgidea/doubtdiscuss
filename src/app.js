@@ -91,7 +91,7 @@ app.get('/pag/', authpageNoId, async (req, res) => {
         res.status(201).render('page', { name: "", link: "#", username: "" });
     }
 
-})
+});
 
 app.get('/profile',profileAuth,async(req,res)=>{
     try{
@@ -110,14 +110,11 @@ app.get('/profile',profileAuth,async(req,res)=>{
 
 app.post('/register/', async (req, res) => {
     try {
-        const username = req.body.username.toLowerCase();
+        const username = req.body.username.toString().toLowerCase();
         const name = req.body.name;
         const email = req.body.email;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
-        if (username == "" || name == "" || email == "" || password.length < 5 || name.length < 2) {
-            return res.json({ "result": "Please fill carefully" });
-        }
         const createDocument = async () => {
             const userinfor = new Register({
                 "username": username,
@@ -147,6 +144,13 @@ app.post('/register/', async (req, res) => {
                 }
                 return "fail";
             }
+        }
+        if (username == "" || name == "" || email == "" || password.length < 5 || name.length < 2) {
+            return res.json({ "result": "Please fill carefully" });
+        }
+        console.log(username.indexOf('/'),username.indexOf('?'),username.indexOf('&'));
+        if(username.indexOf('/')>-1 || username.indexOf('?')>-1 || username.indexOf('&')>-1 ){
+            return res.json({"result":"Please don't use characters like /?&"});
         }
         if (password === confirmPassword) {
             const response = await createDocument();
