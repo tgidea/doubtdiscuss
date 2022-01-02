@@ -174,12 +174,12 @@ app.post('/login/', async (req, res) => {
         const email = req.body.email;
         const password = req.body.password.toString();
         //const Temp = Register.find({"email":email}) or 
-        const Temp = await Register.find({ "email": email })
-        if (Temp[0] == undefined) {
+        const Temp = await Register.findOne({ "email": email })
+        if (Temp == undefined) {
             res.send({ "result": "Invalid login details" });
         }
-        else if (Temp[0].password == password) {
-            const token = await Temp[0].generateAuthToken();
+        else if (Temp.password == password) {
+            const token = await Temp.generateAuthToken();
             // console.log(token);
             res.cookie("jwt", token, {
                 expires: new Date(Date.now() + 32400000000),
@@ -246,12 +246,44 @@ app.get('/get/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/edit/:idName/:fun/:event/',profileAuth,(req,res)=>{
+app.get('/id/:idName',profileAuth,async(req,res)=>{
     try{
+        const idName=req.params.idName;
+        const idInfo=await IdData.findOne({name:idName})
+        const username=idInfo.author;
+        const limit=idInfo.limit;
+        const coAuthor=idInfo.coAuthor.toString().trim();
+        const deniedTo=idInfo.deniedTo.toString().trim();
+        const active=idInfo.active;
+        if(coAuthor.indexOf(req.username)>-1 || idInfo.author==req.username){
+            res.render('edit',{idName,username,limit,coAuthor,deniedTo,active});
+        }
+        else{
+            res.send(`<h1>Page not found</h1>`);
+        }
+    }
+    catch(err){
+        console.log(err);
+        res.send({result:"Something went wrong"});
+    }
+})
+
+app.get('/edit/:idName/:fun/:event/',profileAuth,async(req,res)=>{
+    try{
+        
         const idName=req.params.idName;
         const fun=req.params.fun;
         const event=req.params.event;
-        if(req.ids.indexOf(idName)>-1){
+        let idInfo;
+        try{
+            idInfo=await IdData.findOne({name:idName});
+        }
+        catch(err){
+            console.log(err);
+            res.send({result:"Not accessible"});
+            return;
+        }
+        if(req.ids.indexOf(idName)>-1 || idInfo.coAuthor.indexOf(req.username)>-1 ){
             editId(res,req,idName,fun,event);
         }
         else{

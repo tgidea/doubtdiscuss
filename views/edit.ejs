@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <style>
+        body {
+            background: -webkit-linear-gradient(left, rgb(253, 214, 230), hsl(0, 25%, 98%));
+        }
+
+        .emp-profile {
+            padding: 3%;
+            margin-top: 3%;
+            margin-bottom: 3%;
+            border-radius: 0.5rem;
+            background: #fff;
+        }
+
+        .profile-head h5 {
+            color: #333;
+        }
+
+        .profile-head h6 {
+            color: #0062cc;
+        }
+
+        .profile-head .nav-tabs {
+            margin-bottom: 5%;
+        }
+
+        .profile-head .nav-tabs .nav-link {
+            font-weight: 600;
+            border: none;
+        }
+
+        .profile-head .nav-tabs .nav-link.active {
+            border: none;
+            border-bottom: 2px solid #0062cc;
+        }
+
+        .profile-work {
+            padding: 14%;
+            margin-top: -15%;
+        }
+
+        .profile-tab label {
+            font-weight: 600;
+        }
+
+        .profile-tab p {
+            font-weight: 600;
+            color: #0062cc;
+        }
+    </style>
+    <title>Owner Id</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
+            <!-- <a  href="/main" class="mr-6" style="float:right; font-weight: 600; text-decoration: none; color: white;">Home</a> -->
+        </div>
+    </nav>
+
+    <div class="container emp-profile">
+        <!-- <form method="post"> -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="profile-head">
+                    <h5>
+                        <%=username%>
+                    </h5>
+                    <h6 id="idNam">
+                        <%=idName%>
+                    </h6>
+
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" href="#">Settings</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tab-content profile-tab" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Co Owner</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" style="overflow-x: scroll;" id="coAuthor"
+                                    placeholder="<%=coAuthor%>">
+                            </div>
+                            <div class="col-md-1 mb-2">
+                                <button id="btn-1" onclick="coAuthorFun()" style="font-size:10px;">Change</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Limit</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="number" class="form-control" id="limit" placeholder="<%=limit%>">
+                            </div>
+                            <div class="col-md-1 mb-2">
+                                <button id="btn-2" onclick="limitFun()" style="font-size:10px;">Change</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Denied To</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control" style="overflow-x: scroll;" id="deniedTo"
+                                    placeholder="<%=deniedTo%>">
+                            </div>
+                            <div class="col-md-1 mb-2">
+                                <button id="btn-3" onclick="deniedFun()" style="font-size:10px;">Change</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Status</label>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-control" id="status">
+                                    <%=active%>
+                                </div>
+                            </div>
+                            <div class="col-md-1 mb-2">
+                                <button id="btn-4" onclick="activeFun()" style="font-size:10px;">Change</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- </form> -->
+    </div>
+</body>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+<script>
+    const limitFun = async () => {
+        // e.preventDefault();
+        const limit = document.getElementById('limit');
+        const limitV = limit.value;
+        if (limitV === "" || limitV == "") {
+            alert('Enter valid number');
+        }
+        else if (limitV < 0 || limitV > 200) {
+            alert('Enter limit in range of 0-200');
+        }
+        else {
+            try {
+                const ide = document.getElementById('idNam').innerText;
+                await fetch(`/edit/${ide}/limit/${limitV}`)
+                    .then(function (resp) {
+                        return resp.json();
+                    })
+                    .then(function (data) {
+                        
+                        alert(`${data.result}`);
+                    }).catch((err) => {
+                        // console.log(err);
+                        alert(`Something went wrong`);
+                    })
+            }
+            catch (err) {
+                // console.log(err);
+                alert(`Something went wrong`);
+            }
+        }
+    };
+    const deniedFun = async () => {
+        const deniedTo = document.getElementById('deniedTo');
+        const deniedToV = deniedTo.value;
+        
+        if (deniedToV == "") {
+            alert('Fill carefully');
+            return;
+        }
+        else {
+            try {
+                const id = document.getElementById('idNam').innerText;
+                await fetch(`/edit/${id}/deniedTo/${deniedToV}`)
+                    .then(function (resp) {
+                        return resp.json();
+                    })
+                    .then(function (data) {
+                        alert(`${data.result}`);
+                    }).catch((err) => {
+                        // console.log(err);
+                        alert(`Something went wrong`);
+                    })
+            }
+            catch (err) {
+                // console.log(err);
+                alert(`Something went wrong`);
+            }
+        }
+    };
+    const coAuthorFun = async () => {
+        const coAuthor = document.getElementById('coAuthor');
+        const coAuthorV = coAuthor.value;
+        
+        if (coAuthorV == "") {
+            alert('Fill carefully');
+            return;
+        }
+        else {
+            try {
+                const id = document.getElementById('idNam').innerText;
+                await fetch(`/edit/${id}/coAuthor/${coAuthorV}`)
+                    .then(function (resp) {
+                        return resp.json();
+                    })
+                    .then(function (data) {
+                        alert(`${data.result}`);
+                    }).catch((err) => {
+                        // console.log(err);
+                        alert(`Something went wrong`);
+                    })
+            }
+            catch (err) {
+                // console.log(err);
+                alert(`Something went wrong`);
+            }
+        }
+    };
+    const activeFun = async () => {
+        // e.preventDefault();
+        try {
+            const id = document.getElementById('idNam').innerText;
+            await fetch(`/edit/${id}/active/true`)
+                .then(function (resp) {
+                    return resp.json();
+                })
+                .then(function (data) {
+                    alert(`${data.result}`);
+                }).catch((err) => {
+                    // console.log(err);
+                    alert(`Something went wrong`);
+                })
+        }
+        catch (err) {
+            // console.log(err);
+            alert(`Something went wrong`);
+        }
+
+    };
+
+</script>
+
+</html>
