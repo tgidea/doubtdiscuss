@@ -102,8 +102,9 @@
             </div>
         </div>
     </div>
-    <div >
-        <div class="mb-3" id="items-list" style="display:flex; flex-direction:column-reverse; margin-left: 6vw; margin-right: 6vw; ">
+    <div>
+        <div class="mb-3" id="items-list"
+            style="display:flex; flex-direction:column-reverse; margin-left: 6vw; margin-right: 6vw; ">
 
         </div>
     </div>
@@ -119,15 +120,17 @@
 
     const showData = (articles, keyvalue) => {
         const artitem = articles;
-
         //setting class in option using local storage
         let opt1 = "none", opt2 = "none", opt3 = "none", opt4 = "none", object = "";
         if (localStorage.getItem('clickedId') != undefined) {
             object = JSON.parse(localStorage.getItem('clickedId'));
         }
         var items_list = document.getElementById('items-list');
-        var keyvalues = keyvalue;
         items_list.innerHTML = '';
+        if(artitem[0].length<1){
+            items_list.innerHTML+="<h6>Empty</h6>"
+        }
+        var keyvalues = keyvalue;
 
         for (var i = 0; i < artitem[0].length; i++) {
 
@@ -184,7 +187,7 @@
                         .then(function (data) {
                             if (data.result == 'success') {
                                 const dataAll = [data.alldata];
-                                if(check=="yes"){
+                                if (check == "yes") {
                                     notify.innerHTML = `<h6 style="color:green">Success </h6>`
                                 }
                                 showData(dataAll, keyvalue);
@@ -341,14 +344,14 @@
                         })
                         .then(function (data) {
                             // console.log(data);
-                            if(data.result=="success"){
-                                notify.innerHTML = `<h6 style="color:green">${data.result}</h6>`; 
+                            if (data.result == "success") {
+                                notify.innerHTML = `<h6 style="color:green">${data.result}</h6>`;
                                 getdata("yes");
-                            }                 
-                            else{
-                                notify.innerHTML = `<h6 style="color:red">${data.result}</h6>`; 
+                            }
+                            else {
+                                notify.innerHTML = `<h6 style="color:red">${data.result}</h6>`;
                                 getdata("no")
-                            }           
+                            }
                         });
                 }
                 catch (err) {
@@ -379,30 +382,35 @@
                 // notify.style.display = "block";
             }
             else if (keyvalue != '') {
-                try {
-                    await fetch(`/delete/${keyvalue}`)
-                        .then(function (resp) {
-                            return resp.json();
-                        })
-                        .then(function (data) {
-                            if (data.result == 'success') {
-                                // const dataAll = [data.alldata];
-                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                if (confirm("Do you want to delete all questions")) {
+                    try {
+                        await fetch(`/delete/${keyvalue}`)
+                            .then(function (resp) {
+                                return resp.json();
+                            })
+                            .then(function (data) {
+                                if (data.result == 'success') {
+                                    // const dataAll = [data.alldata];
+                                    notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                    // notify.style.display = "block";
+                                    getdata("yes");
+                                }
+                                else {
+                                    notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
+                                    // notify.style.display = "block";
+                                }
+                            }).catch((err) => {
+                                notify.innerHTML = `<h6 style="color:red">Error occured</h6>`
                                 // notify.style.display = "block";
-                                getdata("yes");
-                            }
-                            else {
-                                notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
-                                // notify.style.display = "block";
-                            }
-                        }).catch((err) => {
-                            notify.innerHTML = `<h6 style="color:red">Error occured</h6>`
-                            // notify.style.display = "block";
-                        })
+                            })
+                    }
+                    catch (err) {
+                        notify.innerHTML = `<h6 style="color:red">Something went wrong </h6>`
+                        // notify.style.display = "block";
+                    }
                 }
-                catch (err) {
-                    notify.innerHTML = `<h6 style="color:red">Something went wrong </h6>`
-                    // notify.style.display = "block";
+                else{
+                    return;
                 }
             }
             else {
