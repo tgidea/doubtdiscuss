@@ -9,15 +9,15 @@ const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
 const authpageNoId = require('./middleware/authpageNoId');
 const authstart = require('./middleware/authstart');
-const profileAuth=require('./middleware/profileauth');
+const profileAuth = require('./middleware/profileauth');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
-const editId=require('./functionality/editId');
-const IdData=require('./schema/idSchemaModal');
-const idSchema=require('./schema/idSchema');
-const deleteDocument=require('./functionality/deleteDocument');
+const editId = require('./functionality/editId');
+const IdData = require('./schema/idSchemaModal');
+const idSchema = require('./schema/idSchema');
+const deleteDocument = require('./functionality/deleteDocument');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
 const create_update_ip = require('./functionality/create_update_userkeyid');
@@ -42,17 +42,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/' ,(req, res) => {
-    try{
-        const token=req.cookies.jwt;
-        const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
+app.get('/', (req, res) => {
+    try {
+        const token = req.cookies.jwt;
+        const verifyToken = jwt.verify(token, process.env.JWT_TOKEN);
         res.redirect('/main');
     }
-    catch(err){
-        try{
+    catch (err) {
+        try {
             res.sendFile(path.join(staticPath, 'login.html'));
         }
-        catch(error){
+        catch (error) {
             res.send("Something went wrong");
         }
     }
@@ -62,11 +62,11 @@ app.get('/' ,(req, res) => {
 app.get('/main', authstart, async (req, res) => {
     try {
         const username = req.username;
-        res.status(201).render('main', { username: username,link:"/profile" });
+        res.status(201).render('main', { username: username, link: "/profile" });
     }
     catch (err) {
         console.log('Invalid token');
-        res.status(201).render('main', { username: "Login",link:"/" });
+        res.status(201).render('main', { username: "Login", link: "/" });
     }
 
 });
@@ -93,17 +93,17 @@ app.get('/pag/', authpageNoId, async (req, res) => {
 
 })
 
-app.get('/profile',profileAuth,async(req,res)=>{
-    try{
-        const username=req.username;
-        const name=req.name;
-        const email=req.email;
-        const ids=req.ids;
-        res.status(201).render('profile',{username,name,email,ids});
+app.get('/profile', profileAuth, async (req, res) => {
+    try {
+        const username = req.username;
+        const name = req.name;
+        const email = req.email;
+        const ids = req.ids;
+        res.status(201).render('profile', { username, name, email, ids });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({status:"error",result:"Something went wrong"});
+        res.send({ status: "error", result: "Something went wrong" });
     }
 })
 
@@ -179,14 +179,21 @@ app.post('/login/', async (req, res) => {
             res.send({ "result": "Invalid login details" });
         }
         else if (Temp[0].password == password) {
-            const token = await Temp[0].generateAuthToken();
-            // console.log(token);
-            res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 32400000000),
-                httpOnly: true
-            })
-                // res.status(201).sendFile(path.join(staticPath, 'main.html'));
-                .redirect('/main')
+            // console.log(Temp[0]);
+            if ( Temp[0].active == true) {
+                const token = await Temp[0].generateAuthToken();
+                // console.log(token);
+                res.cookie("jwt", token, {
+                    expires: new Date(Date.now() + 32400000000),
+                    httpOnly: true
+                })
+                    // res.status(201).sendFile(path.join(staticPath, 'main.html'));
+                    .redirect('/main')
+            }
+            else{
+                // console.log('Not verified');
+                res.send({ "result": "Invalid login details" });
+            }
         }
         else {
             res.send({ "result": "Invalid login details" });
@@ -199,13 +206,13 @@ app.post('/login/', async (req, res) => {
     }
 })
 
-app.get('/logout',authlogout,async(req,res)=>{
-    try{
+app.get('/logout', authlogout, async (req, res) => {
+    try {
         res.clearCookie('jwt');
-        const temp=await req.user.save();
+        const temp = await req.user.save();
         res.sendFile(path.join(staticPath, 'login.html'));
     }
-    catch(err){
+    catch (err) {
         res.status(500).send(`<h1>Logout fails</h1>`);
     }
 })
@@ -214,7 +221,7 @@ app.get('/newkey/', auth, async (req, res) => {
     try {
         var str1 = await createLength();
         const username = req.username;
-        create_update_ip(str1, username, res,req);
+        create_update_ip(str1, username, res, req);
     }
     catch (err) {
         console.log(err);
@@ -227,7 +234,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
         const usernam = req.username;
         const quest = req.params.quest.toString();
         //check if routed id present or not
-        post_question(stri, quest, usernam, res,req);
+        post_question(stri, quest, usernam, res, req);
     }
     catch (err) {
         console.log(err);
@@ -238,7 +245,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        await getdata(stri, res,req);
+        await getdata(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -246,21 +253,21 @@ app.get('/get/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/edit/:idName/:fun/:event/',profileAuth,(req,res)=>{
-    try{
-        const idName=req.params.idName;
-        const fun=req.params.fun;
-        const event=req.params.event;
-        if(req.ids.indexOf(idName)>-1){
-            editId(res,req,idName,fun,event);
+app.get('/edit/:idName/:fun/:event/', profileAuth, (req, res) => {
+    try {
+        const idName = req.params.idName;
+        const fun = req.params.fun;
+        const event = req.params.event;
+        if (req.ids.indexOf(idName) > -1) {
+            editId(res, req, idName, fun, event);
         }
-        else{
-            res.send({"result":"Please Contact Owner"});
+        else {
+            res.send({ "result": "Please Contact Owner" });
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({"result":"Something went wrong"});
+        res.send({ "result": "Something went wrong" });
     }
 })
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
@@ -269,7 +276,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
         const questid = "" + req.params.quest_id;
         const opti = "" + req.params.opt;
         const status = "" + req.params.status;
-        changeOption(stri, questid, opti, status, res,req);
+        changeOption(stri, questid, opti, status, res, req);
     }
     catch (err) {
         console.log(err);
@@ -280,7 +287,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
 app.get('/delete/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        deleteCollection(stri, res,req);
+        deleteCollection(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -288,12 +295,12 @@ app.get('/delete/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/deleteDocument/:collection/:document',auth,async(req,res)=>{
+app.get('/deleteDocument/:collection/:document', auth, async (req, res) => {
     try {
         const collection = "" + req.params.collection;
-        const document=req.params.document;
-        const username=req.username;
-        deleteDocument(req, res,collection,document,username);
+        const document = req.params.document;
+        const username = req.username;
+        deleteDocument(req, res, collection, document, username);
     }
     catch (err) {
         console.log(err);
