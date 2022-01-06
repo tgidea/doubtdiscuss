@@ -231,12 +231,45 @@ app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
         res.send({ "result": "Something went wrong" });
     }
 })
-
+app.get('/outverify/:email', async (req, res) => {
+    try {
+        const mail = req.params.email;
+        const details = await Register.findOne({ email: mail });
+        if (details) {
+            const id = details._id;
+            const name=details.username;
+            var mailOptions = {
+                from: 'gyanexplode@gmail.com',
+                to: `${mail}`,
+                subject: 'Verify Account',
+                html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing our product</h4>
+                        <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                        `
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                    res.send({"result":"Something wrong happened"})
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    res.send({"result":"Verification link send"});
+                }
+            });
+        }
+        else {
+            res.send({ "result": "No mail address found" });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.send({ result: "Something went wrong" });
+    }
+})
 app.get('/verify/', async (req, res) => {
     try {
         const _id = req.query.id.toString();
         const username = req.query.name.toString();
-        const details =await Register.findOne({_id:_id});
+        const details = await Register.findOne({ _id: _id });
         if (details.username == username) {
             const result = await Register.updateOne({ _id },
                 {
@@ -244,14 +277,14 @@ app.get('/verify/', async (req, res) => {
                         active: true
                     }
                 });
-            if(result){ 
+            if (result) {
                 res.status(201).render('success');
             }
-            else{
+            else {
                 res.send("Something went wrong");
             }
         }
-        else{
+        else {
             res.send("Invalid");
         }
     }
