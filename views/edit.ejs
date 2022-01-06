@@ -67,7 +67,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
             <div>
-                <a  href="/pag/<%=idName%>"
+                <a href="/pag/<%=idName%>"
                     style="float:right; font-weight: 400; text-decoration: none; color: rgba(255,255,255,.55);">Id-Page</a>
                 <a href="/profile"
                     style="float:right; font-weight: 400;margin-right: 3vw; text-decoration: none; color: rgba(255,255,255,.55);">Profile</a>
@@ -111,7 +111,8 @@
                                     placeholder="<%=coAuthor%>">
                             </div>
                             <div class="col-md-1 mb-2">
-                                <button class=" btn-primary" id="btn-1" onclick="coAuthorFun()" style="font-size:10px;">Change</button>
+                                <button class=" btn-primary" id="btn-1" onclick="coAuthorFun()"
+                                    style="font-size:10px;">Change</button>
                             </div>
                         </div>
                         <div class="row">
@@ -122,7 +123,8 @@
                                 <input type="number" class="form-control" id="limit" placeholder="<%=limit%>">
                             </div>
                             <div class="col-md-1 mb-2">
-                                <button class=" btn-primary" id="btn-2" onclick="limitFun()" style="font-size:10px;">Change</button>
+                                <button class=" btn-primary" id="btn-2" onclick="limitFun()"
+                                    style="font-size:10px;">Change</button>
                             </div>
                         </div>
                         <div class="row">
@@ -134,7 +136,8 @@
                                     placeholder="<%=deniedTo%>">
                             </div>
                             <div class="col-md-1 mb-2">
-                                <button class=" btn-primary" id="btn-3" onclick="deniedFun()" style="font-size:10px;">Change</button>
+                                <button class=" btn-primary" id="btn-3" onclick="deniedFun()"
+                                    style="font-size:10px;">Change</button>
                             </div>
                         </div>
                         <div class="row">
@@ -147,7 +150,8 @@
                                 </div>
                             </div>
                             <div class="col-md-1 mb-2">
-                                <button class=" btn-primary" id="btn-4" onclick="activeFun()" style="font-size:10px;">Change</button>
+                                <button class=" btn-primary" id="btn-4" onclick="activeFun()"
+                                    style="font-size:10px;">Change</button>
                             </div>
                         </div>
                     </div>
@@ -203,7 +207,7 @@
             alert('Fill carefully');
             return;
         }
-        else if (deniedToV.toString().indexOf('/') > -1 || deniedToV.toString().indexOf('?') > -1 || deniedToV.toString().indexOf('&') > -1){
+        else if (deniedToV.toString().indexOf('/') > -1 || deniedToV.toString().indexOf('?') > -1 || deniedToV.toString().indexOf('&') > -1) {
             alert('Invalid Username');
             return;
         }

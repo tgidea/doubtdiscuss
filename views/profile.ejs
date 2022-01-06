@@ -234,8 +234,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h6 class="text-muted f-w-400"><a href="/logout"
-                                                style="text-decoration: none;">Log Out</a></h6>
+                                        <h6 class="text-muted f-w-400"><a id="logout" href="#" style="text-decoration: none;">LogOut</a></h6>
                                     </div>
 
                                 </div>
@@ -278,7 +277,7 @@
         crossorigin="anonymous"></script>
     <!-- <script src="page.js"></script> -->
     <script>
-        const box=document.getElementById('idContent');
+        const box = document.getElementById('idContent');
         const showLink1 = function (str) {
             // console.log('str',str);
             let id1 = "";
@@ -300,10 +299,27 @@
             }
             link1 = `<a href="/id/${id1}">${id1}</a> `;
             link2 = `<a href="/id/${id2}">${id2}</a> `;
-            box.innerHTML=`${link1}<br>${link2} `
+            box.innerHTML = `${link1}<br>${link2} `
         }
         showLink1(box.innerText);
-        
+
+        const logout = document.getElementById('logout');
+        logout.addEventListener('click', async () => {
+            try {
+                await fetch('/logout')
+                    .then((res) => {
+                        // if (res.redirected == true) {
+                        window.location.reload();
+                        // return;
+                        // }
+                        // return res.json();
+                    })
+            }
+            catch (err) {
+                console.log(err);
+            }
+        })
+
     </script>
 </body>
 

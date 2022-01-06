@@ -14,7 +14,7 @@ const authpage=async(req,res,next)=>{
     }
     catch(err){
         const id = req.params.id.toString();
-        console.log('Token not present or faulty');
+        console.log('Token not present or faulty 3');
         res.status(201).render('page', { name:id ,link:"/",username:"Login"  });
     }
 }

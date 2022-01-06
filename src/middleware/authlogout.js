@@ -12,7 +12,7 @@ const authlogout=async(req,res,next)=>{
         next();
     }
     catch(err){
-        console.log('Token not present or faulty');
+        console.log('Token not present or faulty 2');
         res.status(500).send(`<h1>Logout fails. Please <a href="/">Login</a></h1>`);
     }
 }

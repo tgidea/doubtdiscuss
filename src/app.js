@@ -139,7 +139,7 @@ app.get('/logout', authlogout, async (req, res) => {
     try {
         res.clearCookie('jwt');
         const temp = await req.user.save();
-        res.sendFile(path.join(staticPath, 'login.html'));
+        res.redirect('/');
     }
     catch (err) {
         res.status(500).send(`<h1>Logout fails</h1>`);
