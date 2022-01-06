@@ -25,6 +25,10 @@ const register = new mongoose.Schema({
         type:String,
         required:true
     },
+    active:{
+        type:Boolean,
+        default:false
+    },
     tokens:[{
         token1:{
         type:String,
@@ -35,7 +39,7 @@ const register = new mongoose.Schema({
 register.methods.generateAuthToken= async function(){
     try{
         const token=jwt.sign({id:this._id.toString(),username:this.username.toString()},`${JWT_KEY}`);
-        this.tokens=this.tokens.concat({token1:token})
+        this.tokens=({token1:token});
         await this.save();
         // console.log(token);
         return token;

@@ -9,15 +9,17 @@ const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
 const authpageNoId = require('./middleware/authpageNoId');
 const authstart = require('./middleware/authstart');
-const profileAuth=require('./middleware/profileauth');
+const profileAuth = require('./middleware/profileauth');
+const nodemailer = require('nodemailer');
+const transporter = require('./functionality/nodemailer');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
-const editId=require('./functionality/editId');
-const IdData=require('./schema/idSchemaModal');
-const idSchema=require('./schema/idSchema');
-const deleteDocument=require('./functionality/deleteDocument');
+const editId = require('./functionality/editId');
+const IdData = require('./schema/idSchemaModal');
+const idSchema = require('./schema/idSchema');
+const deleteDocument = require('./functionality/deleteDocument');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
 const create_update_ip = require('./functionality/create_update_userkeyid');
@@ -25,9 +27,12 @@ const changeOption = require('./functionality/changeoption');
 const deleteCollection = require('./functionality/deleteColl');
 const deleteBlankCollection = require('./functionality/deleteemptycollections');
 const createLength = require('./functionality/generateid');
+const loginFun = require('./functionality/login');
 const Register = require('./registerSchema');
+const registerFun = require('./functionality/registerFun');
 const authlogout = require('./middleware/authlogout');
 require('dotenv').config({ path: __dirname + '/config.env' });
+const pass = process.env.PASS;
 const JWT_KEY = process.env.JWT_TOKEN;
 
 const app = express();
@@ -42,17 +47,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/' ,(req, res) => {
-    try{
-        const token=req.cookies.jwt;
-        const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
+app.get('/', (req, res) => {
+    try {
+        const token = req.cookies.jwt;
+        const verifyToken = jwt.verify(token, process.env.JWT_TOKEN);
         res.redirect('/main');
     }
-    catch(err){
-        try{
+    catch (err) {
+        try {
             res.sendFile(path.join(staticPath, 'login.html'));
         }
-        catch(error){
+        catch (error) {
             res.send("Something went wrong");
         }
     }
@@ -62,11 +67,11 @@ app.get('/' ,(req, res) => {
 app.get('/main', authstart, async (req, res) => {
     try {
         const username = req.username;
-        res.status(201).render('main', { username: username,link:"/profile" });
+        res.status(201).render('main', { username: username, link: "/profile" });
     }
     catch (err) {
         console.log('Invalid token');
-        res.status(201).render('main', { username: "Login",link:"/" });
+        res.status(201).render('main', { username: "Login", link: "/" });
     }
 
 });
@@ -93,75 +98,24 @@ app.get('/pag/', authpageNoId, async (req, res) => {
 
 });
 
-app.get('/profile',profileAuth,async(req,res)=>{
-    try{
-        const username=req.username;
-        const name=req.name;
-        const email=req.email;
-        const ids=req.ids;
-        res.status(201).render('profile',{username,name,email,ids});
+app.get('/profile', profileAuth, async (req, res) => {
+    try {
+        const username = req.username;
+        const name = req.name;
+        const email = req.email;
+        const ids = req.ids;
+        res.status(201).render('profile', { username, name, email, ids });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({status:"error",result:"Something went wrong"});
+        res.send({ status: "error", result: "Something went wrong" });
     }
 })
 
 
 app.post('/register/', async (req, res) => {
     try {
-        const username = req.body.username.toString().toLowerCase();
-        const name = req.body.name;
-        const email = req.body.email;
-        const password = req.body.password;
-        const confirmPassword = req.body.confirmPassword;
-        const createDocument = async () => {
-            const userinfor = new Register({
-                "username": username,
-                "name": name,
-                "email": email,
-                "password": password,
-                "confirmPassword": confirmPassword,
-            });
-            try {
-                const token = await userinfor.generateAuthToken();
-                const result = await userinfor.save();
-                // res.sendFile(path.join(staticPath, 'main.html'));
-                return "success";
-            }
-            catch (err) {
-                console.log('error in /register');
-                if (err.code == 11000) {
-                    if (err.keyValue.username != undefined) {
-                        res.send({ "result": "Username already registered" });
-                    }
-                    else if (err.keyValue.email != undefined) {
-                        res.send({ "result": "Email already registered. Please sign in" });
-                    }
-                }
-                else {
-                    res.send({ "result": "Please fill carefully" });
-                }
-                return "fail";
-            }
-        }
-        if (username == "" || name == "" || email == "" || password.length < 5 || name.length < 2) {
-            return res.json({ "result": "Please fill carefully" });
-        }
-        console.log(username.indexOf('/'),username.indexOf('?'),username.indexOf('&'));
-        if(username.indexOf('/')>-1 || username.indexOf('?')>-1 || username.indexOf('&')>-1 ){
-            return res.json({"result":"Please don't use characters like /?&"});
-        }
-        if (password === confirmPassword) {
-            const response = await createDocument();
-            if (response == "success") {
-                res.redirect('/');
-            }
-        }
-        else {
-            res.send({ "result": "Password not match" });
-        }
-
+        registerFun(req, res);
     }
     catch (err) {
         console.log(err);
@@ -172,44 +126,22 @@ app.post('/register/', async (req, res) => {
 
 app.post('/login/', async (req, res) => {
     try {
-        if (req.body.email == undefined || req.body.password == undefined) {
-            res.send({ "result": "Invalid login details" });
-        }
-        const email = req.body.email;
-        const password = req.body.password.toString();
-        //const Temp = Register.find({"email":email}) or 
-        const Temp = await Register.findOne({ "email": email })
-        if (Temp == undefined) {
-            res.send({ "result": "Invalid login details" });
-        }
-        else if (Temp.password == password) {
-            const token = await Temp.generateAuthToken();
-            // console.log(token);
-            res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 32400000000),
-                httpOnly: true
-            })
-                // res.status(201).sendFile(path.join(staticPath, 'main.html'));
-                .redirect('/main')
-        }
-        else {
-            res.send({ "result": "Invalid login details" });
-        }
+        loginFun(req, res);
     }
     catch (err) {
         console.log('Error occur in /login');
         console.log(err);
-        res.send({ "result": "Invalid login details" });
+        res.send({ "result": "Something went wrong" });
     }
 })
 
-app.get('/logout',authlogout,async(req,res)=>{
-    try{
+app.get('/logout', authlogout, async (req, res) => {
+    try {
         res.clearCookie('jwt');
-        const temp=await req.user.save();
+        const temp = await req.user.save();
         res.sendFile(path.join(staticPath, 'login.html'));
     }
-    catch(err){
+    catch (err) {
         res.status(500).send(`<h1>Logout fails</h1>`);
     }
 })
@@ -218,7 +150,7 @@ app.get('/newkey/', auth, async (req, res) => {
     try {
         var str1 = await createLength();
         const username = req.username;
-        create_update_ip(str1, username, res,req);
+        create_update_ip(str1, username, res, req);
     }
     catch (err) {
         console.log(err);
@@ -231,7 +163,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
         const usernam = req.username;
         const quest = req.params.quest.toString();
         //check if routed id present or not
-        post_question(stri, quest, usernam, res,req);
+        post_question(stri, quest, usernam, res, req);
     }
     catch (err) {
         console.log(err);
@@ -242,7 +174,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        await getdata(stri, res,req);
+        await getdata(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -250,62 +182,92 @@ app.get('/get/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/id/:idName',profileAuth,async(req,res)=>{
-    try{
-        const idName=req.params.idName;
-        const idInfo=await IdData.findOne({name:idName})
-        const username=idInfo.author;
-        const limit=idInfo.limit;
-        const coAuthor=idInfo.coAuthor.toString().trim();
-        const deniedTo=idInfo.deniedTo.toString().trim();
-        const active=idInfo.active;
-        if(coAuthor.indexOf(req.username)>-1 || idInfo.author==req.username){
-            res.render('edit',{idName,username,limit,coAuthor,deniedTo,active});
+app.get('/id/:idName', profileAuth, async (req, res) => {
+    try {
+        const idName = req.params.idName;
+        const idInfo = await IdData.findOne({ name: idName })
+        const username = idInfo.author;
+        const limit = idInfo.limit;
+        const coAuthor = idInfo.coAuthor.toString().trim();
+        const deniedTo = idInfo.deniedTo.toString().trim();
+        const active = idInfo.active;
+        if (coAuthor.indexOf(req.username) > -1 || idInfo.author == req.username) {
+            res.render('edit', { idName, username, limit, coAuthor, deniedTo, active });
         }
-        else{
+        else {
             res.send(`<h1>Page not found</h1>`);
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({result:"Something went wrong"});
+        res.send({ result: "Something went wrong" });
     }
 })
 
-app.get('/edit/:idName/:fun/:event/',profileAuth,async(req,res)=>{
-    try{
-        
-        const idName=req.params.idName;
-        const fun=req.params.fun;
-        const event=req.params.event;
+app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
+    try {
+
+        const idName = req.params.idName;
+        const fun = req.params.fun;
+        const event = req.params.event;
         let idInfo;
-        try{
-            idInfo=await IdData.findOne({name:idName});
+        try {
+            idInfo = await IdData.findOne({ name: idName });
         }
-        catch(err){
+        catch (err) {
             console.log(err);
-            res.send({result:"Not accessible"});
+            res.send({ result: "Not accessible" });
             return;
         }
-        if(req.ids.indexOf(idName)>-1 || idInfo.coAuthor.indexOf(req.username)>-1 ){
-            editId(res,req,idName,fun,event);
+        if (req.ids.indexOf(idName) > -1 || idInfo.coAuthor.indexOf(req.username) > -1) {
+            editId(res, req, idName, fun, event);
         }
-        else{
-            res.send({"result":"Please Contact Owner"});
+        else {
+            res.send({ "result": "Please Contact Owner" });
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({"result":"Something went wrong"});
+        res.send({ "result": "Something went wrong" });
     }
 })
+
+app.get('/verify/', async (req, res) => {
+    try {
+        const _id = req.query.id.toString();
+        const username = req.query.name.toString();
+        const details =await Register.findOne({_id:_id});
+        if (details.username == username) {
+            const result = await Register.updateOne({ _id },
+                {
+                    $set: {
+                        active: true
+                    }
+                });
+            if(result){ 
+                res.status(201).render('success');
+            }
+            else{
+                res.send("Something went wrong");
+            }
+        }
+        else{
+            res.send("Invalid");
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.send("Invalid");
+    }
+})
+
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     try {
         const stri = "" + req.params.coll_id;
         const questid = "" + req.params.quest_id;
         const opti = "" + req.params.opt;
         const status = "" + req.params.status;
-        changeOption(stri, questid, opti, status, res,req);
+        changeOption(stri, questid, opti, status, res, req);
     }
     catch (err) {
         console.log(err);
@@ -316,7 +278,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
 app.get('/delete/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        deleteCollection(stri, res,req);
+        deleteCollection(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -324,12 +286,12 @@ app.get('/delete/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/deleteDocument/:collection/:document',auth,async(req,res)=>{
+app.get('/deleteDocument/:collection/:document', auth, async (req, res) => {
     try {
         const collection = "" + req.params.collection;
-        const document=req.params.document;
-        const username=req.username;
-        deleteDocument(req, res,collection,document,username);
+        const document = req.params.document;
+        const username = req.username;
+        deleteDocument(req, res, collection, document, username);
     }
     catch (err) {
         console.log(err);
