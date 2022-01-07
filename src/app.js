@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
             res.sendFile(path.join(staticPath, 'login.html'));
         }
         catch (error) {
-            res.send("Something went wrong");
+            res.status(400).send("Something went wrong");
         }
     }
 });
@@ -108,7 +108,7 @@ app.get('/profile', profileAuth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ status: "error", result: "Something went wrong" });
+        res.status(400).render('error',{"error":`Something went wrong`});
     }
 })
 
@@ -120,7 +120,7 @@ app.post('/register/', async (req, res) => {
     catch (err) {
         console.log(err);
         console.log('Error in processing /register');
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 })
 
@@ -131,7 +131,7 @@ app.post('/login/', async (req, res) => {
     catch (err) {
         console.log('Error occur in /login');
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 })
 
@@ -142,7 +142,7 @@ app.get('/logout', authlogout, async (req, res) => {
         res.redirect('/');
     }
     catch (err) {
-        res.status(500).send(`<h1>Logout fails</h1>`);
+        res.status(400).render('error',{"error":`Logout fails`});
     }
 })
 
@@ -154,7 +154,7 @@ app.get('/newkey/', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 });
 app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
@@ -167,7 +167,7 @@ app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 });
 
@@ -178,7 +178,7 @@ app.get('/get/:id', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 });
 
@@ -195,12 +195,12 @@ app.get('/id/:idName', profileAuth, async (req, res) => {
             res.render('edit', { idName, username, limit, coAuthor, deniedTo, active });
         }
         else {
-            res.send(`<h1>Page not found</h1>`);
+            res.status(404).render('error',{"error":`Page not found`});
         }
     }
     catch (err) {
         console.log(err);
-        res.send({ result: "Something went wrong" });
+        res.status(404).render('error',{"error":`Something went wrong`});
     }
 })
 
@@ -216,53 +216,60 @@ app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
         }
         catch (err) {
             console.log(err);
-            res.send({ result: "Not accessible" });
+            res.status(403).send({ result: "Not accessible" });
             return;
         }
         if (req.ids.indexOf(idName) > -1 || idInfo.coAuthor.indexOf(req.username) > -1) {
             editId(res, req, idName, fun, event);
         }
         else {
-            res.send({ "result": "Please Contact Owner" });
+            res.status(400).render('error',{"error":`Please contact owner`});
         }
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).render('error',{"error":`Something went wrong`});
     }
 })
-app.get('/outverify/:email', async (req, res) => {
+app.get('/outverify', async (req, res) => {
     try {
-        const mail = req.params.email;
+        const mail = req.query.email;
+        const username = req.query.username;
         const details = await Register.findOne({ email: mail });
         if (details) {
-            const id = details._id;
-            const name=details.username;
-            var mailOptions = {
-                from: 'gyanexplode@gmail.com',
-                to: `${mail}`,
-                subject: 'Verify Account',
-                html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing our product</h4>
+            if (details.username == username) {
+                const id = details._id;
+                const name = details.username;
+                var mailOptions = {
+                    from: 'gyanexplode@gmail.com',
+                    to: `${mail}`,
+                    subject: 'Verify Account',
+                    html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
                         <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                         `
-            };
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                    res.send({"result":"Something wrong happened"})
-                } else {
-                    console.log('Email sent: ' + info.response);
-                    res.send({"result":"Verification link send"});
-                }
-            });
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                        res.status(400).send({ "result": "Something wrong happened" })
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                        res.status(201).render('success',{"text":`Verification email has been sent`});
+                    }
+                });
+            }
+            else{
+                throw('Not valid (in outverify)');
+            }
         }
         else {
-            res.send({ "result": "No mail address found" });
+            res.status(400).render('error',{"error":` username or email are not matching`});
+            
         }
     }
     catch (err) {
         console.log(err);
-        res.send({ result: "Something went wrong" });
+        res.status(500).render('error',{"error":` username or email are not matching`});
     }
 })
 app.get('/verify/', async (req, res) => {
@@ -278,19 +285,19 @@ app.get('/verify/', async (req, res) => {
                     }
                 });
             if (result) {
-                res.status(201).render('success');
+                res.status(201).render('success',{"text":`Your email has been verified succesfully`});
             }
             else {
-                res.send("Something went wrong");
+                res.status(400).render('error',{"error":`Something went wrong`});
             }
         }
         else {
-            res.send("Invalid");
+            res.status(400).render('error',{"error":`Invalid`});
         }
     }
     catch (err) {
         console.log(err);
-        res.send("Invalid");
+        res.status(500).render('error',{"error":`Invalid`});
     }
 })
 
@@ -304,7 +311,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(500).send({ "result": "Something went wrong" });
     }
 });
 
@@ -315,7 +322,7 @@ app.get('/delete/:id', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 });
 
@@ -328,7 +335,7 @@ app.get('/deleteDocument/:collection/:document', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 })
 
@@ -338,12 +345,12 @@ app.get('/deleteblankcollections/', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).render('error',{"error":`Something went wrong`});
     }
 });
 
 app.get("*", (req, res) => {
-    res.send(`<h2>Page not found</h2>`);
+    res.status(404).render('error',{"error":`Page not found`});
 });
 
 app.listen(port, () => {

@@ -40,15 +40,15 @@ const post_question = async (stri, quest, username,res,req) => {
                                             res.send({ "result": "success" });
                                         }
                                         else {
-                                            res.send({ "result": "Limit surpassed" });
+                                            res.status(500).send({ "result": "Limit surpassed" });
                                         }
                                     }
                                     else{
-                                        res.send({ "result": "Sorry,You don't have permission." });
+                                        res.status(403).send({ "result": "Sorry,You don't have permission." });
                                     }
                                 }
                                 else{
-                                    res.send({ "result": "All operations are stopped by owner." });
+                                    res.status(500).send({ "result": "All operations are stopped by owner." });
                                 }
                             }
                             catch (err) {
@@ -60,18 +60,18 @@ const post_question = async (stri, quest, username,res,req) => {
                     }
                     catch (err) {
                         // console.log('id not match');
-                        res.send({ "result": "Id not found" });
+                        res.status(500).send({ "result": "Id not found" });
                     }
                 }
                 else {
                     // console.log('id not match');
-                    res.send({ "result": "Id not found" });
+                    res.status(500).send({ "result": "Id not found" });
                 }
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(500).send({ "result": "Error occured" });
     }
 }
 module.exports = post_question;

@@ -19,23 +19,23 @@ const registerFun = async (req, res) => {
             try {
                 const token = await userinfor.generateAuthToken();
                 const result = await userinfor.save();
-                const mailTo=userinfor.email;
-                const name=userinfor.username;
-                const id=userinfor._id;
+                const mailTo = userinfor.email;
+                const name = userinfor.username;
+                const id = userinfor._id;
                 // console.log('result',result);
                 var mailOptions = {
                     from: 'gyanexplode@gmail.com',
                     to: `${mailTo}`,
                     subject: 'Verify Account',
-                    html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing our product</h4>
+                    html: `<h2>Welcome ${name}</h2><h4> Thanks for using doubtHelper.</h4>
                             <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                             `
                 };
-                transporter.sendMail(mailOptions, function(error, info){
+                transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
-                      console.log(error);
+                        console.log(error);
                     } else {
-                      console.log('Email sent: ' + info.response);
+                        console.log('Email sent: ' + info.response);
                     }
                 });
                 return "success";
@@ -44,10 +44,10 @@ const registerFun = async (req, res) => {
                 console.log('error in /register');
                 if (err.code == 11000) {
                     if (err.keyValue.username != undefined) {
-                        res.send({ "result": "Username already registered. If email not verified , please check your mail inbox history" });
+                        res.send({ "result": `Username already registered. If email not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
                     }
                     else if (err.keyValue.email != undefined) {
-                        res.send({ "result": "Email already registered. If not verified , please check your mail inbox history" });
+                        res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
                     }
                 }
                 else {
@@ -66,9 +66,9 @@ const registerFun = async (req, res) => {
         if (password === confirmPassword) {
             const response = await createDocument();
             if (response == "success") {
-                res.send({"result":"Please check your inbox and verify your email "}) 
+                res.send({ "result": "Please check your inbox and verify your email " })
             }
-    }
+        }
         else {
             res.send({ "result": "Password not match" });
         }
@@ -77,7 +77,7 @@ const registerFun = async (req, res) => {
     catch (err) {
         console.log(err);
         console.log('Error in processing /register');
-        res.send({ "result": "Something went wrong" });
+        res.status(500).send({ "result": "Something went wrong" });
     }
 }
 module.exports = registerFun;

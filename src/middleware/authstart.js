@@ -4,7 +4,7 @@ const path = require('path');
 const envPath = path.join(__dirname, '../config.env');
 require('dotenv').config({ path: envPath });
 const JWT_TOKEN=process.env.JWT_TOKEN;
-console.log(JWT_TOKEN);
+// console.log(JWT_TOKEN);
 const authstart=async(req,res,next)=>{
     try{
         const token=req.cookies.jwt;

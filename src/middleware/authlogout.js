@@ -13,7 +13,8 @@ const authlogout=async(req,res,next)=>{
     }
     catch(err){
         console.log('Token not present or faulty 2');
-        res.status(500).send(`<h1>Logout fails. Please <a href="/">Login</a></h1>`);
+        res.status(500).render('error',{"error":`Logout fails.`});
+        // res.status(500).send(`<h1>Logout fails. Please <a href="/">Login</a></h1>`);
     }
 }
 module.exports=authlogout;

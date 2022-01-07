@@ -40,29 +40,29 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                                         $set: { [`${opti}`]: 0 }
                                     })
                                 }
-                                res.send({ "result": "Success" });
+                                res.status(200).send({ "result": "Success" });
                             }
                             else {
-                                res.send({ "result": "Sorry,You don't have permission." });
+                                res.status(403).send({ "result": "Sorry,You don't have permission." });
                             }
                         }
                         else {
-                            res.send({ "result": "All operations are stopped by owner." });
+                            res.status(500).send({ "result": "All operations are stopped by owner." });
                         }
                     }
                     catch (err) {
                         console.log(err);
-                        res.send({ "result": "Error occur option not updated" })
+                        res.status(500).send({ "result": "Error occur option not updated" })
                     }
                 }
                 else {
-                    res.send({ "result": "Id not found" });
+                    res.status(400).send({ "result": "Id not found" });
                 }
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports = changeOption;

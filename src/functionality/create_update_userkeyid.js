@@ -82,12 +82,12 @@ const create_update_ip = async (str1, username, res,req) => {
                             }
                             catch (err) {
                                 console.log('err occured', err);
-                                res.send({ "result": "update Unsuccessful" })
+                                res.status(200).send({ "result": "update Unsuccessful" })
                             }
                         }
                         catch (err) {
                             console.log(err);
-                            res.send({ "result": `Error occured ` });
+                            res.status(400).send({ "result": `Error occured ` });
                         }
                     }
                 }
@@ -103,14 +103,14 @@ const create_update_ip = async (str1, username, res,req) => {
             catch (err) {
                 console.log(err);
                 console.log('username not found ');
-                res.send({ "result": "Something went wrong" });
+                res.status(400).send({ "result": "Something went wrong" });
             }
         }
         fun();
     }
     catch (err) {
         // console.log('id not match');
-        res.send({ "result": "Id not found" });
+        res.status(400).send({ "result": "Id not found" });
     }
 }
 module.exports = create_update_ip;

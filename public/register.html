@@ -95,7 +95,6 @@
     const result = document.getElementById('result');
     const clearResult = async () => {
       setTimeout(function () {
-        result.innerText = "";
         document.getElementById('registerBtn').disabled=false;
       }, 4000);
     }
@@ -159,7 +158,7 @@
               window.location.href = "/";
             }
             else {
-              result.innerText = data.result;
+              result.innerHTML = data.result;
               clearResult();
             }
           })

@@ -16,10 +16,10 @@ const editId = async (res, req, idName, fun, event) => {
                 try {
                     const limit = await IdData.updateOne({ name: idName },
                         { $set: { limit: event } });
-                    res.send({ "result": "Successfully changed" });
+                    res.status(200).send({ "result": "Successfully changed" });
                 }
                 catch (err) {
-                    res.send({ "result": "Error in updating Limit" });
+                    res.status(400).send({ "result": "Error in updating Limit" });
                 }
             }
             else if (fun == "deniedTo") {
@@ -38,10 +38,10 @@ const editId = async (res, req, idName, fun, event) => {
                             "deniedTo": ` ${recent} ${event} `
                         }
                     })
-                    res.send({ "result": "Done" });
+                    res.status(200).send({ "result": "Done" });
                 }
                 catch (err) {
-                    res.send({ "result": "Error in updating denied To" });
+                    res.status(400).send({ "result": "Error in updating denied To" });
                 }
             }
             else if (fun == "active") {
@@ -57,10 +57,10 @@ const editId = async (res, req, idName, fun, event) => {
                         }
                     })
                     // console.log('reach hrere');
-                    res.send({ "result": "Successfully updated" });
+                    res.status(200).send({ "result": "Successfully updated" });
                 }
                 catch (err) {
-                    res.send({ "result": "Error in updating active state" });
+                    res.status(200).send({ "result": "Error in updating active state" });
                 }
             }
             else if (fun == "coAuthor") {
@@ -80,10 +80,10 @@ const editId = async (res, req, idName, fun, event) => {
                                 "coAuthor": ` ${recent} ${event} `
                             }
                         })
-                        res.send({ "result": "Done" });
+                        res.status(200).send({ "result": "Done" });
                     }
                     catch (err) {
-                        res.send({ "result": "Error in updating coauthor" });
+                        res.status(400).send({ "result": "Error in updating coauthor" });
                     }
                 // }
                 // else{
@@ -91,16 +91,16 @@ const editId = async (res, req, idName, fun, event) => {
                 // }
             }
             else {
-                res.send({ "result": "Invalid Demand" });
+                res.status(400).send({ "result": "Invalid Demand" });
             }
         }
         else {
-            res.send({ "result": "Id not found" });
+            res.status(400).send({ "result": "Id not found" });
         }
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": err });
+        res.status(400).send({ "result": err });
     }
 }
 module.exports = editId;
