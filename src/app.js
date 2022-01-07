@@ -270,7 +270,7 @@ app.get('/outverify', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).render('error',{"error":` username or email are not matching`});
+        res.status(400).render('error',{"error":` username or email are not matching`});
     }
 })
 app.get('/verify/', async (req, res) => {
@@ -299,7 +299,7 @@ app.get('/verify/', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).render('error',{"error":`Invalid`});
+        res.status(400).render('error',{"error":`Invalid`});
     }
 })
 
@@ -313,7 +313,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 });
 
