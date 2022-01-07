@@ -3,6 +3,11 @@ const jwt=require('jsonwebtoken');
 require('dotenv').config({ path: __dirname + '/config.env' });
 const JWT_KEY=process.env.JWT_TOKEN;
 const register = new mongoose.Schema({
+    email:{
+        type:String,
+        required:true,
+        unique:true
+    },
     username:{
         type:String,
         required:true,
@@ -11,11 +16,6 @@ const register = new mongoose.Schema({
     name:{
         type:String,
         required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        unique:true
     },
     password:{
         type:String,

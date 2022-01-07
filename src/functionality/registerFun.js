@@ -4,15 +4,15 @@ const transporter = require('../functionality/nodemailer');
 const registerFun = async (req, res) => {
     try {
         const username = req.body.username.toString().toLowerCase();
-        const name = req.body.name;
         const email = req.body.email;
+        const name = req.body.name;
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
         const createDocument = async () => {
             const userinfor = new Register({
+                "email": email,
                 "username": username,
                 "name": name,
-                "email": email,
                 "password": password,
                 "confirmPassword": confirmPassword,
             });
@@ -41,13 +41,23 @@ const registerFun = async (req, res) => {
                 return "success";
             }
             catch (err) {
-                console.log('error in /register');
+                console.log('error in registerFun');
                 if (err.code == 11000) {
-                    if (err.keyValue.email != undefined) {
+                    const det = await Register.find({ email });
+                    if (det.length > 0) {
                         res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
                     }
-                    else if (err.keyValue.username != undefined) {
-                        res.send({ "result": `Username already registered.` });
+                    else {
+
+                        if (err.keyValue.email != undefined) {
+                            res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
+                        }
+                        else if (err.keyValue.username != undefined) {
+                            res.send({ "result": `Username already registered.` });
+                        }
+                        else {
+                            res.send({ "result": `Please fill carefully` });
+                        }
                     }
                 }
                 else {
