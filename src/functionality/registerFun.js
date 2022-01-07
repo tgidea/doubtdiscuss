@@ -3,9 +3,9 @@ const Register = require('../registerSchema')
 const transporter = require('../functionality/nodemailer');
 const registerFun = async (req, res) => {
     try {
-        const username = req.body.username.toString().toLowerCase();
+        const username = req.body.username.toString().toLowerCase().trim();
         const email = req.body.email;
-        const name = req.body.name;
+        const name = req.body.name.toLowerCase().trim();
         const password = req.body.password;
         const confirmPassword = req.body.confirmPassword;
         const createDocument = async () => {
@@ -68,6 +68,9 @@ const registerFun = async (req, res) => {
         }
         if (username == "" || name == "" || email == "" || password.length < 5 || name.length < 2) {
             return res.json({ "result": "Please fill carefully" });
+        }
+        if(username.indexOf(' ')>-1){
+            return res.json({"result":"Space not allowed in username"})
         }
         // console.log(username.indexOf('/'), username.indexOf('?'), username.indexOf('&'));
         if (username.indexOf('/') > -1 || username.indexOf('?') > -1 || username.indexOf('&') > -1) {
