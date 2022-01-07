@@ -108,7 +108,7 @@ app.get('/profile', profileAuth, async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).render('error',{"error":`Something went wrong`});
+        res.status(400).render('error', { "error": `Something went wrong` });
     }
 })
 
@@ -142,7 +142,7 @@ app.get('/logout', authlogout, async (req, res) => {
         res.redirect('/');
     }
     catch (err) {
-        res.status(400).render('error',{"error":`Logout fails`});
+        res.status(400).render('error', { "error": `Logout fails` });
     }
 })
 
@@ -195,12 +195,12 @@ app.get('/id/:idName', profileAuth, async (req, res) => {
             res.render('edit', { idName, username, limit, coAuthor, deniedTo, active });
         }
         else {
-            res.status(404).render('error',{"error":`Page not found`});
+            res.status(404).render('error', { "error": `Page not found` });
         }
     }
     catch (err) {
         console.log(err);
-        res.status(404).render('error',{"error":`Something went wrong`});
+        res.status(404).render('error', { "error": `Something went wrong` });
     }
 })
 
@@ -223,19 +223,19 @@ app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
             editId(res, req, idName, fun, event);
         }
         else {
-            res.status(400).render('error',{"error":`Please contact owner`});
+            res.status(400).render('error', { "error": `Please contact owner` });
         }
     }
     catch (err) {
         console.log(err);
-        res.status(400).render('error',{"error":`Something went wrong`});
+        res.status(400).render('error', { "error": `Something went wrong` });
     }
 })
 app.get('/outverify', async (req, res) => {
     try {
         const mail = req.query.email;
-        const username = req.query.username;
-        username=username.replace('%20'," ");
+        let username = req.query.username;
+        username = username.replace('%20', " ");
         const details = await Register.findOne({ email: mail });
         if (details) {
             if (details.username == username) {
@@ -255,31 +255,31 @@ app.get('/outverify', async (req, res) => {
                         res.status(400).send({ "result": "Something wrong happened" })
                     } else {
                         console.log('Email sent: ' + info.response);
-                        res.status(201).render('success',{"text":`Verification email has been sent`});
+                        res.status(201).render('success', { "text": `Verification email has been sent` });
                     }
                 });
             }
-            else{
-                throw('Not valid (in outverify)');
+            else {
+                throw ('Not valid (in outverify)');
             }
         }
         else {
-            res.status(400).render('error',{"error":` username or email are not matching`});
-            
+            res.status(400).render('error', { "error": ` username or email are not matching` });
+
         }
     }
     catch (err) {
         console.log(err);
-        res.status(400).render('error',{"error":` username or email are not matching`});
+        res.status(400).render('error', { "error": ` username or email are not matching` });
     }
 })
 app.get('/verify/', async (req, res) => {
     try {
         const _id = req.query.id.toString();
-        const username = req.query.name.toString();
-        username=username.replace('%20'," ");
+        let username = req.query.name.toString();
+        username = username.replace('%20', " ").toString().toLowerCase().trim();
         const details = await Register.findOne({ _id: _id });
-        if (details.username == username) {
+        if (details.username.toString().trim() == username.toString().trim()) {
             const result = await Register.updateOne({ _id },
                 {
                     $set: {
@@ -287,19 +287,20 @@ app.get('/verify/', async (req, res) => {
                     }
                 });
             if (result) {
-                res.status(201).render('success',{"text":`Your email has been verified succesfully`});
+                res.status(201).render('success', { "text": `Your email has been verified succesfully` });
             }
             else {
-                res.status(400).render('error',{"error":`Something went wrong`});
+                res.status(400).render('error', { "error": `Something went wrong` });
             }
         }
         else {
-            res.status(400).render('error',{"error":`Invalid`});
+
+            res.status(400).render('error', { "error": `Invalid` });
         }
     }
     catch (err) {
         console.log(err);
-        res.status(400).render('error',{"error":`Invalid`});
+        res.status(400).render('error', { "error": `Invalid` });
     }
 })
 
@@ -347,12 +348,12 @@ app.get('/deleteblankcollections/', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).render('error',{"error":`Something went wrong`});
+        res.status(400).render('error', { "error": `Something went wrong` });
     }
 });
 
 app.get("*", (req, res) => {
-    res.status(404).render('error',{"error":`Page not found`});
+    res.status(404).render('error', { "error": `Page not found` });
 });
 
 app.listen(port, () => {
