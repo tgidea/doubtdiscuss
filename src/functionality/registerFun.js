@@ -43,11 +43,11 @@ const registerFun = async (req, res) => {
             catch (err) {
                 console.log('error in /register');
                 if (err.code == 11000) {
-                    if (err.keyValue.username != undefined) {
-                        res.send({ "result": `Username already registered. If email not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
-                    }
-                    else if (err.keyValue.email != undefined) {
+                    if (err.keyValue.email != undefined) {
                         res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
+                    }
+                    else if (err.keyValue.username != undefined) {
+                        res.send({ "result": `Username already registered.` });
                     }
                 }
                 else {
