@@ -235,6 +235,7 @@ app.get('/outverify', async (req, res) => {
     try {
         const mail = req.query.email;
         const username = req.query.username;
+        username=username.replace('%20'," ");
         const details = await Register.findOne({ email: mail });
         if (details) {
             if (details.username == username) {
@@ -276,7 +277,7 @@ app.get('/verify/', async (req, res) => {
     try {
         const _id = req.query.id.toString();
         const username = req.query.name.toString();
-        username=username.replace('%20',"");
+        username=username.replace('%20'," ");
         const details = await Register.findOne({ _id: _id });
         if (details.username == username) {
             const result = await Register.updateOne({ _id },
