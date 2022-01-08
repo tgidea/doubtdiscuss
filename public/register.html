@@ -120,6 +120,7 @@
           !(code > 96 && code < 123)) { // lower alpha (a-z)      
             console.log(username);
             result.innerText = "Please use alphanumeric only";
+            clearResult();
             return;
         }
       }
