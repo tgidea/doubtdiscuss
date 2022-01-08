@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const Register=require('../registerSchema');
+const Register=require('../schema/registerSchema');
 const Client = require('../schema/usernewkey');
 const blockReq = require('../schema/blockReqschema');
 

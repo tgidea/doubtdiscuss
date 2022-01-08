@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const Register=require('../registerSchema');
+const Register=require('../schema/registerSchema');
 const path = require('path');
 const staticPath = path.join(__dirname, '.../public');
 const authpage=async(req,res,next)=>{

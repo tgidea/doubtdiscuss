@@ -34,7 +34,7 @@ const deleteCollection = async (stri, res, req) => {
                                                 res.send({ "result": "You are not owner/co-owner of this id" });
                                             }
                                             else {
-                                                res.send({ "result": "Can't delete till a limit reach" });
+                                                res.send({ "result": "Can't delete until limit reach" });
                                             }
                                         }
                                     }

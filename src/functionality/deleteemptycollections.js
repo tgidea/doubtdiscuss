@@ -59,13 +59,13 @@ const deleteBlankCollection = async (res) => {
                     }
 
                 }
-                res.send({ "result": reslt });
+                res.status(200).send({ "result": reslt });
 
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports=deleteBlankCollection;

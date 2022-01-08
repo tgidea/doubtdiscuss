@@ -28,7 +28,7 @@ const deleteCollection = require('./functionality/deleteColl');
 const deleteBlankCollection = require('./functionality/deleteemptycollections');
 const createLength = require('./functionality/generateid');
 const loginFun = require('./functionality/login');
-const Register = require('./registerSchema');
+const Register = require('./schema/registerSchema');
 const registerFun = require('./functionality/registerFun');
 const authlogout = require('./middleware/authlogout');
 require('dotenv').config({ path: __dirname + '/config.env' });
@@ -38,6 +38,7 @@ const JWT_KEY = process.env.JWT_TOKEN;
 const app = express();
 app.set('view engine', 'ejs');
 const port = process.env.PORT || 9001;
+const http = require('http').createServer(app);
 // mongodb://localhost:27017/expapp
 
 
@@ -364,6 +365,6 @@ app.get("*", (req, res) => {
     res.status(404).render('error', { "error": `Page not found` });
 });
 
-app.listen(port, () => {
+http.listen(port, () => {
     console.log('connection succesful');
 });

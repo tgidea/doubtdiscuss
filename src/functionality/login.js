@@ -1,5 +1,5 @@
 
-const Register = require('../registerSchema');
+const Register = require('../schema/registerSchema');
 
 const loginFun = async (req,res) => {
     try {

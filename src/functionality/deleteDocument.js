@@ -24,29 +24,29 @@ const deleteDocument = async (req, res, collection, document,username) => {
                         if(status.active){
                             if(result.owner==username){
                                 const deleted=await Temp.deleteOne({_id:document});
-                                res.send({ "result": "Success" });
+                                res.status(200).send({ "result": "Success" });
                             }
                             else{
-                                res.send({ "result": "You didn't post it." })
+                                res.status(400).send({ "result": "You didn't post it." })
                             }
                         }
                         else{
-                            res.send({"result":"This ids operation are closed by owner"})
+                            res.status(400).send({"result":"This ids operation are closed by owner"})
                         }
                     }
                     catch (err) {
                         console.log(err);
-                        res.send({ "result": "Something went wrong" })
+                        res.status(400).send({ "result": "Something went wrong" })
                     }
                 }
                 else {
-                    res.send({ "result": "Something went wrong" })
+                    res.status(400).send({ "result": "Something went wrong" })
                 }
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 }
 module.exports = deleteDocument;

@@ -97,7 +97,7 @@ const create_update_ip = async (str1, username, res,req) => {
                     dynamicSchema(str1);
                     createIdEdit(str1,username);
                     const obj = { "result": "success", "id": str1 };
-                    res.send(obj);
+                    res.status(200).send(obj);
                 }
             }
             catch (err) {

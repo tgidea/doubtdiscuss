@@ -47,12 +47,12 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                             }
                         }
                         else {
-                            res.status(500).send({ "result": "All operations are stopped by owner." });
+                            res.status(403).send({ "result": "All operations are stopped by owner." });
                         }
                     }
                     catch (err) {
                         console.log(err);
-                        res.status(500).send({ "result": "Error occur option not updated" })
+                        res.status(400).send({ "result": "Error occur option not updated" })
                     }
                 }
                 else {

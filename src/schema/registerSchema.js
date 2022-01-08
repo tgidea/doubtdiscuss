@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const jwt=require('jsonwebtoken');
-require('dotenv').config({ path: __dirname + '/config.env' });
+const path=require('path');
+const envPath=path.join(__dirname,'../config.env');
+require('dotenv').config({ path: envPath });
 const JWT_KEY=process.env.JWT_TOKEN;
 const register = new mongoose.Schema({
     email:{

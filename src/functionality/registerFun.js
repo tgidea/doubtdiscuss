@@ -1,5 +1,5 @@
 
-const Register = require('../registerSchema')
+const Register = require('../schema/registerSchema')
 const transporter = require('../functionality/nodemailer');
 const registerFun = async (req, res) => {
     try {
@@ -45,23 +45,23 @@ const registerFun = async (req, res) => {
                 if (err.code == 11000) {
                     const det = await Register.find({ email });
                     if (det.length > 0) {
-                        res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
+                        res.status(400).send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
                     }
                     else {
 
                         if (err.keyValue.email != undefined) {
-                            res.send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
+                            res.status(400).send({ "result": `Email already registered. If not verified , please check your mail inbox history or <a href="/outverify?email=${email}&username=${username}">verify </a> again` });
                         }
                         else if (err.keyValue.username != undefined) {
-                            res.send({ "result": `Username already registered.` });
+                            res.status(400).send({ "result": `Username already registered.` });
                         }
                         else {
-                            res.send({ "result": `Please fill carefully` });
+                            res.status(400).send({ "result": `Please fill carefully` });
                         }
                     }
                 }
                 else {
-                    res.send({ "result": "Please fill carefully" });
+                    res.status(400).send({ "result": "Please fill carefully" });
                 }
                 return "fail";
             }
@@ -87,18 +87,18 @@ const registerFun = async (req, res) => {
         if (password === confirmPassword) {
             const response = await createDocument();
             if (response == "success") {
-                res.send({ "result": "Please check your inbox and verify your email " })
+                res.status(200).send({ "result": "Please check your inbox and verify your email " })
             }
         }
         else {
-            res.send({ "result": "Password not match" });
+            res.status(400).send({ "result": "Password not match" });
         }
 
     }
     catch (err) {
         console.log(err);
         console.log('Error in processing /register');
-        res.status(500).send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });
     }
 }
 module.exports = registerFun;
