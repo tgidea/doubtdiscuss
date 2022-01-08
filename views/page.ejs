@@ -15,9 +15,61 @@
             color: white;
         }
 
+        .notification {
+            background-color: rgb(252, 252, 252);
+            color: rgb(248, 9, 109);
+            text-decoration: none;
+            padding: 6px 6px;
+            position: relative;
+            margin-right: 20px;
+            display: inline-block;
+            border-radius: 2px;
+        }
+
+        /* .notification:hover {
+            background: rgb(247, 196, 217);
+            color: rgb(248, 9, 109);
+        } */
+
+        .notification .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+
+        .not-content {
+            position: absolute;
+            z-index: 99;
+            max-width: 40vw;
+            max-height: 200px;
+            justify-content: center;
+            align-items: center;
+            left: 50%;
+            overflow: scroll;
+            background: rgb(253, 225, 237);
+            padding: 8px;
+            font-size: smaller;
+            display: none;
+        }
+
+        /* .notification:hover #not-content {
+            display: block;
+        } */
+        .visi {
+            display: block;
+        }
+
         @media screen and (min-width: 1px) {
             #items-list {
                 font-size: 3.4vw;
+            }
+
+            .notification {
+                margin-right: 2px;
             }
         }
 
@@ -37,12 +89,36 @@
             #items-list {
                 font-size: 1.6vw;
             }
+
+            .notification {
+                margin-right: 20px;
+            }
         }
 
         @media screen and (min-width: 1000px) {
             #items-list {
                 font-size: 1.2vw;
             }
+
+            .not-content {
+                position: absolute;
+                z-index: 99;
+                max-width: 30vw;
+                max-height: 300px;
+                justify-content: center;
+                align-items: center;
+                left: 13%;
+                overflow: scroll;
+                background: rgb(253, 225, 237);
+                padding: 8px;
+                font-size: smaller;
+                display: none;
+            }
+
+            .visi {
+                display: block;
+            }
+
         }
     </style>
     <title>DoubtHelper/page</title>
@@ -53,6 +129,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
         <div class="container-fluid">
             <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
+            <a href="#" id="notif-box" onclick="showNot()" class="notification">
+                <span>Inbox</span>
+                <span class="badge" id="count">0</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -74,7 +154,7 @@
                         <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="<%=link%>">
+                        <a class="nav-link " href="<%=link%>" id="namee">
                             <%=username%>
                         </a>
                     </li>
@@ -83,6 +163,9 @@
             </div>
         </div>
     </nav>
+    <div class="not-content">
+        empty
+    </div>
     <div class="container" id="notify" style="margin-top:20px; min-height: 30px;">
 
     </div>
@@ -114,10 +197,36 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
     <!-- <script src="page.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
 </body>
 <script>
+    const showNot = async () => {
+        console.log('her')
+        const notif = document.getElementsByClassName('not-content')[0];
+        notif.classList.toggle('visi');
+    }
     //************************************************************************* *//
-
+    const socket = io();
+    // const keyy=document.getElementById('key').value;
+    const nameee = document.getElementById('namee').innerText.trim();
+    const iddd = document.getElementById('key').value;
+    const notific=document.getElementsByClassName('not-content')[0];
+    socket.emit('joinId', { "name": `${nameee}`, "id": `${iddd}` });
+    socket.on('new', (message) => {
+        const count = document.getElementById('count');
+        const val = parseInt(count.innerText);
+        if (val == NaN) {
+            val = 0;
+        }
+        count.innerText = val + 1;
+        if(notific.innerText=='empty'){notific.innerText=""};
+        notific.innerHTML+= `<p >${message}</p>`;
+    });
+    socket.on('check', (message) => {
+        if(notific.innerText=='empty'){notific.innerText=""};
+        notific.innerHTML+= `<p >${message}</p>`;
+    });
+    //***********************************************************************
     const showData = (articles, keyvalue) => {
         const artitem = articles;
         //setting class in option using local storage
@@ -127,8 +236,8 @@
         }
         var items_list = document.getElementById('items-list');
         items_list.innerHTML = '';
-        if(artitem[0].length<1){
-            items_list.innerHTML+="<h6>Empty</h6>"
+        if (artitem[0].length < 1) {
+            items_list.innerHTML += "<h6>Empty</h6>"
         }
         var keyvalues = keyvalue;
 
@@ -162,8 +271,11 @@
             items_list.innerHTML += output;
         }
     }
+
     //************************************************************************* *//
     const getdata = async (check) => {
+        const count = document.getElementById('count').innerText=0;
+        const noti=document.getElementsByClassName('not-content')[0].innerHTML="empty"
         const notify = document.getElementById('notify');
         const fetching = async () => {
             const key = document.getElementById('key');
@@ -229,6 +341,7 @@
                     })
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
+                            socket.emit('update', "Question deleted");
                             notify.innerHTML = `<h6 style="color:green">Success </h6>`;
                             getdata("yes");
                         }
@@ -294,6 +407,7 @@
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
                             const dataAll = [data.alldata];
+                            socket.emit('update', "option change");
                             notify.innerHTML = `<h6 style="color:green">Success </h6>`;
                             getdata("yes");
                         }
@@ -345,6 +459,7 @@
                         .then(function (data) {
                             // console.log(data);
                             if (data.result == "success") {
+                                socket.emit('update', "question post");
                                 notify.innerHTML = `<h6 style="color:green">${data.result}</h6>`;
                                 getdata("yes");
                             }
@@ -390,6 +505,7 @@
                             })
                             .then(function (data) {
                                 if (data.result == 'success') {
+                                    socket.emit('update', "All quesiton deleted");
                                     // const dataAll = [data.alldata];
                                     notify.innerHTML = `<h6 style="color:green">Success </h6>`
                                     // notify.style.display = "block";
@@ -409,7 +525,7 @@
                         // notify.style.display = "block";
                     }
                 }
-                else{
+                else {
                     return;
                 }
             }

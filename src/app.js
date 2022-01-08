@@ -4,6 +4,7 @@ const bodyparser = require('body-parser');
 const path = require('path')
 const jwt = require('jsonwebtoken');
 const cookieparser = require('cookie-parser');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./users');
 const dynamicSchema = require('./schema/dynamicCollection');
 const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
@@ -31,6 +32,7 @@ const loginFun = require('./functionality/login');
 const Register = require('./schema/registerSchema');
 const registerFun = require('./functionality/registerFun');
 const authlogout = require('./middleware/authlogout');
+
 require('dotenv').config({ path: __dirname + '/config.env' });
 const pass = process.env.PASS;
 const JWT_KEY = process.env.JWT_TOKEN;
@@ -39,6 +41,7 @@ const app = express();
 app.set('view engine', 'ejs');
 const port = process.env.PORT || 9001;
 const http = require('http').createServer(app);
+const io = require('socket.io')(http)
 // mongodb://localhost:27017/expapp
 
 
@@ -237,8 +240,8 @@ app.get('/outverify', async (req, res) => {
     try {
         const mail = req.query.email;
         let username = req.query.username;
-        if (emailReq.mail == undefined || Date.now()-emailReq.mail>13200000) {
-            emailReq.mail=Date.now();
+        if (emailReq.mail == undefined || Date.now() - emailReq.mail > 13200000) {
+            emailReq.mail = Date.now();
             // console.log(emailReq);
             username = username.replace('%20', " ");
             const details = await Register.findOne({ email: mail });
@@ -273,7 +276,7 @@ app.get('/outverify', async (req, res) => {
 
             }
         }
-        else{
+        else {
             res.status(400).render('error', { "error": `Email already sended.` });
         }
     }
@@ -360,6 +363,51 @@ app.get('/deleteblankcollections/', async (req, res) => {
         res.status(400).render('error', { "error": `Something went wrong` });
     }
 });
+
+//Socket connections
+io.on('connection', socket => {
+    socket.on('joinId', async (userInfo) => {
+        try {
+            if (userInfo.name != 'Login' && userInfo.name != 'login') {
+                const user = userJoin(socket.id, userInfo.name, userInfo.id);
+                userInfo.name = userInfo.name.replace('/n', "").trim();
+                socket.join(user.room);
+                socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+    // Listen for chatMessage
+    socket.on('update', async (msg) => {
+        try {
+            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post') {
+                const user = getCurrentUser(socket.id);
+                socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+
+    // Runs when client disconnects
+    socket.on('disconnect', async () => {
+        try {
+            const user = userLeave(socket.id);
+            // console.log('on disconnect', user);
+            if (user != undefined) {
+                socket.broadcast.to(user.room).emit('check', `${user.name} has left`);
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+});
+
+
 
 app.get("*", (req, res) => {
     res.status(404).render('error', { "error": `Page not found` });
