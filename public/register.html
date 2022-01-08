@@ -101,7 +101,7 @@
     const form = document.getElementById('reg-form');
     form.addEventListener('submit', registerUser);
 
-    const registerUser=async(event)=>{
+    async function registerUser(event){
       event.preventDefault();
       const username = document.getElementById('username').value.toLowerCase().trim();
       const name = document.getElementById('name').value.trim();
