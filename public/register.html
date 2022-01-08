@@ -95,29 +95,41 @@
     const result = document.getElementById('result');
     const clearResult = async () => {
       setTimeout(function () {
-        document.getElementById('registerBtn').disabled=false;
+        document.getElementById('registerBtn').disabled = false;
       }, 4000);
     }
     const form = document.getElementById('reg-form');
     form.addEventListener('submit', registerUser);
 
-    async function registerUser(event) {
+    const registerUser=async(event)=>{
       event.preventDefault();
       const username = document.getElementById('username').value.toLowerCase().trim();
-      const name = document.getElementById('name').value;
+      const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value;
       const password = document.getElementById('pass').value;
       const confirmPassword = document.getElementById('confpass').value;
-      const btn= document.getElementById('registerBtn');
-      result.style.color="green";
-      result.innerText="Submitting...";
-      btn.disabled=true;
-      if (username == "" || username.indexOf(" ")>-1 || name == "" || name.length < 2 || email == "" || password != confirmPassword || password.length < 5) {
+      const btn = document.getElementById('registerBtn');
+      result.style.color = "green";
+      result.innerText = "Submitting...";
+      btn.disabled = true;
+
+      for (var i = 0, len = username.length; i < len; i++) {
+        code = username.charCodeAt(i);
+        if (!(code > 47 && code < 58) && // numeric (0-9)
+          !(code > 64 && code < 91) && // upper alpha (A-Z)
+          !(code > 96 && code < 123)) { // lower alpha (a-z)      
+        }
+        result.innerText = "Please use alphanumeric only";
+        return;
+      }
+
+
+      if (username == "" || username.indexOf(" ") > -1 || name == "" || name.length < 2 || email == "" || password != confirmPassword || password.length < 5) {
         if (username == "" || name == "") {
           result.innerText = "Please fill carefully";
         }
-        else if(username.toLowerCase().trim().indexOf(" ")>-1){
-          result.innerText="Space not allowed in username";
+        else if (username.toLowerCase().trim().indexOf(" ") > -1) {
+          result.innerText = "Space not allowed in username";
         }
         else if (name.length < 2) {
           result.innerText = "Name length is less than 2";

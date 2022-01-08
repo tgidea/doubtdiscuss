@@ -66,6 +66,14 @@ const registerFun = async (req, res) => {
                 return "fail";
             }
         }
+        for (var i = 0, len = username.length; i < len; i++) {
+            code = username.charCodeAt(i);
+            if (!(code > 47 && code < 58) && // numeric (0-9)
+              !(code > 64 && code < 91) && // upper alpha (A-Z)
+              !(code > 96 && code < 123)) { // lower alpha (a-z)      
+            }
+            return res.json({"result":"Please use alphanumeric only"});
+          }
         if (username == "" || name == "" || email == "" || password.length < 5 || name.length < 2) {
             return res.json({ "result": "Please fill carefully" });
         }

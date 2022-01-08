@@ -231,41 +231,49 @@ app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
         res.status(400).render('error', { "error": `Something went wrong` });
     }
 })
+const emailReq = {};
 app.get('/outverify', async (req, res) => {
     try {
         const mail = req.query.email;
         let username = req.query.username;
-        username = username.replace('%20', " ");
-        const details = await Register.findOne({ email: mail });
-        if (details) {
-            if (details.username == username) {
-                const id = details._id;
-                const name = details.username;
-                var mailOptions = {
-                    from: 'gyanexplode@gmail.com',
-                    to: `${mail}`,
-                    subject: 'Verify Account',
-                    html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
+        if (emailReq.mail == undefined || Date.now()-emailReq.mail>13200000) {
+            emailReq.mail=Date.now();
+            // console.log(emailReq);
+            username = username.replace('%20', " ");
+            const details = await Register.findOne({ email: mail });
+            if (details) {
+                if (details.username == username) {
+                    const id = details._id;
+                    const name = details.username;
+                    var mailOptions = {
+                        from: 'gyanexplode@gmail.com',
+                        to: `${mail}`,
+                        subject: 'Verify Account',
+                        html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
                         <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                         `
-                };
-                transporter.sendMail(mailOptions, function (error, info) {
-                    if (error) {
-                        console.log(error);
-                        res.status(400).send({ "result": "Something wrong happened" })
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                        res.status(201).render('success', { "text": `Verification email has been sent` });
-                    }
-                });
+                    };
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                            res.status(400).send({ "result": "Something wrong happened" })
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                            res.status(201).render('success', { "text": `Verification email has been sent` });
+                        }
+                    });
+                }
+                else {
+                    throw ('Not valid (in outverify)');
+                }
             }
             else {
-                throw ('Not valid (in outverify)');
+                res.status(400).render('error', { "error": ` username or email are not matching` });
+
             }
         }
-        else {
-            res.status(400).render('error', { "error": ` username or email are not matching` });
-
+        else{
+            res.status(400).render('error', { "error": `Email already sended.` });
         }
     }
     catch (err) {
