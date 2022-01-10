@@ -340,6 +340,14 @@
         count.innerText = val + 1;
         notific.innerHTML += `<p class="msg">${message}</p>`;
     });
+    socket.on('refresh',(msg)=>{
+        const notify = document.getElementById('notify');
+        notify.innerHTML = `<h6 style="color:red">Sorry, connection broke. Refreshing in 2 seconds.</h6>`;
+        setTimeout(function(){
+            window.location.reload();
+        },2000)
+        // window.location.reload();
+    });
     //************************************************************************* *//
     const deleteDoc = async (list) => {
         const coll = list[1];

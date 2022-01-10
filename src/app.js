@@ -383,13 +383,14 @@ io.on('connection', socket => {
     socket.on('update', async (msg) => {
         try {
             if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post') {
+                console.log('socket id',socket.id);
                 const user = getCurrentUser(socket.id);
                 console.log('app.js wala',user);
-                if (user != undefined) {
+                if (user != undefined && user.room != undefined) {
                     socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
                 }
                 else{
-                    socket.broadcast.to(user.room).emit('new', `${msg}`);
+                    socket.emit('refresh',"please refresh");
                 }
             }
         }
