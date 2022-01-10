@@ -365,6 +365,16 @@ app.get('/deleteblankcollections/', async (req, res) => {
 });
 
 //Socket connections
+const sendChecker=async()=>{
+    try{   
+        setTimeout(sendChecker,9000);
+        io.sockets.emit('active',{count:1});
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
         try {
@@ -412,6 +422,8 @@ io.on('connection', socket => {
             console.log(err);
         }
     });
+    socket.on('activeYes',async(msg)=>{
+    })
 });
 
 

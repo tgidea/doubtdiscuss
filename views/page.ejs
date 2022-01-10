@@ -287,9 +287,9 @@
                         .then(function (data) {
                             if (data.result == 'success') {
                                 const dataAll = [data.alldata];
-                                if (check == "yes") {
-                                    notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                                }
+                                // if (check == "yes") {
+                                    notify.innerHTML = "";
+                                // }
                                 showData(dataAll, keyvalue);
                             }
                             else {
@@ -310,9 +310,7 @@
             }
         }
         await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 4000);
+        
     }
 
     //************************************************************************* *//
@@ -348,6 +346,9 @@
         },2000)
         // window.location.reload();
     });
+    socket.on('active',(count)=>{
+        socket.emit('activeYes',"active");
+    })
     //************************************************************************* *//
     const deleteDoc = async (list) => {
         const coll = list[1];
