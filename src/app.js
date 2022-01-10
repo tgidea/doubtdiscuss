@@ -371,7 +371,7 @@ io.on('connection', socket => {
             if (userInfo.name != 'Login' && userInfo.name != 'login') {
                 const user = userJoin(socket.id, userInfo.name, userInfo.id);
                 userInfo.name = userInfo.name.replace('/n', "").trim();
-                socket.join(user.room);                
+                socket.join(user.room);
                 socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
             }
         }
@@ -384,7 +384,13 @@ io.on('connection', socket => {
         try {
             if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post') {
                 const user = getCurrentUser(socket.id);
-                socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                console.log('app.js wala',user);
+                if (user != undefined) {
+                    socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                }
+                else{
+                    socket.broadcast.to(user.room).emit('new', `${msg}`);
+                }
             }
         }
         catch (err) {
