@@ -342,7 +342,7 @@
     });
     socket.on('refresh',(msg)=>{
         const notify = document.getElementById('notify');
-        notify.innerHTML = `<h6 style="color:red">Sorry, connection broke. Refreshing in 2 seconds.</h6>`;
+        alert(`Sorry, connection broke. Refreshing in 2 seconds.`);
         setTimeout(function(){
             window.location.reload();
         },2000)
