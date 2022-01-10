@@ -371,7 +371,7 @@ io.on('connection', socket => {
             if (userInfo.name != 'Login' && userInfo.name != 'login') {
                 const user = userJoin(socket.id, userInfo.name, userInfo.id);
                 userInfo.name = userInfo.name.replace('/n', "").trim();
-                socket.join(user.room);
+                socket.join(user.room);                
                 socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
             }
         }

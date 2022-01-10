@@ -42,6 +42,8 @@
         }
 
         .not-content {
+            display: flex;
+            flex-direction: column-reverse;
             position: absolute;
             z-index: 99;
             max-width: 40vw;
@@ -56,11 +58,19 @@
             display: none;
         }
 
+        .msg {
+            background-color: rgb(248, 9, 109);
+            color: white;
+            padding: 8px;
+            border-radius: 20px
+        }
+
         /* .notification:hover #not-content {
             display: block;
         } */
         .visi {
-            display: block;
+            display: flex;
+            flex-direction: column-reverse;
         }
 
         @media screen and (min-width: 1px) {
@@ -116,7 +126,8 @@
             }
 
             .visi {
-                display: block;
+                display: flex;
+                flex-direction: column-reverse;
             }
 
         }
@@ -164,7 +175,7 @@
         </div>
     </nav>
     <div class="not-content">
-        empty
+        Nothing down!
     </div>
     <div class="container" id="notify" style="margin-top:20px; min-height: 30px;">
 
@@ -175,12 +186,12 @@
                 <input type="text" class="form-control" id="key" placeholder="Enter your Id" aria-label="Enter Your Id"
                     aria-describedby="btn2" value="<%=name%>">
                 <textarea class="form-control" id="quest" placeholder="Enter Question" rows="2"></textarea>
-                <div style="display: flex;">
-                    <button onclick="postdata()" class="btn btn-success" id="btn3"
-                        style="margin-right: 5%;">Post</button>
-                    <button onclick="getdata('yes')" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
-                        content</button>
-                    <button onclick="deletedata()" class="btn btn-success" id="btn5">Delete</button>
+                <div style="position: relative;">
+
+                    <button onclick="postdata()" class="btn btn-success" id="btn3" style="width: 67%;">Post</button>
+                    <!-- <button onclick="getdata('yes')" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
+                        content</button> -->
+                    <button style="width: 30%;" onclick="deletedata()" class="btn btn-success" id="btn5">Delete</button>
                 </div>
             </div>
         </div>
@@ -201,31 +212,10 @@
 </body>
 <script>
     const showNot = async () => {
-        console.log('her')
         const notif = document.getElementsByClassName('not-content')[0];
         notif.classList.toggle('visi');
+        document.getElementById('count').innerText = 0;
     }
-    //************************************************************************* *//
-    const socket = io();
-    // const keyy=document.getElementById('key').value;
-    const nameee = document.getElementById('namee').innerText.trim();
-    const iddd = document.getElementById('key').value;
-    const notific=document.getElementsByClassName('not-content')[0];
-    socket.emit('joinId', { "name": `${nameee}`, "id": `${iddd}` });
-    socket.on('new', (message) => {
-        const count = document.getElementById('count');
-        const val = parseInt(count.innerText);
-        if (val == NaN) {
-            val = 0;
-        }
-        count.innerText = val + 1;
-        if(notific.innerText=='empty'){notific.innerText=""};
-        notific.innerHTML+= `<p >${message}</p>`;
-    });
-    socket.on('check', (message) => {
-        if(notific.innerText=='empty'){notific.innerText=""};
-        notific.innerHTML+= `<p >${message}</p>`;
-    });
     //***********************************************************************
     const showData = (articles, keyvalue) => {
         const artitem = articles;
@@ -252,21 +242,21 @@
             <div style="border-bottom : 1px solid green;">
                 <div class="card-body "  >
                     <details > 
-                            <summary></summary>
-                            <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
-                                <p>${artitem[0][i].owner} </p>
-                                <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)" id="delete" style="position:absolute;right:8vw"> <i class="fa fa-trash"></i></button>
+                        <summary></summary>
+                        <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
+                            <p>${artitem[0][i].owner} </p>
+                            <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)" id="delete" style="position:absolute;right:8vw"> <i class="fa fa-trash"></i></button>
                             </div>
-                    </details>
-                <div>
-                <p class="card-text card-header "><span  style=" position:absolute; left:2vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
-                <div class=" mt-2" style="display:flex;justify-content:center;" >
-                    <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
-                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
-                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
-                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
-                </div>
-            </div>`
+                            </details>
+                            <div>
+                                <p class="card-text card-header "><span  style=" position:absolute; left:2vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
+                                <div class=" mt-2" style="display:flex;justify-content:center;" >
+                                    <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
+                                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
+                                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
+                                    <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
+                                    </div>
+                                    </div>`
 
             items_list.innerHTML += output;
         }
@@ -274,8 +264,6 @@
 
     //************************************************************************* *//
     const getdata = async (check) => {
-        const count = document.getElementById('count').innerText=0;
-        const noti=document.getElementsByClassName('not-content')[0].innerHTML="empty"
         const notify = document.getElementById('notify');
         const fetching = async () => {
             const key = document.getElementById('key');
@@ -328,6 +316,31 @@
     }
 
     //************************************************************************* *//
+    const socket = io();
+    const nameee = document.getElementById('namee').innerText.trim();
+    const iddd = document.getElementById('key').value;
+    const notific = document.getElementsByClassName('not-content')[0];
+    const count = document.getElementById('count');
+    socket.emit('joinId', { "name": `${nameee}`, "id": `${iddd}` });
+    getdata("no");
+    socket.on('new', (message) => {
+        const val = parseInt(count.innerText);
+        if (val == NaN) {
+            val = 0;
+        }
+        count.innerText = val + 1;
+        notific.innerHTML += `<p class="msg">${message}</p>`;
+        getdata("no");
+    });
+    socket.on('check', (message) => {
+        const val = parseInt(count.innerText);
+        if (val == NaN) {
+            val = 0;
+        }
+        count.innerText = val + 1;
+        notific.innerHTML += `<p class="msg">${message}</p>`;
+    });
+    //************************************************************************* *//
     const deleteDoc = async (list) => {
         const coll = list[1];
         const doc = list[2];
@@ -342,7 +355,7 @@
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
                             socket.emit('update', "Question deleted");
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`;
+                            notify.innerHTML = "";
                             getdata("yes");
                         }
                         else {
@@ -352,9 +365,9 @@
                     }).catch((err) => {
                         notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`
                     })
-                setTimeout(() => {
-                    notify.innerText = "";
-                }, 4000);
+                // setTimeout(() => {
+                //     notify.innerText = "";
+                // }, 4000);
             }
             catch (err) {
                 console.log(err);
@@ -408,8 +421,8 @@
                         if (data.result == 'Success' || data.result == 'success') {
                             const dataAll = [data.alldata];
                             socket.emit('update', "option change");
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`;
-                            getdata("yes");
+                            notify.innerHTML = "";
+                            getdata("no");
                         }
                         else {
                             notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
@@ -423,9 +436,9 @@
                 console.log(err);
                 notify.innerHTML = `<h6 style="color:red">Check Network or contact us. </h6>`
             }
-            setTimeout(() => {
-                notify.innerText = "";
-            }, 4000);
+            // setTimeout(() => {
+            //     notify.innerText = "";
+            // }, 4000);
         }
     }
     //************************************************************************* *//
@@ -460,8 +473,8 @@
                             // console.log(data);
                             if (data.result == "success") {
                                 socket.emit('update', "question post");
-                                notify.innerHTML = `<h6 style="color:green">${data.result}</h6>`;
-                                getdata("yes");
+                                notify.innerHTML = "";
+                                getdata("no");
                             }
                             else {
                                 notify.innerHTML = `<h6 style="color:red">${data.result}</h6>`;
@@ -479,9 +492,6 @@
             quest.value = '';
         }
         await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 4000);
     }
     // **********************************************************************
 
@@ -507,9 +517,9 @@
                                 if (data.result == 'success') {
                                     socket.emit('update', "All quesiton deleted");
                                     // const dataAll = [data.alldata];
-                                    notify.innerHTML = `<h6 style="color:green">Success </h6>`
+                                    notify.innerHTML = "";
                                     // notify.style.display = "block";
-                                    getdata("yes");
+                                    getdata("no");
                                 }
                                 else {
                                     notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
@@ -535,9 +545,6 @@
             }
         }
         await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 1000);
     }
 
 
