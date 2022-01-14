@@ -9,7 +9,7 @@ function userJoin(id, name, room) {
 // Get current user
 function getCurrentUser(id) {
   const t=users.find(user => user.id === id);
-  console.log('users.js wala ',t);
+  // console.log('users.js wala ',t);
   return t;
 }
 
@@ -31,10 +31,10 @@ function getRoomUsers(room) {
 
 function deleteUsers(){
   let n=users.length;
-  console.log(n);
+  // console.log(n);
   for(var i=0;i<n;i++){
     if((Date.now()-users[i].dat)>200000){
-      console.log(users[i]);
+      // console.log(users[i]);
       // users.splice(i, 1)[0];
     }
   }

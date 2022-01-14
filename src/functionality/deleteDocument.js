@@ -22,15 +22,15 @@ const deleteDocument = async (req, res, collection, document,username) => {
                         const result = await Temp.findOne({ _id: document });
                         const status = await IdData.findOne({ name: collection });
                         if(status.active){
-                            if(result.owner==username){
-                                const deleted=await Temp.deleteOne({_id:document});
+                            if(result.owner==username || status.author==username || status.coAuthor.indexOf(username)>-1){
+                                const deleted=await Temp.deleteOne({_id:document});                                
                                 res.status(200).send({ "result": "Success" });
                             }
-                            else{
+                            else{                                
                                 res.status(400).send({ "result": "You didn't post it." })
                             }
                         }
-                        else{
+                        else{                            
                             res.status(400).send({"result":"This ids operation are closed by owner"})
                         }
                     }

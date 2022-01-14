@@ -161,20 +161,31 @@ app.get('/newkey/', auth, async (req, res) => {
         res.status(400).send({ "result": "Something went wrong" });
     }
 });
-app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
-    try {
-        const stri = "" + req.params.uniq_id;
-        const usernam = req.username;
-        const quest = req.params.quest.toString();
-        //check if routed id present or not
-        post_question(stri, quest, usernam, res, req);
+// app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
+//     try {
+//         const stri = "" + req.params.uniq_id;
+//         const username = req.username;
+//         const quest = req.params.quest.toString();
+//         //check if routed id present or not
+//         post_question(stri, quest, username, res, req);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(400).send({ "result": "Something went wrong" });
+//     }
+// });
+app.post('/postQues',auth,async(req,res)=>{
+    try{
+        const stri=req.body.keyvalue.toString();
+        const username=req.username;
+        const quest =req.body.question;
+        post_question(stri, quest, username, res, req);
     }
-    catch (err) {
+    catch(err){
         console.log(err);
-        res.status(400).send({ "result": "Something went wrong" });
+        res.status(400).send({ "result": "Something went wrong" });   
     }
-});
-
+})
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
@@ -392,10 +403,8 @@ io.on('connection', socket => {
     // Listen for chatMessage
     socket.on('update', async (msg) => {
         try {
-            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post') {
-                console.log('socket id',socket.id);
+            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' ||msg=='All quesiton deleted') {
                 const user = getCurrentUser(socket.id);
-                console.log('app.js wala',user);
                 if (user != undefined && user.room != undefined) {
                     socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
                 }
