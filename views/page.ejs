@@ -452,12 +452,12 @@
 
     const postQues = async (e) => {
         e.preventDefault();
-        console.log(e,e.target.id);
         const notify = document.getElementById('notify');
         const key = document.getElementById('key');
         const keyvalue = key.value;
         const quest = document.getElementById('quest');
-        var question = quest.value.trim();
+        var question = quest.value.toString();
+        question = question.replace(/\n/g, "<br>")
         if (keyvalue == '' || question == '') {
             notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`;
             return;

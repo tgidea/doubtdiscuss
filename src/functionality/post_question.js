@@ -4,9 +4,10 @@ const IdData=require('../schema/idSchemaModal');
 const idSchema=require('../schema/idSchema');    
 
 const post_question = async (stri, quest, username,res,req) => {
-    const user=req.username;
+    
     //check if routed id present or not
     try {
+        let user=req.username;
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
