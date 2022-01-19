@@ -51,14 +51,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/', async(req, res) => {
+app.get('/', async (req, res) => {
     try {
         const token = req.cookies.jwt;
         const verifyToken = jwt.verify(token, process.env.JWT_TOKEN);
-        if(token!=undefined){
+        if (token != undefined) {
             res.redirect('/main');
         }
-        else{
+        else {
             res.sendFile(path.join(staticPath, 'login.html'));
         }
     }
@@ -179,16 +179,16 @@ app.get('/newkey/', auth, async (req, res) => {
 //         res.status(400).send({ "result": "Something went wrong" });
 //     }
 // });
-app.post('/postQues',auth,async(req,res)=>{
-    try{
-        const stri=req.body.keyvalue.toString();
-        const username=req.username;
-        const quest =req.body.question;
+app.post('/postQues', auth, async (req, res) => {
+    try {
+        const stri = req.body.keyvalue.toString();
+        const username = req.username;
+        const quest = req.body.question;
         post_question(stri, quest, username, res, req);
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(400).send({ "result": "Something went wrong" });   
+        res.status(400).send({ "result": "Something went wrong" });
     }
 })
 app.get('/get/:id', auth, async (req, res) => {
@@ -256,36 +256,42 @@ app.get('/outverify', async (req, res) => {
     try {
         const mail = req.query.email;
         let username = req.query.username;
-        if (emailReq.mail == undefined || Date.now() - emailReq.mail > 13200000) {
-            emailReq.mail = Date.now();
+        if (emailReq[`${mail}`] == undefined || Date.now() - emailReq[`${mail}`] > 13200000) {
+            
             // console.log(emailReq);
             username = username.replace('%20', " ");
             const details = await Register.findOne({ email: mail });
             if (details) {
-                if (details.username == username) {
-                    const id = details._id;
-                    const name = details.username;
-                    var mailOptions = {
-                        from: 'gyanexplode@gmail.com',
-                        to: `${mail}`,
-                        subject: 'Verify Account',
-                        html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
-                        <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                emailReq[`${mail}`] = Date.now();
+                // if (details.username == username) {
+                const id = details._id;
+                const name = details.username;
+                var mailOptions = {
+                    from: 'gyanexplode@gmail.com',
+                    to: `${mail}`,
+                    subject: 'Verify Account',
+                    html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
+                        <p>Please link <a href="https://doubthelper.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                         `
-                    };
-                    transporter.sendMail(mailOptions, function (error, info) {
-                        if (error) {
-                            console.log(error);
-                            res.status(400).send({ "result": "Something wrong happened" })
-                        } else {
-                            console.log('Email sent: ' + info.response);
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                        res.status(400).send({ "result": "Something wrong happened" });
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                        if (info) {
                             res.status(201).render('success', { "text": `Verification email has been sent` });
                         }
-                    });
-                }
-                else {
-                    throw ('Not valid (in outverify)');
-                }
+                        else {
+                            res.status(400).send({ "result": "Something wrong happened" });
+                        }
+                    }
+                });
+                // }
+                // else {
+                //     throw ('Not valid (in outverify)');
+                // }
             }
             else {
                 res.status(400).render('error', { "error": ` username or email are not matching` });
@@ -381,12 +387,12 @@ app.get('/deleteblankcollections/', async (req, res) => {
 });
 
 //Socket connections
-const sendChecker=async()=>{
-    try{   
-        setTimeout(sendChecker,9000);
-        io.sockets.emit('active',{count:1});
+const sendChecker = async () => {
+    try {
+        setTimeout(sendChecker, 9000);
+        io.sockets.emit('active', { count: 1 });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
@@ -408,13 +414,13 @@ io.on('connection', socket => {
     // Listen for chatMessage
     socket.on('update', async (msg) => {
         try {
-            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' ||msg=='All quesiton deleted') {
+            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
                 const user = getCurrentUser(socket.id);
                 if (user != undefined && user.room != undefined) {
                     socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
                 }
-                else{
-                    socket.emit('refresh',"please refresh");
+                else {
+                    socket.emit('refresh', "please refresh");
                 }
             }
         }
@@ -436,7 +442,7 @@ io.on('connection', socket => {
             console.log(err);
         }
     });
-    socket.on('activeYes',async(msg)=>{
+    socket.on('activeYes', async (msg) => {
     })
 });
 

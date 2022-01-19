@@ -28,20 +28,22 @@ const registerFun = async (req, res) => {
                     to: `${mailTo}`,
                     subject: 'Verify Account',
                     html: `<h2>Welcome ${name}</h2><h4> Thanks for using doubtHelper.</h4>
-                            <p>Please link <a href="https://doubthelpertester.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                            <p>Please link <a href="https://doubthelper.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                             `
                 };
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         console.log(error);
+                        return res.status(200).send({ "result": "Email not sended. Something went wrong." });
                     } else {
                         console.log('Email sent: ' + info.response);
+                        return res.status(200).send({ "result": "Please check your inbox and verify your email " });
                     }
                 });
-                return "success";
+                return;
             }
             catch (err) {
-                console.log('error in registerFun');
+                console.log('already present username/email');
                 if (err.code == 11000) {
                     const det = await Register.find({ email });
                     if (det.length > 0) {
@@ -63,7 +65,7 @@ const registerFun = async (req, res) => {
                 else {
                     res.status(400).send({ "result": "Please fill carefully" });
                 }
-                return "fail";
+                return ;
             }
         }
         for (var i = 0, len = username.length; i < len; i++) {
@@ -86,9 +88,6 @@ const registerFun = async (req, res) => {
         }
         if (password === confirmPassword) {
             const response = await createDocument();
-            if (response == "success") {
-                res.status(200).send({ "result": "Please check your inbox and verify your email " })
-            }
         }
         else {
             res.status(400).send({ "result": "Password not match" });
