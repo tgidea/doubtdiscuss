@@ -284,7 +284,7 @@ app.get('/outverify', async (req, res) => {
                             res.status(201).render('success', { "text": `Verification email has been sent` });
                         }
                         else {
-                            res.status(400).send({ "result": "Something wrong happened" });
+                            res.status(400).render('error',{ "error": "Something wrong happened" });
                         }
                     }
                 });
