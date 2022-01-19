@@ -51,11 +51,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
     try {
         const token = req.cookies.jwt;
         const verifyToken = jwt.verify(token, process.env.JWT_TOKEN);
-        res.redirect('/main');
+        if(token!=undefined){
+            res.redirect('/main');
+        }
+        else{
+            res.sendFile(path.join(staticPath, 'login.html'));
+        }
     }
     catch (err) {
         try {
