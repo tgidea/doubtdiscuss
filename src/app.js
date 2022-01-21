@@ -443,6 +443,7 @@ io.on('connection', socket => {
         }
     });
     socket.on('activeYes', async (msg) => {
+        
     })
 });
 

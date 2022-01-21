@@ -103,11 +103,16 @@
 
     async function registerUser(event){
       event.preventDefault();
-      const username = document.getElementById('username').value.toLowerCase().trim();
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('pass').value;
-      const confirmPassword = document.getElementById('confpass').value;
+      const userBox=document.getElementById('username');
+      const username = userBox.value.toLowerCase().trim();
+      const nameBox=document.getElementById('name');
+      const name = nameBox.value.trim();
+      const emailBox=document.getElementById('email');
+      const email = emailBox.value;
+      const passBox=document.getElementById('pass');
+      const password = passBox.value;
+      const confiBox=document.getElementById('confpass');
+      const confirmPassword = confiBox.value;
       const btn = document.getElementById('registerBtn');
       result.style.color = "green";
       result.innerText = "Submitting...";
@@ -176,6 +181,13 @@
             }
             else {
               result.innerHTML = data.result;
+              if(data.result.indexOf('inbox')>-1){
+                confiBox.value='';
+                passBox.value='';
+                emailBox.value='';
+                nameBox.value='';
+                userBox.value='';
+              }
               clearResult();
             }
           })

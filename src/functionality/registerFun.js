@@ -38,7 +38,7 @@ const registerFun = async (req, res) => {
                     } else {
                         console.log('Email sent: ' + info.response);
                         console.log(info);
-                        return res.status(200).send({ "result": "Please check your inbox and verify your email " });
+                        return res.status(200).send({ "result": "Please check your inbox and verify your email" });
                     }
                 });
                 return;

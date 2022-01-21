@@ -47,8 +47,6 @@ const create_update_ip = async (str1, username, res,req) => {
             }
             try {
                 const result = await Temp.find({ "username": username });
-                // user found
-                // console.log(result);
                 if (result != null && result != undefined &&result.length>0 ) {
                     //if ids request exceed 2
                     if (result[0].count >= 2) {
@@ -58,8 +56,7 @@ const create_update_ip = async (str1, username, res,req) => {
                     // ids request not exceed 2
                     else {
                         try {
-                            //try for updates if count<2
-                            // console.log(1);
+                            //try for updates if count<2                            
                             const idtemp = result[0].id + " " + str1;
                             const idcount = result[0].count + 1;
                             dynamicSchema(str1);
@@ -75,8 +72,7 @@ const create_update_ip = async (str1, username, res,req) => {
                                     }).catch(function (err) {
                                         console.log(err);
                                     })
-                                const obj = { "result": "success", "id": `${result[0].id} ${str1}` };
-                                // console.log(obj);
+                                const obj = { "result": "success", "id": `${result[0].id} ${str1}` };                                
                                 res.send(obj);
 
                             }

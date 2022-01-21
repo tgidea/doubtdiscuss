@@ -4,7 +4,7 @@ const Register = require('../schema/registerSchema');
 const loginFun = async (req,res) => {
     try {
         if (req.body.email == undefined || req.body.password == undefined) {
-            res.send({ "result": "Invalid login details" });
+            return res.send({ "result": "Invalid login details" });
         }
         const email = req.body.email;
         const password = req.body.password.toString();
