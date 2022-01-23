@@ -347,7 +347,8 @@
     });
     socket.on('refresh', (msg) => {
         const notify = document.getElementById('notify');
-        alert(`Sorry, connection broke. Refreshing in 2 seconds.`);
+        console.clear();
+        alert(`Sorry, connection broke. Refreshing in 1 second.`);
         setTimeout(function () {
             window.location.reload();
         }, 1000)

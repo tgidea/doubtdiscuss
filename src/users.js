@@ -1,4 +1,5 @@
 const users = [];
+let userlimit={};
 // Join user to chat
 function userJoin(id, name, room) {
   const user = { id, name, room,"date":Date.now() };
@@ -29,20 +30,35 @@ function getRoomUsers(room) {
   return users.filter(user => user.room === room);
 }
 
-function deleteUsers(){
-  let n=users.length;
-  // console.log(n);
-  for(var i=0;i<n;i++){
-    if((Date.now()-users[i].dat)>200000){
-      // console.log(users[i]);
-      // users.splice(i, 1)[0];
+function limitId(id){
+  if(userlimit[`${id}`]==undefined){
+    userlimit[`${id}`]=Date.now();
+    return true;
+  }
+  else{
+    let tim=userlimit[`${id}`];
+    if(Date.now()-tim<400){
+      userlimit[`${id}`]=Date.now();
+      return false;
+    }
+    else{
+      userlimit[`${id}`]=Date.now();
     }
   }
+  return true;
 }
 
+function clearLimit(){
+  setTimeout(function(){
+    userlimit={};
+    clearLimit();
+  },3600000);
+}
+clearLimit();
 module.exports = {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
+  limitId
 };

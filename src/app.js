@@ -4,7 +4,7 @@ const bodyparser = require('body-parser');
 const path = require('path')
 const jwt = require('jsonwebtoken');
 const cookieparser = require('cookie-parser');
-const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, limitId } = require('./users');
 const dynamicSchema = require('./schema/dynamicCollection');
 const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
@@ -257,7 +257,7 @@ app.get('/outverify', async (req, res) => {
         const mail = req.query.email;
         let username = req.query.username;
         if (emailReq[`${mail}`] == undefined || Date.now() - emailReq[`${mail}`] > 13200000) {
-            
+
             // console.log(emailReq);
             username = username.replace('%20', " ");
             const details = await Register.findOne({ email: mail });
@@ -284,7 +284,7 @@ app.get('/outverify', async (req, res) => {
                             res.status(201).render('success', { "text": `Verification email has been sent` });
                         }
                         else {
-                            res.status(400).render('error',{ "error": "Something wrong happened" });
+                            res.status(400).render('error', { "error": "Something wrong happened" });
                         }
                     }
                 });
@@ -389,7 +389,7 @@ app.get('/deleteblankcollections/', async (req, res) => {
 //Socket connections
 const sendChecker = async () => {
     try {
-        setTimeout(sendChecker, 9000);
+        setTimeout(sendChecker, 8000);
         io.sockets.emit('active', { count: 1 });
     }
     catch (err) {
@@ -400,11 +400,16 @@ sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
         try {
-            if (userInfo.name != 'Login' && userInfo.name != 'login') {
-                const user = userJoin(socket.id, userInfo.name, userInfo.id);
-                userInfo.name = userInfo.name.replace('/n', "").trim();
-                socket.join(user.room);
-                socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
+            if (limitId(socket.id)) {
+                if (userInfo.name != 'Login' && userInfo.name != 'login') {
+                    const user = userJoin(socket.id, userInfo.name, userInfo.id);
+                    userInfo.name = userInfo.name.replace('/n', "").trim();
+                    socket.join(user.room);
+                    socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
+                }
+            }
+            else{
+                socket.emit('refresh', "please refresh");
             }
         }
         catch (err) {
@@ -414,14 +419,19 @@ io.on('connection', socket => {
     // Listen for chatMessage
     socket.on('update', async (msg) => {
         try {
-            if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
-                const user = getCurrentUser(socket.id);
-                if (user != undefined && user.room != undefined) {
-                    socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+            if (limitId(socket.id)) {
+                if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
+                    const user = getCurrentUser(socket.id);
+                    if (user != undefined && user.room != undefined) {
+                        socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                    }
+                    else {
+                        socket.emit('refresh', "please refresh");
+                    }
                 }
-                else {
-                    socket.emit('refresh', "please refresh");
-                }
+            }
+            else {
+                socket.emit('refresh', "please refresh");
             }
         }
         catch (err) {
@@ -443,7 +453,7 @@ io.on('connection', socket => {
         }
     });
     socket.on('activeYes', async (msg) => {
-        
+
     })
 });
 
