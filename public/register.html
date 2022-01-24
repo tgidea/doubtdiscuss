@@ -181,7 +181,7 @@
             }
             else {
               result.innerHTML = data.result;
-              if(data.result.indexOf('inbox')>-1){
+              if(data.result.indexOf('inbox')>-1 && data.result.indexOf('already')){
                 confiBox.value='';
                 passBox.value='';
                 emailBox.value='';
