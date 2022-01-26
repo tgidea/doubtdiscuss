@@ -51,6 +51,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
+const blocked = {};
+
 app.get('/', async (req, res) => {
     try {
         const token = req.cookies.jwt;
@@ -400,7 +402,7 @@ const sendChecker = async () => {
 sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
-        try {
+        try {          
             if (limitId(socket.id)) {
                 const alreadyOrNot = getCurrentUser(socket.id);
                 if (userInfo.name != 'Login' && userInfo.name != 'login' && alreadyOrNot == undefined) {
@@ -410,9 +412,6 @@ io.on('connection', socket => {
                     socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
                 }
             }
-            else {
-                // socket.emit('refresh', "please refresh");
-            }
         }
         catch (err) {
             console.log(err);
@@ -421,11 +420,15 @@ io.on('connection', socket => {
     // Listen for chatMessage
     socket.on('update', async (msg) => {
         try {
-            if (limitId(socket.id)) {
+            const user = getCurrentUser(socket.id);
+            let pass = false;
+            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 5000) {
+                pass = true;
+            }
+            if (limitId(socket.id) && pass) {  
                 if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
-                    const user = getCurrentUser(socket.id);
                     const status = await IdData.findOne({ name: `${user.room}` });
-                    if (status.deniedTo.toString().indexOf(`${user.name}`) == -1) {
+                    if (status.deniedTo.toString().indexOf(`${user.name}`) < 0) {
                         if (user != undefined && user.room != undefined) {
                             socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
                         }
@@ -434,12 +437,25 @@ io.on('connection', socket => {
                         }
                     }
                     else {
-                        socket.emit('new','You do not have permission');
+                        socket.emit('new', 'You do not have permission');
+                        if (user == undefined || user.room == undefined) {
+                            socket.emit('refresh', 'please refresh');
+                        }
+                        else {
+                            socket.broadcast.to(user.room).emit('new', `${user.name} trying fake updates has blocked.`);
+                        }
                     }
                 }
             }
             else {
-                // socket.emit('refresh', "please refresh");
+                if (user == undefined || user.room == undefined) {
+                    socket.emit('refresh', 'please refresh');
+                }
+                if(pass==true){
+                    blocked[`${user.name}`] = Date.now();
+                    socket.emit('new','please try after 5 seconds');
+                    socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);   
+                }
             }
         }
         catch (err) {
