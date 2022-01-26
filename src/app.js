@@ -402,7 +402,7 @@ const sendChecker = async () => {
 sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
-        try {          
+        try {         
             if (limitId(socket.id)) {
                 const alreadyOrNot = getCurrentUser(socket.id);
                 const user = userJoin(socket.id, userInfo.name, userInfo.id);
@@ -411,6 +411,9 @@ io.on('connection', socket => {
                     socket.join(user.room);
                     socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
                 }
+            }
+            else{
+                socket.emit('refresh', "please refresh");
             }
         }
         catch (err) {
