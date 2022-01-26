@@ -422,7 +422,7 @@ io.on('connection', socket => {
         try {
             const user = getCurrentUser(socket.id);
             let pass = false;
-            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 5000) {
+            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 15000) {
                 pass = true;
             }
             if (limitId(socket.id) && pass) {  
@@ -453,7 +453,7 @@ io.on('connection', socket => {
                 }
                 if(pass==true){
                     blocked[`${user.name}`] = Date.now();
-                    socket.emit('new','please try after 5 seconds');
+                    socket.emit('refresh','please try after 5 seconds');
                     socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);   
                 }
             }
