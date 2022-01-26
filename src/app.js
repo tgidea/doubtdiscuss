@@ -277,8 +277,8 @@ app.get('/outverify', async (req, res) => {
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         console.log(error);
-                        res.status(400).render('error',{ "error": "Something wrong happened. Please try again later after some time." });
-                    } 
+                        res.status(400).render('error', { "error": "Something wrong happened. Please try again later after some time." });
+                    }
                     else {
                         console.log('Email sent: ' + info.response);
                         if (info) {
@@ -402,15 +402,16 @@ io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
         try {
             if (limitId(socket.id)) {
-                if (userInfo.name != 'Login' && userInfo.name != 'login') {
+                const alreadyOrNot = getCurrentUser(socket.id);
+                if (userInfo.name != 'Login' && userInfo.name != 'login' && alreadyOrNot == undefined) {
                     const user = userJoin(socket.id, userInfo.name, userInfo.id);
                     userInfo.name = userInfo.name.replace('/n', "").trim();
                     socket.join(user.room);
                     socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
                 }
             }
-            else{
-                socket.emit('refresh', "please refresh");
+            else {
+                // socket.emit('refresh', "please refresh");
             }
         }
         catch (err) {
@@ -423,16 +424,22 @@ io.on('connection', socket => {
             if (limitId(socket.id)) {
                 if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
                     const user = getCurrentUser(socket.id);
-                    if (user != undefined && user.room != undefined) {
-                        socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                    const status = await IdData.findOne({ name: `${user.room}` });
+                    if (status.deniedTo.toString().indexOf(`${user.name}`) == -1) {
+                        if (user != undefined && user.room != undefined) {
+                            socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                        }
+                        else {
+                            socket.emit('refresh', "please refresh");
+                        }
                     }
                     else {
-                        socket.emit('refresh', "please refresh");
+                        socket.emit('new','You do not have permission');
                     }
                 }
             }
             else {
-                socket.emit('refresh', "please refresh");
+                // socket.emit('refresh', "please refresh");
             }
         }
         catch (err) {

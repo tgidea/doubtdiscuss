@@ -37,12 +37,9 @@ function limitId(id){
   }
   else{
     let tim=userlimit[`${id}`];
+    userlimit[`${id}`]=Date.now();
     if(Date.now()-tim<400){
-      userlimit[`${id}`]=Date.now();
       return false;
-    }
-    else{
-      userlimit[`${id}`]=Date.now();
     }
   }
   return true;
