@@ -55,25 +55,12 @@ const blocked = {};
 
 app.get('/', async (req, res) => {
     try {
-        const token = req.cookies.jwt;
-        const verifyToken = jwt.verify(token, process.env.JWT_TOKEN);
-        if (token != undefined) {
-            res.redirect('/main');
-        }
-        else {
-            res.sendFile(path.join(staticPath, 'login.html'));
-        }
+        res.sendFile(path.join(staticPath, 'login.html'));
     }
     catch (err) {
-        try {
-            res.sendFile(path.join(staticPath, 'login.html'));
-        }
-        catch (error) {
-            res.status(400).send("Something went wrong");
-        }
+        res.status(400).render('error',{"error":"Something went wrong"});
     }
 });
-
 
 app.get('/main', authstart, async (req, res) => {
     try {
@@ -81,10 +68,9 @@ app.get('/main', authstart, async (req, res) => {
         res.status(201).render('main', { username: username, link: "/profile" });
     }
     catch (err) {
-        console.log('Invalid token');
+        console.log(err);
         res.status(201).render('main', { username: "Login", link: "/" });
     }
-
 });
 
 app.get('/pag/:id', authpage, async (req, res) => {
@@ -168,19 +154,7 @@ app.get('/newkey/', auth, async (req, res) => {
         res.status(400).send({ "result": "Something went wrong" });
     }
 });
-// app.get('/post/:uniq_id/:quest', auth, async (req, res) => {
-//     try {
-//         const stri = "" + req.params.uniq_id;
-//         const username = req.username;
-//         const quest = req.params.quest.toString();
-//         //check if routed id present or not
-//         post_question(stri, quest, username, res, req);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(400).send({ "result": "Something went wrong" });
-//     }
-// });
+
 app.post('/postQues', auth, async (req, res) => {
     try {
         const stri = req.body.keyvalue.toString();
@@ -425,6 +399,10 @@ io.on('connection', socket => {
         try {
             const user = getCurrentUser(socket.id);
             let pass = false;
+            if(user==undefined){
+                socket.emit('refresh','Refresh Please');
+                return;
+            }
             if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 15000) {
                 pass = true;
             }
@@ -483,8 +461,6 @@ io.on('connection', socket => {
 
     })
 });
-
-
 
 app.get("*", (req, res) => {
     res.status(404).render('error', { "error": `Page not found` });

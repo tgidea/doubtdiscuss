@@ -9,14 +9,15 @@ const authstart=async(req,res,next)=>{
     try{
         const token=req.cookies.jwt;
         const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
-        // console.log(veriftToken);
+        // console.log(verifyToken);
         const user =await Register.findOne({_id:verifyToken.id});
         req.useremail=user.email;
         req.username=verifyToken.username;
+        req.user=user.username;
         next();
     }
     catch(err){
-        console.log('Token not present or faulty5');
+        console.log('Token not present or faulty5',err);
         res.status(201).render('main',{username:"Login",link:"/"});
     }
 }
