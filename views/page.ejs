@@ -115,6 +115,16 @@
             width: 100%;
         }
 
+        #deleteBtn {
+            position: relative;
+            left: 33%;
+        }
+
+        #trashBtn {
+            position: relative;
+            left: 30%;
+        }
+
         @media screen and (min-width: 1px) {
             #items-list {
                 font-size: 3.4vw;
@@ -134,6 +144,14 @@
         @media screen and (min-width: 600px) {
             #items-list {
                 font-size: 3vw;
+            }
+
+            #deleteBtn {                
+                left: 36%;
+            }
+
+            #trashBtn {                
+                left: 37%;
             }
         }
 
@@ -308,9 +326,9 @@
                         <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
                             <p>${artitem[0][i].owner} </p>
                             <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)"
-                                id="delete" style="position:relative;left:47%"> <i class="fa fa-trash"></i></button>
+                                id="deleteBtn" > <i class="fa fa-trash"></i></button>
                             <button class="${artitem[0][i]._id} btn" onclick="getComment(this.classList)"
-                                id="delete" style="position:relative;left:30%"> <i class="fa fa-comment"></i></button>
+                                id="trashBtn"> <i class="fa fa-comment"></i></button>
                         </div>
                     </details>
                     <div style="position: relative;">
@@ -411,7 +429,7 @@
                         return resp.json();
                     })
                     .then(function (data) {
-                        if (data.result == "success") {                            
+                        if (data.result == "success") {
                             showComment(quesId, data.comment);
                         }
                         else {
@@ -512,9 +530,7 @@
     socket.on('active', (count) => {
         socket.emit('activeYes', "active");
     })
-
     //************************************************************************* *//
-
     const deleteDoc = async (list) => {
         const coll = list[1];
         const doc = list[2];
