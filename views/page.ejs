@@ -343,7 +343,7 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="card-text card-header "><span style=" position:absolute; left:-3vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title.toString()}</p>
+                        <p class="card-text card-header "><span style=" position:absolute; left:-2vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title.toString()}</p>
                         <div class=" mt-2" style="display:flex;justify-content:center;">
                             <div> <button onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button>
@@ -522,7 +522,7 @@
     socket.on('refresh', (msg) => {
         const notify = document.getElementById('notify');
         console.clear();
-        alert(`Sorry, connection broke. Refreshing in 1 second.`);
+        alert(`${msg}`);
         setTimeout(function () {
             window.location.reload();
         }, 1000)

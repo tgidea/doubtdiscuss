@@ -461,7 +461,7 @@ io.on('connection', socket => {
                 }
             }
             else {
-                socket.emit('refresh', "please refresh");
+                socket.emit('refresh', "Too frequent request. Refreshing..");
             }
         }
         catch (err) {
@@ -474,7 +474,7 @@ io.on('connection', socket => {
             const user = getCurrentUser(socket.id);
             let pass = false;
             if (user == undefined) {
-                socket.emit('refresh', 'Refresh Please');
+                socket.emit('refresh', 'Connection Broke, Refreshing...');
                 return;
             }
             if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 15000) {
@@ -488,13 +488,13 @@ io.on('connection', socket => {
                             socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
                         }
                         else {
-                            socket.emit('refresh', "please refresh");
+                            socket.emit('refresh', "Connection Broke, Refreshing...");
                         }
                     }
                     else {
                         socket.emit('new', 'You do not have permission');
                         if (user == undefined || user.room == undefined) {
-                            socket.emit('refresh', 'please refresh');
+                            socket.emit('refresh', 'Connection Broke, Refreshing...');
                         }
                         else {
                             socket.broadcast.to(user.room).emit('new', `${user.name} trying fake updates has blocked.`);
@@ -504,11 +504,11 @@ io.on('connection', socket => {
             }
             else {
                 if (user == undefined || user.room == undefined) {
-                    socket.emit('refresh', 'please refresh');
+                    socket.emit('refresh', 'Connection Broke, Refreshing...');
                 }
                 if (pass == true) {
                     blocked[`${user.name}`] = Date.now();
-                    socket.emit('refresh', 'please try after 5 seconds');
+                    socket.emit('refresh', 'Too frequent Request, please try after 5 seconds');
                     socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);
                 }
             }
