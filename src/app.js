@@ -13,6 +13,7 @@ const authstart = require('./middleware/authstart');
 const profileAuth = require('./middleware/profileauth');
 const nodemailer = require('nodemailer');
 const transporter = require('./functionality/nodemailer');
+const post_comment = require('./functionality/post_comment');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
@@ -21,6 +22,7 @@ const editId = require('./functionality/editId');
 const IdData = require('./schema/idSchemaModal');
 const idSchema = require('./schema/idSchema');
 const deleteDocument = require('./functionality/deleteDocument');
+const get_comment = require('./functionality/getComment');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
 const create_update_ip = require('./functionality/create_update_userkeyid');
@@ -52,13 +54,14 @@ app.use(express.json());
 app.use(cookieparser());
 
 const blocked = {};
+const blockedComm = {};
 
 app.get('/', async (req, res) => {
     try {
         res.sendFile(path.join(staticPath, 'login.html'));
     }
     catch (err) {
-        res.status(400).render('error',{"error":"Something went wrong"});
+        res.status(400).render('error', { "error": "Something went wrong" });
     }
 });
 
@@ -167,6 +170,77 @@ app.post('/postQues', auth, async (req, res) => {
         res.status(400).send({ "result": "Something went wrong" });
     }
 })
+
+app.post('/comment', auth, async(req, res) => {
+    try {
+        const id = req.body.id.toString();
+        const username = req.username;
+        const comment = req.body.commentVal;
+        const quesId = req.body.quesId;
+        const details = await IdData.findOne({ name: id });
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 5000) {
+            blockedComm[`${req.username}`]=Date.now();
+        }
+        else{
+            return res.json({"result":"Too quickly next attempt.Please try after some time"});
+        }
+        if (details) {
+            if (details.active) {
+                if (details.deniedTo.indexOf(req.username) == -1) {
+                    post_comment(id, quesId, comment, req, res);
+                }
+                else {
+                    res.status(400).send({ "result": "Sorry,You don't have permission." });
+                }
+            }
+            else {
+                res.status(400).send({ "result": "All operations are stopped by owner."});
+            }
+        }
+        else {
+            res.status(400).send({"result":"Id not found"});
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).send({ "result": "Something went wrong" });
+    }
+})
+
+app.get('/getComment/:id/:questId', auth,async(req,res)=>{
+    try{
+        const id = req.params.id;
+        const questId = req.params.questId;
+        const details = await IdData.findOne({ name: id });
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 4000) {
+            blockedComm[`${req.username}`]=Date.now();
+        }
+        else{
+            return res.json({"result":"You are attempting too. Please try after some time"});
+        }
+        if (details) {
+            if (details.active) {
+                if (details.deniedTo.indexOf(req.username) == -1) {
+                    get_comment(id, questId, req, res);
+                }
+                else {
+                    res.status(400).send({ "result": "Sorry,You don't have permission." });
+                }
+            }
+            else {
+                res.status(400).send({ "result": "All operations are stopped by owner."});
+            }
+        }
+        else {
+            res.status(400).send({"result":"Id not found"});
+        }
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).send({ "result": "Something went wrong" });
+    }
+})
+
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
@@ -376,7 +450,7 @@ const sendChecker = async () => {
 sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
-        try {         
+        try {
             if (limitId(socket.id)) {
                 const alreadyOrNot = getCurrentUser(socket.id);
                 const user = userJoin(socket.id, userInfo.name, userInfo.id);
@@ -386,7 +460,7 @@ io.on('connection', socket => {
                     socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
                 }
             }
-            else{
+            else {
                 socket.emit('refresh', "please refresh");
             }
         }
@@ -399,14 +473,14 @@ io.on('connection', socket => {
         try {
             const user = getCurrentUser(socket.id);
             let pass = false;
-            if(user==undefined){
-                socket.emit('refresh','Refresh Please');
+            if (user == undefined) {
+                socket.emit('refresh', 'Refresh Please');
                 return;
             }
             if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 15000) {
                 pass = true;
             }
-            if (limitId(socket.id) && pass) {  
+            if (limitId(socket.id) && pass) {
                 if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
                     const status = await IdData.findOne({ name: `${user.room}` });
                     if (status.deniedTo.toString().indexOf(`${user.name}`) < 0) {
@@ -432,10 +506,10 @@ io.on('connection', socket => {
                 if (user == undefined || user.room == undefined) {
                     socket.emit('refresh', 'please refresh');
                 }
-                if(pass==true){
+                if (pass == true) {
                     blocked[`${user.name}`] = Date.now();
-                    socket.emit('refresh','please try after 5 seconds');
-                    socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);   
+                    socket.emit('refresh', 'please try after 5 seconds');
+                    socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);
                 }
             }
         }

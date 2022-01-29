@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
 const IdData = require('../schema/idSchemaModal');
-
+const QuesModel=require('../schema/quesModel');
 const deleteDocument = async (req, res, collection, document,username) => {
-
     try {
         mongoose.connection.db.listCollections({ name: collection })
             .next(async (err, info) => {
@@ -23,7 +22,8 @@ const deleteDocument = async (req, res, collection, document,username) => {
                         const status = await IdData.findOne({ name: collection });
                         if(status.active){
                             if(result.owner==username || status.author==username || status.coAuthor.indexOf(username)>-1){
-                                const deleted=await Temp.deleteOne({_id:document});                                
+                                const deleted=await Temp.deleteOne({_id:document}); 
+                                const quesDeleted=await QuesModel.deleteOne({_id:document});                               
                                 res.status(200).send({ "result": "Success" });
                             }
                             else{                                

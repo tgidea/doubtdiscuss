@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
 const IdData=require('../schema/idSchemaModal');
 const idSchema=require('../schema/idSchema');    
+const QuesModel=require('../schema/quesModel');
 
 const post_question = async (stri, quest, username,res,req) => {
     
@@ -34,8 +35,12 @@ const post_question = async (stri, quest, username,res,req) => {
                                                     "title": quest,
                                                     "owner":username,
                                                 });
-                                                const result = await datacoll.save();
-                                                // console.log('created successfully');
+                                                const result = await datacoll.save();                                                
+                                                const quesDoc=new QuesModel({
+                                                    "_id":result._id.toString(),
+                                                    username
+                                                })                                                                                                
+                                                const resultFin=await quesDoc.save();
                                             }
                                             createDocument();
                                             res.send({ "result": "success" });
@@ -53,14 +58,16 @@ const post_question = async (stri, quest, username,res,req) => {
                                 }
                             }
                             catch (err) {
+                                console.log('in fun')
                                 console.log(err);
+                                res.send({"result":"Some problem occured"});
                             }
                         }
                         fun();
 
                     }
                     catch (err) {
-                        // console.log('id not match');
+                        console.log('id not match');
                         res.status(400).send({ "result": "Id not found" });
                     }
                 }
@@ -71,7 +78,7 @@ const post_question = async (stri, quest, username,res,req) => {
             })
     }
     catch (err) {
-        console.log(err);
+        console.log(err,'in funn');
         res.status(400).send({ "result": "Error occured" });
     }
 }

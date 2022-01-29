@@ -18,9 +18,12 @@ const dynamicSchema = (prefix)=> {
         opt4: {
             type: Number,
             default: 0
-        }
+        },
+        comment: [{
+            type: String,
+        }]
     });
-    mongoose.model(prefix+"",expSchema,prefix);
+mongoose.model(prefix + "", expSchema, prefix);
 
 }
-module.exports=dynamicSchema
+module.exports = dynamicSchema
