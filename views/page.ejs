@@ -418,7 +418,7 @@
         const questIdBox = document.getElementById(`${quesId}box`);
         questIdBox.style.display = 'block';
         const div = document.getElementById(`${quesId}ques`);
-        div.innerHTML = `<p class="card-text">Loading Comments...<br>Please wait.<br><br></p>`
+        div.innerHTML = `<p class="card-text">&nbsp;&nbsp;Loading...<br><br></p>`
 
         const IdBoxList = questIdBox.classList;
         if (IdBoxList.length < 2) {
@@ -434,6 +434,7 @@
                         }
                         else {
                             alert(data.result);
+                            div.innerHTML = `<p class="card-text card-header">Please try again.</p>`
                         }
                     });
             }
