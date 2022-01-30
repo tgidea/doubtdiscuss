@@ -178,7 +178,7 @@ app.post('/comment', auth, async(req, res) => {
         const comment = req.body.commentVal;
         const quesId = req.body.quesId;
         const details = await IdData.findOne({ name: id });
-        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 5000) {
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 3000) {
             blockedComm[`${req.username}`]=Date.now();
         }
         else{
@@ -212,7 +212,7 @@ app.get('/getComment/:id/:questId', auth,async(req,res)=>{
         const id = req.params.id;
         const questId = req.params.questId;
         const details = await IdData.findOne({ name: id });
-        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 4000) {
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 2000) {
             blockedComm[`${req.username}`]=Date.now();
         }
         else{
@@ -477,7 +477,7 @@ io.on('connection', socket => {
                 socket.emit('refresh', 'Connection Broke, Refreshing...');
                 return;
             }
-            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 15000) {
+            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 3000) {
                 pass = true;
             }
             if (limitId(socket.id) && pass) {
@@ -497,7 +497,7 @@ io.on('connection', socket => {
                             socket.emit('refresh', 'Connection Broke, Refreshing...');
                         }
                         else {
-                            socket.broadcast.to(user.room).emit('new', `${user.name} trying fake updates has blocked.`);
+                            socket.broadcast.to(user.room).emit('new', `${user.name} trying to enter has been blocked.`);
                         }
                     }
                 }
@@ -509,7 +509,7 @@ io.on('connection', socket => {
                 if (pass == true) {
                     blocked[`${user.name}`] = Date.now();
                     socket.emit('refresh', 'Too frequent Request, please try after 5 seconds');
-                    socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);
+                    // socket.broadcast.to(user.room).emit('new', `Some fake inbox message can be there from ${user.name}.`);
                 }
             }
         }
