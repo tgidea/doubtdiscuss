@@ -481,11 +481,16 @@ io.on('connection', socket => {
                 pass = true;
             }
             if (limitId(socket.id) && pass) {
-                if (msg == 'Question deleted' || msg == 'option change' || msg == 'question post' || msg == 'All quesiton deleted') {
+                if (msg.message == 'Question deleted' || msg.message == 'option change' || msg.message == 'question post' || msg.message == 'All quesiton deleted') {
                     const status = await IdData.findOne({ name: `${user.room}` });
                     if (status.deniedTo.toString().indexOf(`${user.name}`) < 0) {
-                        if (user != undefined && user.room != undefined) {
-                            socket.broadcast.to(user.room).emit('new', `${msg} by ${user.name}`);
+                        if (user != undefined && user.room != undefined ){
+                            if(msg.data.length>0 && msg.message == 'option change'){
+                                socket.broadcast.to(user.room).emit('new',` in question ${msg.data}  ${msg.message} by ${user.name}`);
+                            }
+                            else{
+                                socket.broadcast.to(user.room).emit('new',` ${msg.data}  ${msg.message} by ${user.name}`);
+                            }
                         }
                         else {
                             socket.emit('refresh', "Connection Broke, Refreshing...");

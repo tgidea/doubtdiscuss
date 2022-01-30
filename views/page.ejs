@@ -319,13 +319,13 @@
             opt3 = object[`${artitem[0][i]._id}opt3`];
             opt4 = object[`${artitem[0][i]._id}opt4`];
             output += `
-            <div style="" class="item-list-msg">
+            <div id="${artitem[0][i]._id}disp" class="item-list-msg">
                 <div class="card-body ">
                     <details>
                         <summary></summary>
                         <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
                             <p>${artitem[0][i].owner} </p>
-                            <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)"
+                            <button class="btn  ${keyvalues} ${artitem[0][i]._id} ${i+1}" onclick="deleteDoc(this.classList)"
                                 id="deleteBtn" > <i class="fa fa-trash"></i></button>
                             <button class="${artitem[0][i]._id} btn" onclick="getComment(this.classList)"
                                 id="trashBtn"> <i class="fa fa-comment"></i></button>
@@ -346,19 +346,19 @@
                         <p class="card-text card-header "><span style=" position:absolute; left:-2vw;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title.toString()}</p>
                         <div class=" mt-2" style="display:flex;justify-content:center;">
                             <div> <button onclick="option(this.classList,this.textContent)"
-                                    class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button>
+                                    class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1} ${i+1}">opt1</button>
                                 <span>${artitem[0][i].opt1}</span>
                             </div>
                             <div> <button onclick="option(this.classList,this.textContent)"
-                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button>
+                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2} ${i+1}">opt2</button>
                                 <span>${artitem[0][i].opt2}</span>
                             </div>
                             <div> <button onclick="option(this.classList,this.textContent)"
-                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button>
+                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3} ${i+1}">opt3</button>
                                 <span>${artitem[0][i].opt3}</span>
                             </div>
                             <div> <button onclick="option(this.classList,this.textContent)"
-                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button>
+                                    class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4} ${i+1}">opt4</button>
                                 <span>${artitem[0][i].opt4}</span>
                             </div>
                         </div>
@@ -535,6 +535,7 @@
     const deleteDoc = async (list) => {
         const coll = list[1];
         const doc = list[2];
+        const num=list[3];
         const notify = document.getElementById('notify');
         const bool = confirm('Are you want to delete it');
         if (bool) {
@@ -545,7 +546,7 @@
                     })
                     .then(function (data) {
                         if (data.result.toString().toLowerCase() == 'success') {
-                            socket.emit('update', "Question deleted");
+                            socket.emit('update', {"message":"Question deleted","data":`${num}`});
                             notify.innerHTML = "";
                             getdata("yes");
                         }
@@ -570,6 +571,7 @@
             const id = list[2];
             const opti = text;
             const pageid = list[3];
+            const numb=list[5];
             const notify = document.getElementById('notify');
             try {
                 let status;
@@ -607,7 +609,7 @@
                     .then(function (data) {
                         if (data.result == 'Success' || data.result == 'success') {
                             const dataAll = [data.alldata];
-                            socket.emit('update', "option change");
+                            socket.emit('update', {"message":"option change","data":`${numb}`});
                             notify.innerHTML = "";
                             getdata("no");
                         }
@@ -655,7 +657,7 @@
                     })
                     .then(function (data) {
                         if (data.result == "success") {
-                            socket.emit('update', "question post");
+                            socket.emit('update', {"message":"question post","data":""});
                             notify.innerHTML = "";
                             getdata("no");
                         }
@@ -693,7 +695,7 @@
                             })
                             .then(function (data) {
                                 if (data.result == 'success') {
-                                    socket.emit('update', "All quesiton deleted");
+                                    socket.emit('update', {"message":"All quesiton deleted","data":""});
                                     notify.innerHTML = "";
                                     getdata("no");
                                 }
