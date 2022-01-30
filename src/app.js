@@ -451,10 +451,10 @@ sendChecker();
 io.on('connection', socket => {
     socket.on('joinId', async (userInfo) => {
         try {
-            if (limitId(socket.id)) {
+            if (limitId(socket.id)) {                
                 const alreadyOrNot = getCurrentUser(socket.id);
-                const user = userJoin(socket.id, userInfo.name, userInfo.id);
                 if (userInfo.name != 'Login' && userInfo.name != 'login' && alreadyOrNot == undefined) {
+                    const user = userJoin(socket.id, userInfo.name, userInfo.id);
                     userInfo.name = userInfo.name.replace('/n', "").trim();
                     socket.join(user.room);
                     socket.broadcast.to(user.room).emit('check', `${user.name} has joined`);
