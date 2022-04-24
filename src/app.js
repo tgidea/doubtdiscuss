@@ -338,11 +338,7 @@ app.get('/outverify', async (req, res) => {
                             res.status(400).render('error', { "error": "Something wrong happened. Please try again." });
                         }
                     }
-                });
-                // }
-                // else {
-                //     throw ('Not valid (in outverify)');
-                // }
+                });                
             }
             else {
                 res.status(400).render('error', { "error": ` username or email are not matching` });
@@ -537,7 +533,6 @@ io.on('connection', socket => {
         }
     });
     socket.on('activeYes', async (msg) => {
-
     })
 });
 
