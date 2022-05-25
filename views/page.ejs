@@ -321,8 +321,17 @@
       div.innerHTML = "";
       for (var i = 0; i < data.length; i++) {
         var output = "";
+        let dataText=data[i].text;
+        dataText = dataText.replace(/\?/g, "&quest;");
+        dataText = dataText.replace(/\%/g, "&percnt;");
+        dataText = dataText.replace(/\#/g, "&num;");
+        dataText = dataText.replace(/\//g, "&sol;");
+        dataText = dataText.replace(/\?/g, "&quest;");
+        dataText = dataText.replace(/\</g, "&lt;");
+        dataText = dataText.replace(/\>/g, "&gt;");
+        dataText = dataText.replace(/\\/g, "&Backslash;");
         output += `
-            <p class="card-text card-header "><span style="color:rgb(248, 9, 109);">${data[i].author} &nbsp;&nbsp;</span>${data[i].text}</p>`;
+            <p class="card-text card-header "><span style="color:rgb(248, 9, 109);">${data[i].author} &nbsp;&nbsp;</span>${dataText}</p>`;
         div.innerHTML += output;
       }
       if (data.length == 0) {
@@ -355,6 +364,16 @@
         opt2 = object[`${artitem[0][i]._id}opt2`];
         opt3 = object[`${artitem[0][i]._id}opt3`];
         opt4 = object[`${artitem[0][i]._id}opt4`];
+        var toPrint=artitem[0][i].title.toString();
+        toPrint = toPrint.replace(/\?/g, "&quest;");
+        toPrint = toPrint.replace(/\%/g, "&percnt;");
+        toPrint = toPrint.replace(/\#/g, "&num;");
+        toPrint = toPrint.replace(/\//g, "&sol;");
+        toPrint = toPrint.replace(/\?/g, "&quest;");
+        toPrint = toPrint.replace(/\</g, "&lt;");
+        toPrint = toPrint.replace(/\>/g, "&gt;");
+        toPrint = toPrint.replace(/\\/g, "&Backslash;");
+
         output += `
             <div id="${artitem[0][i]._id}disp" class="item-list-msg">
                 <div class="card-body ">
@@ -392,9 +411,7 @@
                         </div>
                         <p class="card-text card-header "><span style=" position:absolute; left:-2vw;">${
                           i + 1
-                        }&nbsp;&nbsp;</span>${artitem[0][
-          i
-        ].title.toString()}</p>
+                        }&nbsp;&nbsp;</span>${toPrint}</p>
                         <div class=" mt-2" style="display:flex;justify-content:center;">
                             <div> <button onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${
@@ -448,6 +465,14 @@
         return alert("Please fill carefully");
       }
       commentVal = commentVal.replace(/\n/g, "<br>");
+      commentVal = commentVal.replace(/\?/g, "&quest;");
+      commentVal = commentVal.replace(/\%/g, "&percnt;");
+      commentVal = commentVal.replace(/\#/g, "&num;");
+      commentVal = commentVal.replace(/\//g, "&sol;");
+      commentVal = commentVal.replace(/\?/g, "&quest;");
+      commentVal = commentVal.replace(/\</g, "&lt;");
+      commentVal = commentVal.replace(/\>/g, "&gt;");
+      commentVal = commentVal.replace(/\\/g, "&Backslash;");
       try {
         fetch("/comment/", {
           method: "POST",
