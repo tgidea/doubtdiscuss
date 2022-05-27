@@ -323,9 +323,10 @@
         var output = "";
         let dataText=data[i].text;
         dataText = dataText.replace(/\?/g, "&quest;");
+        dataText = dataText.replace(/\<br>/g, "/n");
         dataText = dataText.replace(/\%/g, "&percnt;");
         dataText = dataText.replace(/\#/g, "&num;");
-        dataText = dataText.replace(/\//g, "&sol;");
+        // dataText = dataText.replace(/\//g, "&sol;");
         dataText = dataText.replace(/\?/g, "&quest;");
         dataText = dataText.replace(/\</g, "&lt;");
         dataText = dataText.replace(/\>/g, "&gt;");
@@ -365,15 +366,17 @@
         opt3 = object[`${artitem[0][i]._id}opt3`];
         opt4 = object[`${artitem[0][i]._id}opt4`];
         var toPrint=artitem[0][i].title.toString();
+        toPrint = toPrint.replace(/\<br>/g, " *DDDcode ");
         toPrint = toPrint.replace(/\?/g, "&quest;");
         toPrint = toPrint.replace(/\%/g, "&percnt;");
         toPrint = toPrint.replace(/\#/g, "&num;");
         toPrint = toPrint.replace(/\//g, "&sol;");
         toPrint = toPrint.replace(/\?/g, "&quest;");
-        toPrint = toPrint.replace(/\</g, "&lt;");
-        toPrint = toPrint.replace(/\>/g, "&gt;");
+        toPrint = toPrint.replace(/\</g, " &lt;");
+        toPrint = toPrint.replace(/\>/g, "&gt; ");
         toPrint = toPrint.replace(/\\/g, "&Backslash;");
-
+        toPrint = toPrint.replace(/\*DDDcode/g, "<br>");
+        
         output += `
             <div id="${artitem[0][i]._id}disp" class="item-list-msg">
                 <div class="card-body ">
