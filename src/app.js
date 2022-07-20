@@ -387,7 +387,7 @@ app.get('/verify/', async (req, res) => {
 
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     try {    
-        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 3000) {            
+        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 2000) {            
             const stri = "" + req.params.coll_id;
             const questid = "" + req.params.quest_id;
             const opti = "" + req.params.opt;
@@ -478,7 +478,7 @@ io.on('connection', socket => {
                 socket.emit('refresh', 'Connection Broke, Refreshing...');
                 return;
             }
-            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 3000) {
+            if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 2000) {
                 pass = true;
             }
             if (limitId(socket.id) && pass) {
