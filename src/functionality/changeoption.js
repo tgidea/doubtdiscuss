@@ -21,13 +21,14 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                         Temp = mongoose.model(stri, expschema2);
                     }
                     try {
-                        const details = await IdData.findOne({ name: stri });                        
+                        const details = await IdData.findOne({ name: stri });  
+                        var updatedVal;                      
                         if (details.active) {
                             if (details.deniedTo.indexOf(req.username) == -1) {
                                 if (status == "inc") {
                                     const result = await Temp.updateOne({ _id: questid }, {
                                         $inc: { [`${opti}`]: 1 }
-                                    })
+                                    })                                    
                                 }
                                 else {
                                     const result = await Temp.updateOne({ _id: questid }, {
@@ -40,7 +41,9 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                                         $set: { [`${opti}`]: 0 }
                                     })
                                 }
-                                res.status(200).send({ "result": "Success" });
+                                updatedVal = check[0][`${opti}`];
+                                if(updatedVal<0)updatedVal=0;
+                                res.status(200).send({ "result": "Success" , "updated_val" : `${updatedVal}` });
                             }
                             else {
                                 res.status(403).send({ "result": "Sorry,You don't have permission." });

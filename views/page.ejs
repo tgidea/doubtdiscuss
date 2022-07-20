@@ -416,37 +416,37 @@
                           i + 1
                         }&nbsp;&nbsp;</span>${toPrint}</p>
                         <div class=" mt-2" style="display:flex;justify-content:center;">
-                            <div> <button onclick="option(this.classList,this.textContent)"
+                            <div> <button id = ${artitem[0][i]._id}bopt1 onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${
                                       artitem[0][i]._id
                                     } ${keyvalues} ${opt1} ${
           i + 1
         }">opt1</button>
-                                <span>${artitem[0][i].opt1}</span>
+                                <span id = ${artitem[0][i]._id}opt1 >${artitem[0][i].opt1}</span>
                             </div>
-                            <div> <button onclick="option(this.classList,this.textContent)"
+                            <div> <button id = ${artitem[0][i]._id}bopt2 onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${
                                       artitem[0][i]._id
                                     }  ${keyvalues} ${opt2} ${
           i + 1
         }">opt2</button>
-                                <span>${artitem[0][i].opt2}</span>
+                                <span id = ${artitem[0][i]._id}opt2 >${artitem[0][i].opt2}</span>
                             </div>
-                            <div> <button onclick="option(this.classList,this.textContent)"
+                            <div> <button id = ${artitem[0][i]._id}bopt3 onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${
                                       artitem[0][i]._id
                                     }  ${keyvalues} ${opt3} ${
           i + 1
         }">opt3</button>
-                                <span>${artitem[0][i].opt3}</span>
+                                <span id = ${artitem[0][i]._id}opt3 >${artitem[0][i].opt3}</span>
                             </div>
-                            <div> <button onclick="option(this.classList,this.textContent)"
+                            <div> <button id = ${artitem[0][i]._id}bopt4  onclick="option(this.classList,this.textContent)"
                                     class="btn btn-outline-success ${
                                       artitem[0][i]._id
                                     }  ${keyvalues} ${opt4} ${
           i + 1
         }">opt4</button>
-                                <span>${artitem[0][i].opt4}</span>
+                                <span id = ${artitem[0][i]._id}opt4 >${artitem[0][i].opt4}</span>
                             </div>
                         </div>
                     </div>
@@ -594,13 +594,24 @@
     const count = document.getElementById("count");
     socket.emit("joinId", { name: `${nameee}`, id: `${iddd}` });
     getdata("no");
-    socket.on("new", (message) => {
+    socket.on("optionChange" ,(msg)=>{
+      // console.log(msg);
       const val = parseInt(count.innerText);
       if (val == NaN) {
         val = 0;
       }
       count.innerText = val + 1;
-      notific.innerHTML += `<p class="msg">${message}</p>`;
+      notific.innerHTML += `<p class="msg">${msg.message}</p>`;
+      var info = document.getElementById(`${msg.question}${msg.option}`);
+      info.innerText = `${msg.updatedVal}`;
+    })
+    socket.on("new", (msg) => {
+      const val = parseInt(count.innerText);
+      if (val == NaN) {
+        val = 0;
+      }
+      count.innerText = val + 1;
+      notific.innerHTML += `<p class="msg">${msg}</p>`;
       getdata("no");
     });
     socket.on("check", (message) => {
@@ -700,20 +711,27 @@
               return resp.json();
             })
             .then(function (data) {
-              if (data.result == "Success" || data.result == "success") {
-                const dataAll = [data.alldata];
+              if (data.result == "Success" || data.result == "success") {                
                 socket.emit("update", {
                   message: "option change",
                   data: `${numb}`,
+                  updatedVal : `${data.updated_val}`,
+                  option : `${opti}`,
+                  question : `${id}`
                 });
+                // console.log(data);
                 notify.innerHTML = "";
-                getdata("no");
+                var info = document.getElementById(`${id}${opti}`);
+                info.innerText = data.updated_val;
+                document.getElementById(`${id}b${opti}`).classList.toggle("true");
+                // getdata("no");
               } else {
                 notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`;
-                getdata("no");
+                // getdata("no");
               }
             })
             .catch((err) => {
+              console.log(err);
               notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`;
             });
         } catch (err) {

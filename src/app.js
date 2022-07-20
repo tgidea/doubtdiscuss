@@ -386,12 +386,17 @@ app.get('/verify/', async (req, res) => {
 })
 
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
-    try {
-        const stri = "" + req.params.coll_id;
-        const questid = "" + req.params.quest_id;
-        const opti = "" + req.params.opt;
-        const status = "" + req.params.status;
-        changeOption(stri, questid, opti, status, res, req);
+    try {    
+        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 3000) {            
+            const stri = "" + req.params.coll_id;
+            const questid = "" + req.params.quest_id;
+            const opti = "" + req.params.opt;
+            const status = "" + req.params.status;
+            changeOption(stri, questid, opti, status, res, req);
+        }
+        else{
+            res.status(403).send({"result":"Too frequent request"});
+        }
     }
     catch (err) {
         console.log(err);
@@ -482,7 +487,13 @@ io.on('connection', socket => {
                     if (status.deniedTo.toString().indexOf(`${user.name}`) < 0) {
                         if (user != undefined && user.room != undefined ){
                             if(msg.data.length>0 && msg.message == 'option change'){
-                                socket.broadcast.to(user.room).emit('new',` in question ${msg.data}  ${msg.message} by ${user.name}`);
+                                socket.broadcast.to(user.room).emit('optionChange',
+                                {
+                                    "message": `${msg.data}  ${msg.message} by ${user.name}`,
+                                    "updatedVal" : `${msg.updatedVal}`,
+                                    "option" : `${msg.option}`,
+                                    "question" : `${msg.question}`
+                                })
                             }
                             else{
                                 socket.broadcast.to(user.room).emit('new',` ${msg.data}  ${msg.message} by ${user.name}`);
