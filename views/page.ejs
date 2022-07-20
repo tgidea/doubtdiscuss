@@ -394,10 +394,10 @@
 
       for (var i = 0; i < artitem[0].length; i++) {
         var output = "";
-        opt1 = object[`${artitem[0][i]._id}opt1`];
-        opt2 = object[`${artitem[0][i]._id}opt2`];
-        opt3 = object[`${artitem[0][i]._id}opt3`];
-        opt4 = object[`${artitem[0][i]._id}opt4`];
+        opt1 = object[`${artitem[0][i]._id}opt1`]==true?true:"";
+        opt2 = object[`${artitem[0][i]._id}opt2`]==true?true:"";
+        opt3 = object[`${artitem[0][i]._id}opt3`]==true?true:"";
+        opt4 = object[`${artitem[0][i]._id}opt4`]==true?true:"";
         var toPrint=artitem[0][i].title.toString();
         toPrint = await convertPrint(toPrint);        
         output += `
@@ -675,15 +675,16 @@
     //************************************************************************* *//
     const option = async (list, text) => {
       const conf = window.confirm("Are you sure?");
+      const id = list[2];
+      const opti = text;
+      const pageid = list[3];
+      const numb = list[5];
       if (conf) {
-        const id = list[2];
-        const opti = text;
-        const pageid = list[3];
-        const numb = list[5];
+        document.getElementById(`${id}b${opti}`).disabled = true;
+
         const notify = document.getElementById("notify");
         try {
           let status;
-
           //determine whether to decrese or increse
           if (localStorage.getItem("clickedId") != undefined) {
             const object = JSON.parse(localStorage.getItem("clickedId"));
@@ -715,7 +716,8 @@
               return resp.json();
             })
             .then(function (data) {
-              if (data.result == "Success" || data.result == "success") {                
+              if (data.result.toLowerCase() == "success") {
+                // console.log(data);                
                 socket.emit("update", {
                   message: "option change",
                   data: `${numb}`,
@@ -724,10 +726,8 @@
                   question : `${id}`
                 });                
                 notify.innerHTML = "";
-                var info = document.getElementById(`${id}${opti}`);
-                info.innerText = data.updated_val;
-                document.getElementById(`${id}b${opti}`).classList.toggle("true");
-                // getdata("no");
+                newTEXT((`${id}${opti}`)  , `${data.updated_val}`);
+                document.getElementById(`${id}b${opti}`).classList.toggle("true");                
               } else {
                 notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`;
                 // getdata("no");
@@ -742,6 +742,7 @@
           notify.innerHTML = `<h6 style="color:red">Check Network or contact us. </h6>`;
         }
       }
+      document.getElementById(`${id}b${opti}`).disabled = false;
     };
 
     const postQues = async (e) => {

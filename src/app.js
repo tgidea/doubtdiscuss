@@ -178,7 +178,7 @@ app.post('/comment', auth, async(req, res) => {
         const comment = req.body.commentVal;
         const quesId = req.body.quesId;
         const details = await IdData.findOne({ name: id });
-        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 3000) {
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 2500) {
             blockedComm[`${req.username}`]=Date.now();
         }
         else{
@@ -387,7 +387,7 @@ app.get('/verify/', async (req, res) => {
 
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
     try {    
-        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 2000) {            
+        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 2000) {                            
             const stri = "" + req.params.coll_id;
             const questid = "" + req.params.quest_id;
             const opti = "" + req.params.opt;
@@ -481,15 +481,18 @@ io.on('connection', socket => {
             if (blocked[`${user.name}`] == undefined || (Date.now() - blocked[`${user.name}`]) > 2000) {
                 pass = true;
             }
+            // console.log(pass);
             if (limitId(socket.id) && pass) {
                 if (msg.message == 'Question deleted' || msg.message == 'option change' || msg.message == 'question post' || msg.message == 'All quesiton deleted') {
                     const status = await IdData.findOne({ name: `${user.room}` });
+                    
                     if (status.deniedTo.toString().indexOf(`${user.name}`) < 0) {
                         if (user != undefined && user.room != undefined ){
-                            if(msg.data.length>0 && msg.message == 'option change'){
+                            if(msg.data.length>0 && msg.message == 'option change'){                                
                                 socket.broadcast.to(user.room).emit('optionChange',
                                 {
-                                    "message": `${msg.data}  ${msg.message} by ${user.name}`,
+                                    // "message": `${msg.data}  ${msg.message} by ${user.name}`,
+                                    "message": `${msg.message} by ${user.name}`,
                                     "updatedVal" : `${msg.updatedVal}`,
                                     "option" : `${msg.option}`,
                                     "question" : `${msg.question}`
