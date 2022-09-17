@@ -1,5 +1,5 @@
 # doubtdiscuss
-
+<h3>Visit <a href="https://doubtsolver.herokuapp.com">https://doubtsolver.herokuapp.com</a></h3><br>
 <p>
 It is a platform where multiple people can post a mcq question, answer that and also add comment.
 Per account two rooms can be generated whose link will be present in home page. It is real time web app built using sockets;
@@ -20,3 +20,4 @@ In 'Inbox' all notifications regarding the page will be available like : <br>
 <li>Room creator can make any person co-owner of a room.</li>
 <li>Every person has its profile page indicating its Email Id , Name , rooms created by him/her.</li>
 </ul>
+
