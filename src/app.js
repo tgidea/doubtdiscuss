@@ -321,7 +321,7 @@ app.get('/outverify', async (req, res) => {
                     to: `${mail}`,
                     subject: 'Verify Account',
                     html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
-                        <p>Please link <a href="https://doubthelper.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                        <p>Please link <a href="https://doubtsolver.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                         `
                 };
                 transporter.sendMail(mailOptions, function (error, info) {
