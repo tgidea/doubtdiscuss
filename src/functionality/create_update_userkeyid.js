@@ -47,8 +47,6 @@ const create_update_ip = async (str1, username, res,req) => {
             }
             try {
                 const result = await Temp.find({ "username": username });
-                // user found
-                // console.log(result);
                 if (result != null && result != undefined &&result.length>0 ) {
                     //if ids request exceed 2
                     if (result[0].count >= 2) {
@@ -58,8 +56,7 @@ const create_update_ip = async (str1, username, res,req) => {
                     // ids request not exceed 2
                     else {
                         try {
-                            //try for updates if count<2
-                            // console.log(1);
+                            //try for updates if count<2                            
                             const idtemp = result[0].id + " " + str1;
                             const idcount = result[0].count + 1;
                             dynamicSchema(str1);
@@ -75,19 +72,18 @@ const create_update_ip = async (str1, username, res,req) => {
                                     }).catch(function (err) {
                                         console.log(err);
                                     })
-                                const obj = { "result": "success", "id": `${result[0].id} ${str1}` };
-                                // console.log(obj);
+                                const obj = { "result": "success", "id": `${result[0].id} ${str1}` };                                
                                 res.send(obj);
 
                             }
                             catch (err) {
                                 console.log('err occured', err);
-                                res.send({ "result": "update Unsuccessful" })
+                                res.status(200).send({ "result": "update Unsuccessful" })
                             }
                         }
                         catch (err) {
                             console.log(err);
-                            res.send({ "result": `Error occured ` });
+                            res.status(400).send({ "result": `Error occured ` });
                         }
                     }
                 }
@@ -97,20 +93,20 @@ const create_update_ip = async (str1, username, res,req) => {
                     dynamicSchema(str1);
                     createIdEdit(str1,username);
                     const obj = { "result": "success", "id": str1 };
-                    res.send(obj);
+                    res.status(200).send(obj);
                 }
             }
             catch (err) {
                 console.log(err);
                 console.log('username not found ');
-                res.send({ "result": "Something went wrong" });
+                res.status(400).send({ "result": "Something went wrong" });
             }
         }
         fun();
     }
     catch (err) {
         // console.log('id not match');
-        res.send({ "result": "Id not found" });
+        res.status(400).send({ "result": "Id not found" });
     }
 }
 module.exports = create_update_ip;

@@ -1,414 +1,839 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-GBBBQQ5SDS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-GBBBQQ5SDS");
+    </script>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <style>
-        .true {
-            background-color: #198754;
-            color: white;
+      .true {
+        background-color: #198754;
+        color: white;
+      }
+
+      .notification {
+        background-color: rgb(252, 252, 252);
+        color: rgb(248, 9, 109);
+        text-decoration: none;
+        padding: 6px 6px;
+        position: relative;
+        margin-right: 20px;
+        display: inline-block;
+        border-radius: 2px;
+      }
+
+      /* .notification:hover {
+            background: rgb(247, 196, 217);
+            color: rgb(248, 9, 109);
+        } */
+
+      .notification .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+      }
+
+      .not-content {
+        display: flex;
+        flex-direction: column-reverse;
+        position: absolute;
+        z-index: 99;
+        max-width: 40vw;
+        max-height: 200px;
+        justify-content: center;
+        align-items: center;
+        left: 50%;
+        overflow: scroll;
+        background: rgb(253, 225, 237);
+        padding: 8px;
+        font-size: smaller;
+        display: none;
+      }
+
+      .msg {
+        background-color: rgb(248, 9, 109);
+        color: white;
+        padding: 8px;
+        border-radius: 20px;
+      }
+
+      /* .notification:hover #not-content {
+            display: block;
+        } */
+      .visi {
+        display: flex;
+        flex-direction: column-reverse;
+      }
+
+      .item-list-msg {
+        border-bottom: 1px solid green;
+        max-width: 100vw;
+        max-height: 400px;
+        overflow: auto;
+      }
+
+      #items-list {
+        display: flex;
+        flex-direction: column-reverse;
+        margin-left: 6vw;
+        margin-right: 6vw;
+      }
+
+      .comment {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background: white;
+        display: none;
+      }
+
+      .comment-data {
+        display: flex;
+        flex-direction: column-reverse;
+      }
+
+      .submit-comment {
+        position: sticky;
+        bottom: 2px;
+        width: 100%;
+      }
+
+      #deleteBtn {
+        position: relative;
+        left: 33%;
+      }
+
+      #trashBtn {
+        position: relative;
+        left: 30%;
+      }
+
+      @media screen and (min-width: 1px) {
+        #items-list {
+          font-size: 3.4vw;
         }
 
-        @media screen and (min-width: 1px) {
-            #items-list {
-                font-size: 3.4vw;
-            }
+        .notification {
+          margin-right: 2px;
+        }
+      }
+
+      @media screen and (min-width: 450px) {
+        #items-list {
+          font-size: 3.6vw;
+        }
+      }
+
+      @media screen and (min-width: 600px) {
+        #items-list {
+          font-size: 3vw;
         }
 
-        @media screen and (min-width: 450px) {
-            #items-list {
-                font-size: 3.6vw;
-            }
+        #deleteBtn {
+          left: 36%;
         }
 
-        @media screen and (min-width: 600px) {
-            #items-list {
-                font-size: 3vw;
-            }
+        #trashBtn {
+          left: 37%;
+        }
+      }
+
+      @media screen and (min-width: 800px) {
+        #items-list {
+          font-size: 1.6vw;
         }
 
-        @media screen and (min-width: 800px) {
-            #items-list {
-                font-size: 1.6vw;
-            }
+        .notification {
+          margin-right: 20px;
+        }
+      }
+
+      @media screen and (min-width: 1000px) {
+        #items-list {
+          font-size: 1.2vw;
         }
 
-        @media screen and (min-width: 1000px) {
-            #items-list {
-                font-size: 1.2vw;
-            }
+        .not-content {
+          position: absolute;
+          z-index: 99;
+          max-width: 30vw;
+          max-height: 300px;
+          justify-content: center;
+          align-items: center;
+          left: 13%;
+          overflow: scroll;
+          background: rgb(253, 225, 237);
+          padding: 8px;
+          font-size: smaller;
+          display: none;
         }
+
+        .visi {
+          display: flex;
+          flex-direction: column-reverse;
+        }
+      }
     </style>
     <title>DoubtHelper/page</title>
-</head>
+  </head>
 
-<body>
-
-    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(248, 9, 109);">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#" style="font-weight: 600;">DoubtHelper</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="/main">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../howtouse.html">How to use</a>
-                    </li>
-                    <!-- <li class="nav-item">
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="background-color: rgb(248, 9, 109)"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" style="font-weight: 600"
+          >DoubtHelper</a
+        >
+        <a href="#" id="notif-box" onclick="showNot()" class="notification">
+          <span>Inbox</span>
+          <span class="badge" id="count">0</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/main">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../howtouse.html">How to use</a>
+            </li>
+            <!-- <li class="nav-item">
                         <a class="nav-link" href="#">About </a>
                     </li> -->
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="mailto: gyanexplode@gmail.com">Contact us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href="<%=link%>">
-                            <%=username%>
-                        </a>
-                    </li>
-                </ul>
-
-            </div>
+            <li class="nav-item">
+              <a class="nav-link" href="mailto: gyanexplode@gmail.com"
+                >Contact us</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="<%=link%>" id="namee">
+                <%=username%>
+              </a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
-    <div class="container" id="notify" style="margin-top:20px; min-height: 30px;">
-
-    </div>
-    <div class="container">
-        <div class="input-group mb-3">
-            <div class="container">
-                <input type="text" class="form-control" id="key" placeholder="Enter your Id" aria-label="Enter Your Id"
-                    aria-describedby="btn2" value="<%=name%>">
-                <textarea class="form-control" id="quest" placeholder="Enter Question" rows="2"></textarea>
-                <div style="display: flex;">
-                    <button onclick="postdata()" class="btn btn-success" id="btn3"
-                        style="margin-right: 5%;">Post</button>
-                    <button onclick="getdata()" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
-                        content</button>
-                    <button onclick="deletedata()" class="btn btn-success" id="btn5">Delete</button>
-                </div>
+    <div class="not-content">Nothing down!</div>
+    <div
+      class="container"
+      id="notify"
+      style="margin-top: 20px; min-height: 30px"
+    ></div>
+    <div class="container" style="border-bottom: 1px solid green">
+      <div class="input-group mb-3">
+        <div class="container">
+          <form id="addQues">
+            <input
+              style="display: none;"
+              type="text"
+              class="form-control"
+              name="key"
+              id="key"
+              placeholder="Enter your Id"
+              aria-label="Enter Your Id"
+              aria-describedby="btn2"
+              value="<%=name%>"
+            />
+            <textarea
+              class="form-control"
+              id="quest"
+              placeholder="Enter Question"
+              rows="2"
+            ></textarea>
+            <div style="position: relative">
+              <button class="btn btn-success" id="btn3" style="width: 100%">
+                Post
+              </button>
+              <!-- <button onclick="getdata('yes')" class="btn btn-success" id="btn4" style="margin-right: 5%;">Get
+                            content</button> -->
+              <!-- <button style="width: 30%;" class="btn btn-success"
+                            id="btn5">Delete</button> -->
             </div>
+          </form>
         </div>
+      </div>
     </div>
-    <div class="container">
-        <div class="container" id="items-list" style="display:flex; flex-direction:column-reverse;">
-
-        </div>
+    <div>
+      <div class="mb-3" id="items-list"></div>
     </div>
 
     <!-- <script src="page.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
     <!-- <script src="page.js"></script> -->
-</body>
-<script>
-    //************************************************************************* *//
+    <script src="/socket.io/socket.io.js"></script>
+  </body>
+  <script>
+    //*****************UTILITY*************************
+    const convertPost = (commentVal)=>{
+      commentVal = commentVal.replace(/\?/g, "&quest;");
+      commentVal = commentVal.replace(/\%/g, "&percnt;");
+      commentVal = commentVal.replace(/\#/g, "&num;");
+      commentVal = commentVal.replace(/\//g, "&sol;");
+      commentVal = commentVal.replace(/\</g, "&lt;");
+      commentVal = commentVal.replace(/\>/g, "&gt;");
+      commentVal = commentVal.replace(/\\/g, "&Backslash;");
+      commentVal = commentVal.replace(/\n|\n\n|\r\n/g, "<br>");
+      return commentVal;
+    }
+    const convertPrint = (dataText)=>{
+      dataText = dataText.replace(/\<br>/g, " *DDDcode ");
+      dataText = dataText.replace(/\?/g, "&quest;");
+      dataText = dataText.replace(/\%/g, "&percnt;");
+      dataText = dataText.replace(/\#/g, "&num;");
+      dataText = dataText.replace(/\//g, "&sol;");
+      dataText = dataText.replace(/\?/g, "&quest;");
+      dataText = dataText.replace(/\</g, " &lt;");
+      dataText = dataText.replace(/\>/g, "&gt; ");
+      dataText = dataText.replace(/\\/g, "&Backslash;");
+      dataText = dataText.replace(/\*DDDcode/g, "<br>");
+      return dataText;
+    }
 
-    const showData = (articles, keyvalue) => {
-        const artitem = articles;
+    function showAlertIText(dest , msg){
+       dest.innerText = msg;
+    }
+    function showAlertIHTML(dest , msg){
+       dest.innerHTML = msg;
+    }
+    function newHTML(dest , msg){
+       document.getElementById(`${dest}`).innerHTML = msg;
+    }
+    function newTEXT(dest , msg){
+       document.getElementById(`${dest}`).innerText = msg;
+    }
 
-        //setting class in option using local storage
-        let opt1 = "none", opt2 = "none", opt3 = "none", opt4 = "none", object = "";
-        if (localStorage.getItem('clickedId') != undefined) {
-            object = JSON.parse(localStorage.getItem('clickedId'));
-        }
-        var items_list = document.getElementById('items-list');
-        var keyvalues = keyvalue;
-        items_list.innerHTML = '';
+    // *******************************************
+    const showNot = async () => {
+      const notif = document.getElementsByClassName("not-content")[0];
+      notif.classList.toggle("visi");
+      document.getElementById("count").innerText = 0;
+    };
+    //***********************************************************************
+    const showComment = async (quesId, data) => {
+      const div = document.getElementById(`${quesId}ques`);
+      const questIdBox = document.getElementById(`${quesId}box`);
 
-        for (var i = 0; i < artitem[0].length; i++) {
+      showAlertIHTML(div,"");
+      for (var i = 0; i < data.length; i++) {
+        var output = "";
+        let dataText=data[i].text;
+        dataText = await convertPrint(dataText);
+        output += `
+            <p class="card-text card-header "><span style="color:rgb(248, 9, 109);">${data[i].author} &nbsp;&nbsp;</span>${dataText}</p>`;
+        div.innerHTML += output;
+      }
+      if (data.length == 0) {
+        div.innerHTML = `<p class="card-text card-header "><span style="color:rgb(248, 9, 109);">DoubtHelper &nbsp;&nbsp;</span>Nothing To show</p>`;
+      }
+    };
+    //***********************************************************************
 
-            var output = "";
-            opt1 = object[`${artitem[0][i]._id}opt1`];
-            opt2 = object[`${artitem[0][i]._id}opt2`];
-            opt3 = object[`${artitem[0][i]._id}opt3`];
-            opt4 = object[`${artitem[0][i]._id}opt4`];
-            output += `
-            <div class="card text-center border-success">
-                 <div class="card-body ">
-                    <details > 
-                            <summary></summary>
-                            <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
-                                <p>${artitem[0][i].owner} </p>
-                                <button class="btn  ${keyvalues} ${artitem[0][i]._id}" onclick="deleteDoc(this.classList)" id="delete" style="position:absolute;right:3vw"> <i class="fa fa-trash"></i></button>
+    const showData = async(articles, keyvalue) => {
+      const artitem = articles;
+      //setting class in option using local storage
+      let opt1 = "none",
+        opt2 = "none",
+        opt3 = "none",
+        opt4 = "none",
+        object = "";
+      if (localStorage.getItem("clickedId") != undefined) {
+        object = JSON.parse(localStorage.getItem("clickedId"));
+      }
+      var items_list = document.getElementById("items-list");
+      showAlertIHTML(items_list,"");
+      if (artitem[0].length < 1) {
+        items_list.innerHTML += "<h6>Empty</h6>";
+      }
+      var keyvalues = keyvalue;
+
+      for (var i = 0; i < artitem[0].length; i++) {
+        var output = "";
+        opt1 = object[`${artitem[0][i]._id}opt1`]==true?true:"";
+        opt2 = object[`${artitem[0][i]._id}opt2`]==true?true:"";
+        opt3 = object[`${artitem[0][i]._id}opt3`]==true?true:"";
+        opt4 = object[`${artitem[0][i]._id}opt4`]==true?true:"";
+        var toPrint=artitem[0][i].title.toString();
+        toPrint = await convertPrint(toPrint);        
+        output += `
+            <div id="${artitem[0][i]._id}disp" class="item-list-msg">
+                <div class="card-body ">
+                    <details>
+                        <summary></summary>
+                        <div style="display:flex; flex-direction:row; align-items:baseline; justify-content:center;">
+                            <p>${artitem[0][i].owner} </p>
+                            <button class="btn  ${keyvalues} ${
+          artitem[0][i]._id
+        } ${i + 1}" onclick="deleteDoc(this.classList)"
+                                id="deleteBtn" > <i class="fa fa-trash"></i></button>
+                            <button class="${
+                              artitem[0][i]._id
+                            } btn" onclick="getComment(this.classList)"
+                                id="trashBtn"> <i class="fa fa-comment"></i></button>
+                        </div>
+                    </details>
+                    <div style="position: relative;">
+                        <div id="${artitem[0][i]._id}box" class="comment">
+                            <div id="${
+                              artitem[0][i]._id
+                            }ques" class="comment-data">
                             </div>
-                        </details>
-                 <div class="container">
-                     <p class="card-text card-header "><span  style="width:10vw; position:absolute; left:0px;">${i + 1}&nbsp;&nbsp;</span>${artitem[0][i].title}</p>
-                     <div class="container mt-2" style="display:flex;justify-content:center;" >
-                       <div> <button onclick="option(this.classList,this.textContent)"  class="btn btn-outline-success ${artitem[0][i]._id} ${keyvalues} ${opt1}">opt1</button> <span>${artitem[0][i].opt1}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt2}">opt2</button> <span>${artitem[0][i].opt2}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt3}">opt3</button> <span>${artitem[0][i].opt3}</span></div>
-                       <div> <button onclick="option(this.classList,this.textContent)" class="btn btn-outline-success ${artitem[0][i]._id}  ${keyvalues} ${opt4}">opt4</button> <span>${artitem[0][i].opt4}</span></div>
-                     </div>
-                     </div>
+                            <div class="submit-comment">
+                                <div style="display: flex;">
+                                    <textarea id="${
+                                      artitem[0][i]._id
+                                    }" class="form-control" class="comment-area" placeholder="Comment here.."
+                                        rows="1"></textarea>
+                                    <button class="${
+                                      artitem[0][i]._id
+                                    } btn btn-primary" onclick="addComment(this.classList)">Comment</button>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-text card-header " style="word-break:break-word;"><span style=" position:absolute; left:-1rem;">${
+                          i + 1
+                        }</span>${toPrint}</p>
+                        <div class=" mt-2" style="display:flex;justify-content:center;">
+                            <div> <button id = ${artitem[0][i]._id}bopt1 onclick="option(this.classList,this.textContent)"
+                                    class="btn btn-outline-success ${
+                                      artitem[0][i]._id
+                                    } ${keyvalues} ${opt1} ${
+          i + 1
+        }">opt1</button>
+                                <span id = ${artitem[0][i]._id}opt1 >${artitem[0][i].opt1}</span>
+                            </div>
+                            <div> <button id = ${artitem[0][i]._id}bopt2 onclick="option(this.classList,this.textContent)"
+                                    class="btn btn-outline-success ${
+                                      artitem[0][i]._id
+                                    }  ${keyvalues} ${opt2} ${
+          i + 1
+        }">opt2</button>
+                                <span id = ${artitem[0][i]._id}opt2 >${artitem[0][i].opt2}</span>
+                            </div>
+                            <div> <button id = ${artitem[0][i]._id}bopt3 onclick="option(this.classList,this.textContent)"
+                                    class="btn btn-outline-success ${
+                                      artitem[0][i]._id
+                                    }  ${keyvalues} ${opt3} ${
+          i + 1
+        }">opt3</button>
+                                <span id = ${artitem[0][i]._id}opt3 >${artitem[0][i].opt3}</span>
+                            </div>
+                            <div> <button id = ${artitem[0][i]._id}bopt4  onclick="option(this.classList,this.textContent)"
+                                    class="btn btn-outline-success ${
+                                      artitem[0][i]._id
+                                    }  ${keyvalues} ${opt4} ${
+          i + 1
+        }">opt4</button>
+                                <span id = ${artitem[0][i]._id}opt4 >${artitem[0][i].opt4}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-             </div>`
+            </div>`;
 
-            items_list.innerHTML += output;
-        }
-    }
+        items_list.innerHTML += output;
+      }
+    };
+
     //************************************************************************* *//
-    const getdata = async () => {
-        const notify = document.getElementById('notify');
-        const fetching = async () => {
-            const key = document.getElementById('key');
-            const keyvalue = key.value;
-            const btn4 = document.getElementById('btn4');
-            if (keyvalue == '') {
-                // console.log('both empty');
-                document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
+    const addComment = async (list) => {
+      const quesId = list[0];
+      const comment = document.getElementById(`${quesId}`);
+      let commentVal = comment.value;
+      const key = document.getElementById("key");
+      const keyvalue = key.value;
+      if (commentVal == "") {
+        return alert("Please fill carefully");
+      }
+      commentVal = await convertPost(commentVal);
+      try {
+        fetch("/comment/", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            id: keyvalue,
+            quesId,
+            commentVal,
+          }),
+        })
+          .then(function (resp) {
+            return resp.json();
+          })
+          .then(function (data) {
+            if (data.result == "success") {
+              showComment(quesId, data.comment);
+              comment.value = "";
+            } else {
+              alert(`${data.result}`);
             }
-            else if (keyvalue != '') {
-                try {
-                    await fetch(`/get/${keyvalue}`)
-                        .then(function (resp) {
-                            return resp.json();
-                        })
-                        .then(function (data) {
-                            if (data.result == 'success') {
-                                const dataAll = [data.alldata];
-                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                                showData(dataAll, keyvalue);
-                            }
-                            else {
-                                notify.innerHTML = `<h6 style="color:red"> ${data.result} </h6>`
+          });
+      } catch (err) {        
+        alert("Some error occured");
+      }
+    };
+    //************************************************************************* *//
+    const getComment = async (list) => {
+      const quesId = list[0];
+      const key = document.getElementById("key");
+      const questIdBox = document.getElementById(`${quesId}box`);
+      questIdBox.style.display = "block";
+      const div = document.getElementById(`${quesId}ques`);
+      showAlertIHTML(div,`<p class="card-text">&nbsp;&nbsp;Loading...<br><br></p>`);
 
-                            }
-                        }).catch((err) => {
-                            console.log('reach here2');
-                            notify.innerHTML = `<h6 style="color:red">${err}</h6>`
-                        })
-                }
-                catch (err) {
-                    notify.innerHTML = `<h6 style="color:red">${err} </h6>`
-                }
-            }
-            else {
-                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
-            }
+      const IdBoxList = questIdBox.classList;
+      if (IdBoxList.length < 2) {
+        const keyvalue = key.value;
+        try {
+          fetch(`/getComment/${keyvalue}/${quesId}/`)
+            .then(function (resp) {
+              return resp.json();
+            })
+            .then(function (data) {
+              if (data.result == "success") {
+                showComment(quesId, data.comment);
+              } else {
+                alert(data.result);
+                showAlertIHTML(div,`<p class="card-text card-header">Please try again.</p>`);
+              }
+            });
+        } catch (err) {
+          alert("Some error occured");
         }
-        await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 4000);
-    }
+      } else {
+        questIdBox.style.display = "none";
+      }
+      questIdBox.classList.toggle("visible");
+    };
+    //************************************************************************* *//
+    const getdata = async (check) => {
+      const notify = document.getElementById("notify");
+      const fetching = async () => {
+        const key = document.getElementById("key");
+        let keyvalue = key.value;
+        const btn4 = document.getElementById("btn4");
+        if (keyvalue == "") {
+          newHTML(notify,`<h6 style="color:red">Please fill all fields*</h6>`);
+        } else if (keyvalue != "") {
+          keyvalue = await convertPost(keyvalue)
+          try {
+            await fetch(`/get/${keyvalue}`)
+              .then(function (resp) {
+                return resp.json();
+              })
+              .then(function (data) {
+                if (data.result == "success") {
+                  const dataAll = [data.alldata];
+                  if (check == "yes") {
+                    notify.innerHTML = "";
+                  }
+                  showData(dataAll, keyvalue);
+                } else {                  
+                  showAlertIHTML(notify,`<h6 style="color:red"> ${data.result} </h6>`);
+                }
+              })
+              .catch((err) => {
+                showAlertIHTML(notify,`<h6 style="color:red">${err}</h6>`);
+              });
+          } catch (err) {
+            showAlertIHTML(notify,`<h6 style="color:red">${err} </h6>`);
+          }
+        } else {
+          showAlertIHTML(notify,`<h6 style="color:red">Please fill all fields*</h6>`);
+        }
+      };
+      await fetching();
+    };
 
+    //************************************************************************* *//
+    const socket = io();
+    const nameee = document.getElementById("namee").innerText.trim();
+    const iddd = document.getElementById("key").value;
+    const notific = document.getElementsByClassName("not-content")[0];
+    const count = document.getElementById("count");
+    socket.emit("joinId", { name: `${nameee}`, id: `${iddd}` });
+    getdata("no");
+    socket.on("optionChange" ,(msg)=>{
+      // console.log(msg);
+      const val = parseInt(count.innerText);
+      if (val == NaN) {
+        val = 0;
+      }
+      count.innerText = val + 1;
+      notific.innerHTML += `<p class="msg">${msg.message}</p>`;
+      newTEXT(`${msg.question}${msg.option}` , `${msg.updatedVal}` );      
+    })
+    socket.on("new", (msg) => {
+      const val = parseInt(count.innerText);
+      if (val == NaN) {
+        val = 0;
+      }
+      count.innerText = val + 1;
+      notific.innerHTML += `<p class="msg">${msg}</p>`;
+      getdata("no");
+    });
+    socket.on("check", (message) => {
+      const val = parseInt(count.innerText);
+      if (val == NaN) {
+        val = 0;
+      }
+      count.innerText = val + 1;
+      notific.innerHTML += `<p class="msg">${message}</p>`;
+    });
+    socket.on("refresh", (msg) => {
+      const notify = document.getElementById("notify");
+      console.clear();
+      alert(`${msg}`);
+      setTimeout(function () {
+        window.location.reload();
+      }, 1000);
+    });
+    socket.on("active", (count) => {
+      socket.emit("activeYes", "active");
+    });
     //************************************************************************* *//
     const deleteDoc = async (list) => {
-        const coll = list[1];
-        const doc = list[2];
-        const bool = confirm('Are you want to delete it');
-        if (bool) {
-            try {
-
-                await fetch(`/deleteDocument/${coll}/${doc}`)
-                    .then(function (resp) {
-                        return resp.json();
-                    })
-                    .then(function (data) {
-                        if (data.result == 'Success' || data.result == 'success') {
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                        }
-                        else {
-                            notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
-                        }
-                        getdata();
-                    }).catch((err) => {
-                        notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`
-                    })
-                setTimeout(() => {
-                    notify.innerText = "";
-                }, 4000);
-            }
-            catch (err) {
-                console.log(err);
-                notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`
-            }
+      const coll = list[1];
+      const doc = list[2];
+      const num = list[3];
+      const notify = document.getElementById("notify");
+      const bool = confirm("Are you want to delete it");
+      if (bool) {
+        try {
+          await fetch(`/deleteDocument/${coll}/${doc}`)
+            .then(function (resp) {
+              return resp.json();
+            })
+            .then(function (data) {
+              if (data.result.toString().toLowerCase() == "success") {
+                socket.emit("update", {
+                  message: "Question deleted",
+                  data: `${num}`,
+                });
+                notify.innerHTML = "";
+                getdata("yes");
+              } else {
+                notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`;
+                getdata("no");
+              }
+            })
+            .catch((err) => {
+              notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`;
+            });
+        } catch (err) {
+          console.log(err);
+          notify.innerHTML = `<h6 style="color:red">Something went wrong</h6>`;
         }
-    }
+      }
+    };
     //************************************************************************* *//
     const option = async (list, text) => {
-        const conf = window.confirm('Are you sure?');
-        if (conf) {
-            // console.log('here');
-            const id = list[2];
-            const opti = text;
-            const pageid = list[3];
+      const conf = window.confirm("Are you sure?");
+      const id = list[2];
+      const opti = text;
+      const pageid = list[3];
+      const numb = list[5];
+      if (conf) {
+        document.getElementById(`${id}b${opti}`).disabled = true;
 
-            try {
-                let status;
-
-                //determine whether to decrese or increse 
-                if (localStorage.getItem('clickedId') != undefined) {
-                    const object = JSON.parse(localStorage.getItem('clickedId'));
-                    if (object[`${id}${opti}`] == undefined || object[`${id}${opti}`] == null) {
-                        object[`${id}${opti}`] = true;
-                        localStorage.setItem('clickedId', JSON.stringify(object));
-                        status = "inc";
-                    }
-                    else if (object[`${id}${opti}`] == true) {
-                        object[`${id}${opti}`] = false;
-                        localStorage.setItem('clickedId', JSON.stringify(object));
-                        status = "dec";
-                    }
-                    else {
-                        object[`${id}${opti}`] = true;
-                        localStorage.setItem('clickedId', JSON.stringify(object));
-                        status = "inc";
-                    }
-                }
-                else {
-                    let obj = {
-                        [`${id}${opti}`]: true
-                    }
-                    localStorage.setItem('clickedId', JSON.stringify(obj));
-                    status = "inc";
-                }
-                await fetch(`/change/${pageid}/${id}/${text}/${status}`)
-                    .then(function (resp) {
-                        return resp.json();
-                    })
-                    .then(function (data) {
-                        if (data.result == 'Success' || data.result == 'success') {
-                            const dataAll = [data.alldata];
-                            notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                        }
-                        else {
-                            notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
-                        }
-                        getdata();
-                    }).catch((err) => {
-                        notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`
-                    })
+        const notify = document.getElementById("notify");
+        try {
+          let status;
+          //determine whether to decrese or increse
+          if (localStorage.getItem("clickedId") != undefined) {
+            const object = JSON.parse(localStorage.getItem("clickedId"));
+            if (
+              object[`${id}${opti}`] == undefined ||
+              object[`${id}${opti}`] == null
+            ) {
+              object[`${id}${opti}`] = true;
+              localStorage.setItem("clickedId", JSON.stringify(object));
+              status = "inc";
+            } else if (object[`${id}${opti}`] == true) {
+              object[`${id}${opti}`] = false;
+              localStorage.setItem("clickedId", JSON.stringify(object));
+              status = "dec";
+            } else {
+              object[`${id}${opti}`] = true;
+              localStorage.setItem("clickedId", JSON.stringify(object));
+              status = "inc";
             }
-            catch (err) {
-                console.log(err);
-                notify.innerHTML = `<h6 style="color:red">Check Network or contact us. </h6>`
-            }
-            setTimeout(() => {
-                notify.innerText = "";
-            }, 4000);
+          } else {
+            let obj = {
+              [`${id}${opti}`]: true,
+            };
+            localStorage.setItem("clickedId", JSON.stringify(obj));
+            status = "inc";
+          }
+          await fetch(`/change/${pageid}/${id}/${text}/${status}`)
+            .then(function (resp) {
+              return resp.json();
+            })
+            .then(function (data) {
+              if (data.result.toLowerCase() == "success") {
+                // console.log(data);                
+                socket.emit("update", {
+                  message: "option change",
+                  data: `${numb}`,
+                  updatedVal : `${data.updated_val}`,
+                  option : `${opti}`,
+                  question : `${id}`
+                });                
+                notify.innerHTML = "";
+                newTEXT((`${id}${opti}`)  , `${data.updated_val}`);
+                document.getElementById(`${id}b${opti}`).classList.toggle("true");                
+              } else {
+                notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`;
+                // getdata("no");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              notify.innerHTML = `<h6 style="color:red">Error occured  </h6>`;
+            });
+        } catch (err) {
+          console.log(err);
+          notify.innerHTML = `<h6 style="color:red">Check Network or contact us. </h6>`;
         }
-    }
-    //************************************************************************* *//
+      }
+      document.getElementById(`${id}b${opti}`).disabled = false;
+    };
 
-    const postdata = async () => {
-        const notify = document.getElementById('notify');
-        const fetching = async () => {
-
-            const key = document.getElementById('key');
-            const keyvalue = key.value;
-            const quest = document.getElementById('quest');
-            var questval = quest.value;
-            questval = questval.replace(/\?/g, "&quest;")
-            questval = questval.replace(/\%/g, "&percnt;")
-            questval = questval.replace(/\#/g, "&num;")
-            questval = questval.replace(/\//g, "&sol;")
-            questval = questval.replace(/\\/g, "&Backslash;")
-            questval = questval.replace(/\n|\n\n|\r\n/g, "<br>")
-            questval = questval.toString();
-            const btn3 = document.getElementById('btn3');
-            if (keyvalue == '' || questval == '') {
-                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
-            }
-            else if (keyvalue != '' && questval != '') {
-                try {
-                    // console.log(questval);
-                    await fetch(`/post/${keyvalue}/${questval}`)
-                        .then(function (resp) {
-                            return resp.json();
-                        })
-                        .then(function (data) {
-                            // console.log(data);
-                            if (data.result == "Can't add more than 60 questions") {
-                                notify.innerHTML = `<h6 style="color:orange">${data.result}</h6>`
-                            }
-                            else {
-                                getdata();
-                            }
-                        });
-                }
-                catch (err) {
-                    notify.innerHTML = `<h6 style="color:red">Error with input<br>Erase some mathematical symbols </h6>`
-                }
-            }
-            else {
-                notify.innerHTML = `<h6 style="color:red">Fill all fields*</h6>`
-            }
-            quest.value = '';
+    const postQues = async (e) => {
+      e.preventDefault();
+      const notify = document.getElementById("notify");
+      const key = document.getElementById("key");
+      const keyvalue = key.value;
+      const quest = document.getElementById("quest");
+      var question = quest.value.toString();
+      question = await convertPost(question);
+      if (keyvalue == "" || question == "") {
+        notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`;
+        return;
+      } else {
+        try {
+          fetch("/postQues/", {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              keyvalue,
+              question,
+            }),
+          })
+            .then(function (resp) {
+              return resp.json();
+            })
+            .then(function (data) {
+              if (data.result == "success") {
+                socket.emit("update", { message: "question post", data: "" });
+                notify.innerHTML = "";
+                getdata("no");
+              } else {
+                notify.innerHTML = `<h6 style="color:red">${data.result}</h6>`;
+                getdata("no");
+              }
+            });
+        } catch (err) {
+          notify.innerHTML = `<h6 style="color:red">Error with input<br>Erase some mathematical symbols </h6>`;
         }
-        await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 4000);
-    }
+      }
+      quest.value = "";
+    };
+    const form = document.getElementById("addQues");
+    form.addEventListener("submit", postQues);
     // **********************************************************************
-
-    const deletedata = async () => {
-        const notify = document.getElementById('notify');
-        const fetching = async () => {
-            const key = document.getElementById('key');
-            const keyvalue = key.value;
-            const btn5 = document.getElementById('btn5');
-            if (keyvalue == '') {
-                // console.log('both empty');
-                document.getElementById('notify').innerHTML = `<h6 style="color:red">Please fill id</h6>`
-                // notify.style.display = "block";
+    const deletedata = async (e) => {
+      const notify = document.getElementById("notify");
+      e.preventDefault();
+      const fetching = async () => {
+        const key = document.getElementById("key");
+        const keyvalue = key.value;
+        const btn5 = document.getElementById("btn5");
+        if (keyvalue == "") {
+          document.getElementById(
+            "notify"
+          ).innerHTML = `<h6 style="color:red">Please fill id</h6>`;
+        } else if (keyvalue != "") {
+          if (confirm("Do you want to delete all questions")) {
+            try {
+              await fetch(`/delete/${keyvalue}`)
+                .then(function (resp) {
+                  return resp.json();
+                })
+                .then(function (data) {
+                  if (data.result == "success") {
+                    socket.emit("update", {
+                      message: "All quesiton deleted",
+                      data: "",
+                    });
+                    showAlertIHTML(notify,"");
+                    getdata("no");
+                  } else {
+                    showAlertIHTML(notify,`<h6 style="color:red">${data.result} </h6>`);
+                  }
+                })
+                .catch((err) => {
+                  showAlertIHTML(notify,`<h6 style="color:red">Error occured</h6>`);
+                });
+            } catch (err) {
+              showAlertIHTML(notify,`<h6 style="color:red">Something went wrong </h6>`);
             }
-            else if (keyvalue != '') {
-                try {
-                    await fetch(`/delete/${keyvalue}`)
-                        .then(function (resp) {
-                            return resp.json();
-                        })
-                        .then(function (data) {
-                            if (data.result == 'success') {
-                                // const dataAll = [data.alldata];
-                                notify.innerHTML = `<h6 style="color:green">Success </h6>`
-                                // notify.style.display = "block";
-                                getdata();
-                            }
-                            else {
-                                notify.innerHTML = `<h6 style="color:red">${data.result} </h6>`
-                                // notify.style.display = "block";
-                            }
-                        }).catch((err) => {
-                            notify.innerHTML = `<h6 style="color:red">Error occured</h6>`
-                            // notify.style.display = "block";
-                        })
-                }
-                catch (err) {
-                    notify.innerHTML = `<h6 style="color:red">${err} </h6>`
-                    // notify.style.display = "block";
-                }
-            }
-            else {
-                notify.innerHTML = `<h6 style="color:red">Please fill all fields*</h6>`
-                // notify.style.display = "block";
-            }
+          } else {
+            return;
+          }
+        } else {
+          showAlertIHTML(notify,`<h6 style="color:red">Please fill all fields*</h6>`);  
         }
-        await fetching();
-        setTimeout(() => {
-            notify.innerText = "";
-        }, 1000);
-    }
-
-
-
-</script>
-
+      };
+      await fetching();
+    };
+  </script>
 </html>

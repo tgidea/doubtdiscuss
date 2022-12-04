@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 const expschema2 = require('../schema/expschema2');
 const IdData=require('../schema/idSchemaModal');
 const idSchema=require('../schema/idSchema');    
+const QuesModel=require('../schema/quesModel');
 
 const post_question = async (stri, quest, username,res,req) => {
-    const user=req.username;
+    
     //check if routed id present or not
     try {
+        let user=req.username;
         mongoose.connection.db.listCollections({ name: stri })
             .next(function (err, info) {
                 //if present:
@@ -33,45 +35,51 @@ const post_question = async (stri, quest, username,res,req) => {
                                                     "title": quest,
                                                     "owner":username,
                                                 });
-                                                const result = await datacoll.save();
-                                                // console.log('created successfully');
+                                                const result = await datacoll.save();                                                
+                                                const quesDoc=new QuesModel({
+                                                    "_id":result._id.toString(),
+                                                    username
+                                                })                                                                                                
+                                                const resultFin=await quesDoc.save();
                                             }
                                             createDocument();
                                             res.send({ "result": "success" });
                                         }
                                         else {
-                                            res.send({ "result": "Limit surpassed" });
+                                            res.status(400).send({ "result": "Limit surpassed" });
                                         }
                                     }
                                     else{
-                                        res.send({ "result": "Sorry,You don't have permission." });
+                                        res.status(403).send({ "result": "Sorry,You don't have permission." });
                                     }
                                 }
                                 else{
-                                    res.send({ "result": "All operations are stopped by owner." });
+                                    res.status(400).send({ "result": "All operations are stopped by owner." });
                                 }
                             }
                             catch (err) {
+                                console.log('in fun')
                                 console.log(err);
+                                res.send({"result":"Some problem occured"});
                             }
                         }
                         fun();
 
                     }
                     catch (err) {
-                        // console.log('id not match');
-                        res.send({ "result": "Id not found" });
+                        console.log('id not match');
+                        res.status(400).send({ "result": "Id not found" });
                     }
                 }
                 else {
                     // console.log('id not match');
-                    res.send({ "result": "Id not found" });
+                    res.status(400).send({ "result": "Id not found" });
                 }
             })
     }
     catch (err) {
-        console.log(err);
-        res.send({ "result": "Error occured" });
+        console.log(err,'in funn');
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports = post_question;

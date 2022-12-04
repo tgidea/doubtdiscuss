@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const Register=require('../registerSchema');
+const Register=require('../schema/registerSchema');
 const Client = require('../schema/usernewkey');
 const blockReq = require('../schema/blockReqschema');
 
@@ -12,8 +12,9 @@ const authlogout=async(req,res,next)=>{
         next();
     }
     catch(err){
-        console.log('Token not present or faulty');
-        res.status(500).send(`<h1>Logout fails. Please <a href="/">Login</a></h1>`);
+        console.log('Token not present or faulty 2');
+        res.status(400).render('error',{"error":`Logout fails.`});
+        // res.status(500).send(`<h1>Logout fails. Please <a href="/">Login</a></h1>`);
     }
 }
 module.exports=authlogout;

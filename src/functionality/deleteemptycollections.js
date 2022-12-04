@@ -24,7 +24,7 @@ const deleteBlankCollection = async (res) => {
                                 if (number < 1) {
                                     try {
                                         await mongoose.connection.collection(naam).drop()
-                                        userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
+                                        // userData = [{ ip: "empty now", id: 'empty now', time: getmillsec() }]
                                     }
                                     catch (err) {
                                         reslt = `${err}`;
@@ -59,13 +59,13 @@ const deleteBlankCollection = async (res) => {
                     }
 
                 }
-                res.send({ "result": reslt });
+                res.status(200).send({ "result": reslt });
 
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports=deleteBlankCollection;

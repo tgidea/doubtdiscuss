@@ -23,30 +23,30 @@ const getdata = async (stri, res, req) => {
                         const details = await IdData.findOne({ name: stri });
                         if (details.active) {
                             if (details.deniedTo.indexOf(user) == -1) {
-                                res.send({ "result": "success", "alldata": result });
+                                res.status(200).send({ "result": "success", "alldata": result });
                             }
                             else {
-                                res.send({ "result": "Sorry,You don't have permission." });
+                                res.status(403).send({ "result": "Sorry,You don't have permission." });
                             }
                         }
                         else {
-                            res.send({ "result": "All operations are stopped by owner." });
+                            res.status(400).send({ "result": "All operations are stopped by owner." });
                         }
                     }
                     catch (err) {
                         console.log(err);
-                        res.send({ "result": "Error occur" });
+                        res.status(400).send({ "result": "Error occur" });
                     }
                 }
                 else {
                     // console.log('id not match');
-                    res.send({ "result": "Id not found" });
+                    res.status(400).send({ "result": "Id not found" });
                 }
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports = getdata;

@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const Register=require('../registerSchema');
+const Register=require('../schema/registerSchema');
 const path = require('path');
 const staticPath = path.join(__dirname, '.../public');
 const authpage=async(req,res,next)=>{
@@ -13,7 +13,7 @@ const authpage=async(req,res,next)=>{
         next();
     }
     catch(err){
-        console.log('Token not present or faulty');
+        console.log('Token not present or faulty 4');
         res.status(201).render('page', { name:"" ,link:"/",username:"Login"  });
     }
 }

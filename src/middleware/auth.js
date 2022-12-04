@@ -1,5 +1,5 @@
 const jwt=require('jsonwebtoken');
-const Register=require('../registerSchema');
+const Register=require('../schema/registerSchema');
 const Client = require('../schema/usernewkey');
 const blockReq = require('../schema/blockReqschema');
 
@@ -14,7 +14,7 @@ const auth=async(req,res,next)=>{
         next();
     }
     catch(err){
-        console.log('Token not present or faulty');
+        console.log('Token not present or faulty 1');
         res.status(201).send({"result":`Please <a href="/" style="color:rgb(248, 9, 109)">Sign In</a>`});
     }
 }

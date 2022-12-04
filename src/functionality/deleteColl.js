@@ -21,20 +21,20 @@ const deleteCollection = async (stri, res, req) => {
                             }
                             try {
                                 const number = await Temp.countDocuments();
-                                const limit = await IdData.findOne({ name: stri });
-                                if (limit.deniedTo.indexOf(req.username) == -1) {
-                                    if (limit.active == true) {
-                                        if (number > limit && limit.author == req.username || limit.coauthor.indexOf(req.username)>-1) {
+                                const idInfo = await IdData.findOne({ name: stri });
+                                if (idInfo.deniedTo.indexOf(req.username) == -1) {
+                                    if (idInfo.active == true) {
+                                        // console.log(number,idInfo,req.username);
+                                        if (number >= idInfo.limit && idInfo.author == req.username) {
                                             await Temp.deleteMany();
-                                            console.log('deleted successfully');
                                             res.send({ "result": "success" });
                                         }
                                         else {
-                                            if (number > limit) {
-                                                res.send({ "result": "You are not owner/co-owner of this id" });
+                                            if (number >= idInfo.limit) {
+                                                res.send({ "result": "You are not owner of this id" });
                                             }
                                             else {
-                                                res.send({ "result": "Can't delete till a limit reach" });
+                                                res.send({ "result": "Can't delete until limit reach" });
                                             }
                                         }
                                     }

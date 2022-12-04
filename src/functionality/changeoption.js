@@ -21,13 +21,14 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                         Temp = mongoose.model(stri, expschema2);
                     }
                     try {
-                        const details = await IdData.findOne({ name: stri });                        
+                        const details = await IdData.findOne({ name: stri });  
+                        var updatedVal;                      
                         if (details.active) {
                             if (details.deniedTo.indexOf(req.username) == -1) {
                                 if (status == "inc") {
                                     const result = await Temp.updateOne({ _id: questid }, {
                                         $inc: { [`${opti}`]: 1 }
-                                    })
+                                    })                                    
                                 }
                                 else {
                                     const result = await Temp.updateOne({ _id: questid }, {
@@ -40,29 +41,31 @@ const changeOption = async (stri, questid, opti, status, res, req) => {
                                         $set: { [`${opti}`]: 0 }
                                     })
                                 }
-                                res.send({ "result": "Success" });
+                                updatedVal = check[0][`${opti}`];
+                                if(updatedVal<0)updatedVal=0;
+                                res.status(200).send({ "result": "Success" , "updated_val" : `${updatedVal}` });
                             }
                             else {
-                                res.send({ "result": "Sorry,You don't have permission." });
+                                res.status(403).send({ "result": "Sorry,You don't have permission." });
                             }
                         }
                         else {
-                            res.send({ "result": "All operations are stopped by owner." });
+                            res.status(403).send({ "result": "All operations are stopped by owner." });
                         }
                     }
                     catch (err) {
                         console.log(err);
-                        res.send({ "result": "Error occur option not updated" })
+                        res.status(400).send({ "result": "Error occur option not updated" })
                     }
                 }
                 else {
-                    res.send({ "result": "Id not found" });
+                    res.status(400).send({ "result": "Id not found" });
                 }
             })
     }
     catch (err) {
         console.log(err);
-        res.send({ "result": "Error occured" });
+        res.status(400).send({ "result": "Error occured" });
     }
 }
 module.exports = changeOption;

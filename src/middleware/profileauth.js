@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Register = require('../registerSchema');
+const Register = require('../schema/registerSchema');
 const Client = require('../schema/usernewkey');
 const blockReq = require('../schema/blockReqschema');
 
@@ -25,7 +25,7 @@ const profileAuth = async (req, res, next) => {
     catch (err) {
         // console.log(err);
         console.log('Token not present or faulty');
-        res.status(404).send('<h2>Page not found<br><a href="/">Login</a></h2>');
+        res.status(404).redirect('./')
     }
 }
 module.exports = profileAuth;
