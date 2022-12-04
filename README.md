@@ -1,5 +1,5 @@
 # doubtdiscuss
-<h3>Visit <a href="https://doubtsolver.herokuapp.com">https://doubtsolver.herokuapp.com</a></h3><br>
+<h3>Visit <a href="https://doubtsolver.onrender.com/">https://doubtsolver.onrender.com/</a></h3><br>
 <p>
 It is a platform where multiple people can post a mcq question, answer that and also add comment.
 Per account two rooms can be generated whose link will be present in home page. It is real time web app built using sockets;

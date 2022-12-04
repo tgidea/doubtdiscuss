@@ -28,7 +28,7 @@ const registerFun = async (req, res) => {
                     to: `${mailTo}`,
                     subject: 'Verify Account',
                     html: `<h2>Welcome ${name}</h2><h4> Thanks for using doubtHelper.</h4>
-                            <p>Please link <a href="https://doubthelper.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                            <p>Please link <a href="https://doubtsolver.onrender.com//verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
                             `
                 };
                 transporter.sendMail(mailOptions, function (error, info) {
