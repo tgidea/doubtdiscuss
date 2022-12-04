@@ -1,4 +1,3 @@
-
 const Register = require('../schema/registerSchema');
 
 const loginFun = async (req,res) => {

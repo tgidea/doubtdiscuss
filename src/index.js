@@ -10,15 +10,19 @@ const auth = require('./middleware/auth');
 const authpage = require('./middleware/authpage');
 const authpageNoId = require('./middleware/authpageNoId');
 const authstart = require('./middleware/authstart');
-const profileAuth=require('./middleware/profileauth');
+const profileAuth = require('./middleware/profileauth');
+const nodemailer = require('nodemailer');
+const transporter = require('./functionality/nodemailer');
+const post_comment = require('./functionality/post_comment');
 const blockReq = require('./schema/blockReqschema');
 const expschema2 = require('./schema/expschema2');
 const Client = require('./schema/usernewkey');
 const conn = require('./databaseconn');
-const editId=require('./functionality/editId');
-const IdData=require('./schema/idSchemaModal');
-const idSchema=require('./schema/idSchema');
-const deleteDocument=require('./functionality/deleteDocument');
+const editId = require('./functionality/editId');
+const IdData = require('./schema/idSchemaModal');
+const idSchema = require('./schema/idSchema');
+const deleteDocument = require('./functionality/deleteDocument');
+const get_comment = require('./functionality/getComment');
 const post_question = require('./functionality/post_question');
 const getdata = require('./functionality/getdata');
 const create_update_ip = require('./functionality/create_update_userkeyid');
@@ -49,30 +53,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieparser());
 
-app.get('/' ,(req, res) => {
-    try{
-        const token=req.cookies.jwt;
-        const verifyToken=jwt.verify(token,process.env.JWT_TOKEN);
-        res.redirect('/main');
+const blocked = {};
+const blockedComm = {};
+
+app.get('/', async (req, res) => {
+    try {
+        res.sendFile(path.join(staticPath, 'login.html'));
     }
-    catch(err){
-        try{
-            res.sendFile(path.join(staticPath, 'login.html'));
-        }
-        catch(error){
-            res.send("Something went wrong");
-        }
+    catch (err) {
+        res.status(400).render('error', { "error": "Something went wrong" });
     }
 });
 
 app.get('/main', authstart, async (req, res) => {
     try {
         const username = req.username;
-        res.status(201).render('main', { username: username,link:"/profile" });
+        res.status(201).render('main', { username: username, link: "/profile" });
     }
     catch (err) {
-        console.log('Invalid token');
-        res.status(201).render('main', { username: "Login",link:"/" });
+        console.log(err);
+        res.status(201).render('main', { username: "Login", link: "/" });
     }
 });
 
@@ -98,17 +98,17 @@ app.get('/pag/', authpageNoId, async (req, res) => {
 
 });
 
-app.get('/profile',profileAuth,async(req,res)=>{
-    try{
-        const username=req.username;
-        const name=req.name;
-        const email=req.email;
-        const ids=req.ids;
-        res.status(201).render('profile',{username,name,email,ids});
+app.get('/profile', profileAuth, async (req, res) => {
+    try {
+        const username = req.username;
+        const name = req.name;
+        const email = req.email;
+        const ids = req.ids;
+        res.status(201).render('profile', { username, name, email, ids });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({status:"error",result:"Something went wrong"});
+        res.status(400).render('error', { "error": `Something went wrong` });
     }
 })
 
@@ -126,29 +126,7 @@ app.post('/register/', async (req, res) => {
 
 app.post('/login/', async (req, res) => {
     try {
-        if (req.body.email == undefined || req.body.password == undefined) {
-            res.send({ "result": "Invalid login details" });
-        }
-        const email = req.body.email;
-        const password = req.body.password.toString();
-        //const Temp = Register.find({"email":email}) or 
-        const Temp = await Register.find({ "email": email })
-        if (Temp[0] == undefined) {
-            res.send({ "result": "Invalid login details" });
-        }
-        else if (Temp[0].password == password) {
-            const token = await Temp[0].generateAuthToken();
-            // console.log(token);
-            res.cookie("jwt", token, {
-                expires: new Date(Date.now() + 32400000000),
-                httpOnly: true
-            })
-                // res.status(201).sendFile(path.join(staticPath, 'main.html'));
-                .redirect('/main')
-        }
-        else {
-            res.send({ "result": "Invalid login details" });
-        }
+        loginFun(req, res);
     }
     catch (err) {
         console.log('Error occur in /login');
@@ -157,14 +135,14 @@ app.post('/login/', async (req, res) => {
     }
 })
 
-app.get('/logout',authlogout,async(req,res)=>{
-    try{
+app.get('/logout', authlogout, async (req, res) => {
+    try {
         res.clearCookie('jwt');
-        const temp=await req.user.save();
-        res.sendFile(path.join(staticPath, 'login.html'));
+        const temp = await req.user.save();
+        res.redirect('/');
     }
-    catch(err){
-        res.status(500).send(`<h1>Logout fails</h1>`);
+    catch (err) {
+        res.status(400).render('error', { "error": `Logout fails` });
     }
 })
 
@@ -172,7 +150,7 @@ app.get('/newkey/', auth, async (req, res) => {
     try {
         var str1 = await createLength();
         const username = req.username;
-        create_update_ip(str1, username, res,req);
+        create_update_ip(str1, username, res, req);
     }
     catch (err) {
         console.log(err);
@@ -195,11 +173,33 @@ app.post('/postQues', auth, async (req, res) => {
 
 app.post('/comment', auth, async(req, res) => {
     try {
-        const stri = "" + req.params.uniq_id;
-        const usernam = req.username;
-        const quest = req.params.quest.toString();
-        //check if routed id present or not
-        post_question(stri, quest, usernam, res,req);
+        const id = req.body.id.toString();
+        const username = req.username;
+        const comment = req.body.commentVal;
+        const quesId = req.body.quesId;
+        const details = await IdData.findOne({ name: id });
+        if (blockedComm[`${req.username}`] == undefined || (Date.now() - blockedComm[`${req.username}`]) > 2500) {
+            blockedComm[`${req.username}`]=Date.now();
+        }
+        else{
+            return res.json({"result":"Too quickly next attempt.Please try after some time"});
+        }
+        if (details) {
+            if (details.active) {
+                if (details.deniedTo.indexOf(req.username) == -1) {
+                    post_comment(id, quesId, comment, req, res);
+                }
+                else {
+                    res.status(400).send({ "result": "Sorry,You don't have permission." });
+                }
+            }
+            else {
+                res.status(400).send({ "result": "All operations are stopped by owner."});
+            }
+        }
+        else {
+            res.status(400).send({"result":"Id not found"});
+        }
     }
     catch (err) {
         console.log(err);
@@ -244,7 +244,7 @@ app.get('/getComment/:id/:questId', auth,async(req,res)=>{
 app.get('/get/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        await getdata(stri, res,req);
+        await getdata(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -252,31 +252,151 @@ app.get('/get/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/edit/:idName/:fun/:event/',profileAuth,(req,res)=>{
-    try{
-        const idName=req.params.idName;
-        const fun=req.params.fun;
-        const event=req.params.event;
-        if(req.ids.indexOf(idName)>-1){
-            editId(res,req,idName,fun,event);
+app.get('/id/:idName', profileAuth, async (req, res) => {
+    try {
+        const idName = req.params.idName;
+        const idInfo = await IdData.findOne({ name: idName })
+        const username = idInfo.author;
+        const limit = idInfo.limit;
+        const coAuthor = idInfo.coAuthor.toString().trim();
+        const deniedTo = idInfo.deniedTo.toString().trim();
+        const active = idInfo.active;
+        if (coAuthor.indexOf(req.username) > -1 || idInfo.author == req.username) {
+            res.render('edit', { idName, username, limit, coAuthor, deniedTo, active });
         }
-        else{
-            res.send({"result":"Please Contact Owner"});
+        else {
+            res.status(404).render('error', { "error": `Page not found` });
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.send({"result":"Something went wrong"});
+        res.status(404).render('error', { "error": `Something went wrong` });
+    }
+})
+
+app.get('/edit/:idName/:fun/:event/', profileAuth, async (req, res) => {
+    try {
+
+        const idName = req.params.idName;
+        const fun = req.params.fun;
+        const event = req.params.event;
+        let idInfo;
+        try {
+            idInfo = await IdData.findOne({ name: idName });
+        }
+        catch (err) {
+            console.log(err);
+            res.status(403).send({ result: "Not accessible" });
+            return;
+        }
+        if (req.ids.indexOf(idName) > -1 || idInfo.coAuthor.indexOf(req.username) > -1) {
+            editId(res, req, idName, fun, event);
+        }
+        else {
+            res.status(400).render('error', { "error": `Please contact owner` });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).render('error', { "error": `Something went wrong` });
+    }
+})
+const emailReq = {};
+app.get('/outverify', async (req, res) => {
+    try {
+        const mail = req.query.email;
+        let username = req.query.username;
+        if (emailReq[`${mail}`] == undefined || Date.now() - emailReq[`${mail}`] > 13200000) {
+
+            // console.log(emailReq);
+            username = username.replace('%20', " ");
+            const details = await Register.findOne({ email: mail });
+            if (details) {
+                emailReq[`${mail}`] = Date.now();
+                // if (details.username == username) {
+                const id = details._id;
+                const name = details.username;
+                var mailOptions = {
+                    from: 'gyanexplode@gmail.com',
+                    to: `${mail}`,
+                    subject: 'Verify Account',
+                    html: `<h1>Welcome ${name}</h1><h4> Thanks for choosing doubtHelper</h4>
+                        <p>Please link <a href="https://doubtsolver.herokuapp.com/verify?id=${id}&name=${name} ">here</a> to verify your email.</p>
+                        `
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                        res.status(400).render('error', { "error": "Something wrong happened. Please try again later after some time." });
+                    }
+                    else {
+                        console.log('Email sent: ' + info.response);
+                        if (info) {
+                            res.status(201).render('success', { "text": `Verification email has been sent` });
+                        }
+                        else {
+                            res.status(400).render('error', { "error": "Something wrong happened. Please try again." });
+                        }
+                    }
+                });                
+            }
+            else {
+                res.status(400).render('error', { "error": ` username or email are not matching` });
+
+            }
+        }
+        else {
+            res.status(400).render('error', { "error": `Email already sended.` });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).render('error', { "error": ` username or email are not matching` });
+    }
+})
+app.get('/verify/', async (req, res) => {
+    try {
+        const _id = req.query.id.toString();
+        let username = req.query.name.toString();
+        username = username.replace('%20', " ").toString().toLowerCase().trim();
+        const details = await Register.findOne({ _id: _id });
+        if (details.username.toString().trim() == username.toString().trim()) {
+            const result = await Register.updateOne({ _id },
+                {
+                    $set: {
+                        active: true
+                    }
+                });
+            if (result) {
+                res.status(201).render('success', { "text": `Your email has been verified succesfully` });
+            }
+            else {
+                res.status(400).render('error', { "error": `Something went wrong` });
+            }
+        }
+        else {
+
+            res.status(400).render('error', { "error": `Invalid` });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).render('error', { "error": `Invalid` });
     }
 })
 
 app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
-    try {
-        const stri = "" + req.params.coll_id;
-        const questid = "" + req.params.quest_id;
-        const opti = "" + req.params.opt;
-        const status = "" + req.params.status;
-        changeOption(stri, questid, opti, status, res,req);
+    try {    
+        if (blocked[`${req.username}`] == undefined || (Date.now() - blocked[`${req.username}`]) > 2000) {                            
+            const stri = "" + req.params.coll_id;
+            const questid = "" + req.params.quest_id;
+            const opti = "" + req.params.opt;
+            const status = "" + req.params.status;
+            changeOption(stri, questid, opti, status, res, req);
+        }
+        else{
+            res.status(403).send({"result":"Too frequent request"});
+        }
     }
     catch (err) {
         console.log(err);
@@ -287,7 +407,7 @@ app.get('/change/:coll_id/:quest_id/:opt/:status', auth, async (req, res) => {
 app.get('/delete/:id', auth, async (req, res) => {
     try {
         const stri = "" + req.params.id;
-        deleteCollection(stri, res,req);
+        deleteCollection(stri, res, req);
     }
     catch (err) {
         console.log(err);
@@ -295,12 +415,12 @@ app.get('/delete/:id', auth, async (req, res) => {
     }
 });
 
-app.get('/deleteDocument/:collection/:document',auth,async(req,res)=>{
+app.get('/deleteDocument/:collection/:document', auth, async (req, res) => {
     try {
         const collection = "" + req.params.collection;
-        const document=req.params.document;
-        const username=req.username;
-        deleteDocument(req, res,collection,document,username);
+        const document = req.params.document;
+        const username = req.username;
+        deleteDocument(req, res, collection, document, username);
     }
     catch (err) {
         console.log(err);

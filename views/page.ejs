@@ -15,7 +15,6 @@
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
-
       gtag("config", "G-GBBBQQ5SDS");
     </script>
     <!-- Bootstrap CSS -->
@@ -34,7 +33,6 @@
         background-color: #198754;
         color: white;
       }
-
       .notification {
         background-color: rgb(252, 252, 252);
         color: rgb(248, 9, 109);
@@ -45,12 +43,10 @@
         display: inline-block;
         border-radius: 2px;
       }
-
       /* .notification:hover {
             background: rgb(247, 196, 217);
             color: rgb(248, 9, 109);
         } */
-
       .notification .badge {
         position: absolute;
         top: -10px;
@@ -60,7 +56,6 @@
         background-color: red;
         color: white;
       }
-
       .not-content {
         display: flex;
         flex-direction: column-reverse;
@@ -77,14 +72,12 @@
         font-size: smaller;
         display: none;
       }
-
       .msg {
         background-color: rgb(248, 9, 109);
         color: white;
         padding: 8px;
         border-radius: 20px;
       }
-
       /* .notification:hover #not-content {
             display: block;
         } */
@@ -92,21 +85,18 @@
         display: flex;
         flex-direction: column-reverse;
       }
-
       .item-list-msg {
         border-bottom: 1px solid green;
         max-width: 100vw;
         max-height: 400px;
         overflow: auto;
       }
-
       #items-list {
         display: flex;
         flex-direction: column-reverse;
         margin-left: 6vw;
         margin-right: 6vw;
       }
-
       .comment {
         position: absolute;
         height: 100%;
@@ -114,73 +104,59 @@
         background: white;
         display: none;
       }
-
       .comment-data {
         display: flex;
         flex-direction: column-reverse;
       }
-
       .submit-comment {
         position: sticky;
         bottom: 2px;
         width: 100%;
       }
-
       #deleteBtn {
         position: relative;
         left: 33%;
       }
-
       #trashBtn {
         position: relative;
         left: 30%;
       }
-
       @media screen and (min-width: 1px) {
         #items-list {
           font-size: 3.4vw;
         }
-
         .notification {
           margin-right: 2px;
         }
       }
-
       @media screen and (min-width: 450px) {
         #items-list {
           font-size: 3.6vw;
         }
       }
-
       @media screen and (min-width: 600px) {
         #items-list {
           font-size: 3vw;
         }
-
         #deleteBtn {
           left: 36%;
         }
-
         #trashBtn {
           left: 37%;
         }
       }
-
       @media screen and (min-width: 800px) {
         #items-list {
           font-size: 1.6vw;
         }
-
         .notification {
           margin-right: 20px;
         }
       }
-
       @media screen and (min-width: 1000px) {
         #items-list {
           font-size: 1.2vw;
         }
-
         .not-content {
           position: absolute;
           z-index: 99;
@@ -195,7 +171,6 @@
           font-size: smaller;
           display: none;
         }
-
         .visi {
           display: flex;
           flex-direction: column-reverse;
@@ -334,7 +309,6 @@
       dataText = dataText.replace(/\*DDDcode/g, "<br>");
       return dataText;
     }
-
     function showAlertIText(dest , msg){
        dest.innerText = msg;
     }
@@ -347,7 +321,6 @@
     function newTEXT(dest , msg){
        document.getElementById(`${dest}`).innerText = msg;
     }
-
     // *******************************************
     const showNot = async () => {
       const notif = document.getElementsByClassName("not-content")[0];
@@ -358,7 +331,6 @@
     const showComment = async (quesId, data) => {
       const div = document.getElementById(`${quesId}ques`);
       const questIdBox = document.getElementById(`${quesId}box`);
-
       showAlertIHTML(div,"");
       for (var i = 0; i < data.length; i++) {
         var output = "";
@@ -373,7 +345,6 @@
       }
     };
     //***********************************************************************
-
     const showData = async(articles, keyvalue) => {
       const artitem = articles;
       //setting class in option using local storage
@@ -391,7 +362,6 @@
         items_list.innerHTML += "<h6>Empty</h6>";
       }
       var keyvalues = keyvalue;
-
       for (var i = 0; i < artitem[0].length; i++) {
         var output = "";
         opt1 = object[`${artitem[0][i]._id}opt1`]==true?true:"";
@@ -475,11 +445,9 @@
                     </div>
                 </div>
             </div>`;
-
         items_list.innerHTML += output;
       }
     };
-
     //************************************************************************* *//
     const addComment = async (list) => {
       const quesId = list[0];
@@ -526,7 +494,6 @@
       questIdBox.style.display = "block";
       const div = document.getElementById(`${quesId}ques`);
       showAlertIHTML(div,`<p class="card-text">&nbsp;&nbsp;Loading...<br><br></p>`);
-
       const IdBoxList = questIdBox.classList;
       if (IdBoxList.length < 2) {
         const keyvalue = key.value;
@@ -590,7 +557,6 @@
       };
       await fetching();
     };
-
     //************************************************************************* *//
     const socket = io();
     const nameee = document.getElementById("namee").innerText.trim();
@@ -681,7 +647,6 @@
       const numb = list[5];
       if (conf) {
         document.getElementById(`${id}b${opti}`).disabled = true;
-
         const notify = document.getElementById("notify");
         try {
           let status;
@@ -744,7 +709,6 @@
       }
       document.getElementById(`${id}b${opti}`).disabled = false;
     };
-
     const postQues = async (e) => {
       e.preventDefault();
       const notify = document.getElementById("notify");
