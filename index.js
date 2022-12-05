@@ -557,3 +557,5 @@ app.get("*", (req, res) => {
 http.listen(port, () => {
     console.log('connection succesful');
 });
+
+module.export = app;
