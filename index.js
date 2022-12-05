@@ -47,7 +47,7 @@ const io = require('socket.io')(http)
 // mongodb://localhost:27017/expapp
 
 
-const staticPath = path.join(__dirname, '/public');
+const staticPath = path.join(__dirname, '/client');
 app.use(express.static(staticPath));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
